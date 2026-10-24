@@ -103,37 +103,37 @@ std::wstring CommonDisplayItem::DefaultString(bool is_main_window) const
             if (is_main_window)
                 default_text = CCommon::LoadText(IDS_UPLOAD_DISP, _T(": "));
             else
-                default_text = _T("↑: ");
+                default_text = _T("↑ ");
             break;
         case TDI_DOWN:
             if (is_main_window)
                 default_text = CCommon::LoadText(IDS_DOWNLOAD_DISP, _T(": "));
             else
-                default_text = _T("↓: ");
+                default_text = _T("↓ ");
             break;
         case TDI_TOTAL_SPEED:
-            default_text = _T("↑↓: ");
+            default_text = _T("↑↓ ");
             break;
         case TDI_TODAY_TRAFFIC:
             default_text = CCommon::LoadText(IDS_TRAFFIC_USED, _T(": "));
             break;
         case TDI_CPU:
-            default_text = _T("CPU: ");
+            default_text = _T("CPU ");
             break;
         case TDI_CPU_TEMP:
-            default_text = _T("CPU: ");
+            default_text = is_main_window ? _T("CPU: ") : _T("");
             break;
         case TDI_CPU_FREQ:
             default_text = CCommon::LoadText(IDS_CPU_FREQ, _T(": "));
             break;
         case TDI_MEMORY:
-            default_text = CCommon::LoadText(IDS_MEMORY_DISP, _T(": "));
+            default_text = is_main_window ? CCommon::LoadText(IDS_MEMORY_DISP, _T(": ")) : _T("RAM ");
             break;
         case TDI_GPU_USAGE:
-            default_text = CCommon::LoadText(IDS_GPU_DISP, _T(": "));
+            default_text = _T("GPU ");
             break;
         case TDI_GPU_TEMP:
-            default_text = CCommon::LoadText(IDS_GPU_DISP, _T(": "));
+            default_text = is_main_window ? CCommon::LoadText(IDS_GPU_DISP, _T(": ")) : _T("");
             break;
         case TDI_HDD_TEMP:
             default_text = CCommon::LoadText(IDS_HDD_DISP, _T(": "));
