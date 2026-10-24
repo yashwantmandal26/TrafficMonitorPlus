@@ -21,7 +21,7 @@ public:
 
     void LoadConfig(const std::wstring& config_dir);
     void SaveConfig() const;
-    const CString& StringRes(UINT id);      //根据资源id获取一个字符串资源
+    const CString& StringRes(UINT id);      //Get a string resource based on resource id
 
 public:
     std::wstring m_cur_time;

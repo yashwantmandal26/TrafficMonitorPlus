@@ -1,4 +1,4 @@
-﻿// IconSelectDlg.cpp : 实现文件
+﻿// IconSelectDlg.cpp: implementation file
 //
 
 #include "stdafx.h"
@@ -7,7 +7,7 @@
 #include "afxdialogex.h"
 
 
-// CIconSelectDlg 对话框
+// CIconSelectDlg dialog box
 
 IMPLEMENT_DYNAMIC(CIconSelectDlg, CBaseDialog)
 
@@ -62,17 +62,17 @@ BEGIN_MESSAGE_MAP(CIconSelectDlg, CBaseDialog)
 END_MESSAGE_MAP()
 
 
-// CIconSelectDlg 消息处理程序
+// CIconSelectDlg message handler
 
 
 BOOL CIconSelectDlg::OnInitDialog()
 {
     CBaseDialog::OnInitDialog();
 
-    // TODO:  在此添加额外的初始化
-    SetIcon(theApp.GetMenuIcon(IDI_NOTIFY), FALSE);		// 设置小图标
+    // TODO: Add additional initialization here
+    SetIcon(theApp.GetMenuIcon(IDI_NOTIFY), FALSE);		// Set small icon
 
-    //设置预览图大小
+    //Set preview size
     m_preview_pic.SetWindowPos(nullptr, 0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT, SWP_NOZORDER | SWP_NOMOVE);
     if (m_icon_selected == 4 || m_icon_selected == 5)
         m_preview_pic.SetPicture((HBITMAP)LoadImage(AfxGetInstanceHandle(),
@@ -81,7 +81,7 @@ BOOL CIconSelectDlg::OnInitDialog()
         m_preview_pic.SetPicture((HBITMAP)LoadImage(AfxGetInstanceHandle(),
             MAKEINTRESOURCE(IDB_NOTIFY_ICON_PREVIEW), IMAGE_BITMAP, 0, 0, LR_DEFAULTCOLOR | LR_CREATEDIBSECTION));
 
-    //初始化下拉列表
+    //Initialize drop-down list
     m_icon_select_combo.AddString(CCommon::LoadText(IDS_DEFAULT_ICON));
     m_icon_select_combo.AddString(CCommon::LoadText(IDS_ICON, _T(" 1")));
     m_icon_select_combo.AddString(CCommon::LoadText(IDS_ICON, _T(" 2")));
@@ -94,13 +94,13 @@ BOOL CIconSelectDlg::OnInitDialog()
     m_auto_adapt_chk.EnableWindow(theApp.m_win_version.GetMajorVersion() >= 10);
 
     return TRUE;  // return TRUE unless you set the focus to a control
-                  // 异常: OCX 属性页应返回 FALSE
+                  // Exception: OCX property page should return FALSE
 }
 
 
 void CIconSelectDlg::OnCbnSelchangeCombo1()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_icon_selected = m_icon_select_combo.GetCurSel();
     if (m_icon_selected == 4 || m_icon_selected == 5)
         m_preview_pic.SetPicture((HBITMAP)LoadImage(AfxGetInstanceHandle(),
@@ -118,7 +118,7 @@ afx_msg LRESULT CIconSelectDlg::OnControlRepaint(WPARAM wParam, LPARAM lParam)
     CDC* pDC = (CDC*)lParam;
     if (pControl == &m_preview_pic)
     {
-        //当收到m_preview_pic控件的重绘消息时，同时重绘图标
+        //When receiving the redraw message of the m_preview_pic control, the icon is redrawn at the same time.
         DrawPreviewIcon(pDC);
     }
     return 0;
@@ -127,7 +127,7 @@ afx_msg LRESULT CIconSelectDlg::OnControlRepaint(WPARAM wParam, LPARAM lParam)
 
 void CIconSelectDlg::OnBnClickedAutoAdaptCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_atuo_adapt_notify_icon = (m_auto_adapt_chk.GetCheck() != 0);
 }
 

@@ -20,7 +20,7 @@ public:
     }
     ~CCrashReport() {}
 public:
-    // 生成MiniDump文件
+    // Generate MiniDump file
     void CreateMiniDump(EXCEPTION_POINTERS* pEP)
     {
         SYSTEMTIME stLocalTime;
@@ -43,15 +43,15 @@ public:
         ExpParam.ExceptionPointers = pEP;
         ExpParam.ClientPointers = TRUE;
 
-        // 生成minidump文件
+        // Generate minidump file
         BOOL bResult = ::MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), hDumpFile, MiniDumpNormal, &ExpParam, NULL, NULL);
         ::CloseHandle(hDumpFile);
     }
 
-    //根据地址获取模块路径
+    //Get module path based on address
     std::wstring GetModulePath(DWORD64 address)
     {
-        // 获取模块信息
+        // Get module information
         HMODULE hModule = NULL;
         if (GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (LPCTSTR)address, &hModule)) 
         {
@@ -64,19 +64,19 @@ public:
         return L"Unknown Module";
     }
 
-    //获取崩溃堆栈信息
+    //Get crash stack information
     std::wstring GetStackTrace(EXCEPTION_POINTERS* pExceptionInfo)
     {
         std::wstringstream stream;
 
-        // 初始化符号处理
+        // Initialize symbol processing
         if (!SymInitialize(GetCurrentProcess(), NULL, TRUE))
         {
             stream << L"Failed to initialize symbol handler.\r\n";
             return stream.str();
         }
 
-        // RAII 确保 SymCleanup 被调用
+        // RAII ensures that SymCleanup is called
         struct SymCleanupHelper {
             ~SymCleanupHelper() { SymCleanup(GetCurrentProcess()); }
         } cleanupHelper;
@@ -84,32 +84,32 @@ public:
         STACKFRAME64 stackFrame = {};
         CONTEXT context = *pExceptionInfo->ContextRecord;
 
-        // 初始化堆栈帧
+        // Initialize stack frame
 #if defined _M_IX86
         DWORD machineType = IMAGE_FILE_MACHINE_I386;
-        stackFrame.AddrPC.Offset = context.Eip;    // x86 使用 EIP
-        stackFrame.AddrFrame.Offset = context.Ebp; // x86 使用 EBP
-        stackFrame.AddrStack.Offset = context.Esp; // x86 使用 ESP
+        stackFrame.AddrPC.Offset = context.Eip;    // x86 uses EIP
+        stackFrame.AddrFrame.Offset = context.Ebp; // x86 uses EBP
+        stackFrame.AddrStack.Offset = context.Esp; // x86 uses ESP
 //#elif defined _M_ARM64EC
 //        DWORD machineType = IMAGE_FILE_MACHINE_ARM64;
-//        stackFrame.AddrPC.Offset = context.Pc;     // ARM64 使用 PC
-//        stackFrame.AddrFrame.Offset = context.Fp;  // ARM64 使用 FP
-//        stackFrame.AddrStack.Offset = context.Sp;  // ARM64 使用 SP
+//        stackFrame.AddrPC.Offset = context.Pc; // ARM64 uses PC
+//        stackFrame.AddrFrame.Offset = context.Fp; // ARM64 uses FP
+//        stackFrame.AddrStack.Offset = context.Sp; // ARM64 uses SP
 #else
         DWORD machineType = IMAGE_FILE_MACHINE_AMD64;
-        stackFrame.AddrPC.Offset = context.Rip;    // x64 使用 RIP
-        stackFrame.AddrFrame.Offset = context.Rbp; // x64 使用 RBP
-        stackFrame.AddrStack.Offset = context.Rsp; // x64 使用 RSP
+        stackFrame.AddrPC.Offset = context.Rip;    // x64 uses RIP
+        stackFrame.AddrFrame.Offset = context.Rbp; // x64 uses RBP
+        stackFrame.AddrStack.Offset = context.Rsp; // x64 uses RSP
 #endif
         stackFrame.AddrPC.Mode = AddrModeFlat;
         stackFrame.AddrFrame.Mode = AddrModeFlat;
         stackFrame.AddrStack.Mode = AddrModeFlat;
 
-        // 遍历堆栈帧
+        // Traverse stack frames
         while (StackWalk64(machineType, GetCurrentProcess(), GetCurrentThread(), &stackFrame, &context, NULL, SymFunctionTableAccess64, SymGetModuleBase64, NULL)) {
             if (stackFrame.AddrPC.Offset == 0) break;
 
-            // 获取符号信息
+            // Get symbol information
             BYTE symbolBuffer[sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(TCHAR)];
             PSYMBOL_INFO pSymbol = (PSYMBOL_INFO)symbolBuffer;
             pSymbol->SizeOfStruct = sizeof(SYMBOL_INFO);
@@ -129,7 +129,7 @@ public:
             if (!modulePath.empty())
                 stream << L"Module Path: " << modulePath << L"\r\n";
 
-            // 获取源代码行信息
+            // Get source code line information
             IMAGEHLP_LINE64 line = {};
             line.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
             DWORD lineDisplacement = 0;
@@ -144,7 +144,7 @@ public:
 	{
 		CString info = CCommon::LoadTextFormat(IDS_CRASH_INFO, { m_dumpFile });
 		info += _T("\r\n");
-        //在崩溃信息中调用堆栈
+        //Call stack in crash message
         std::wstring stack_trace = GetStackTrace(pEP);
         if (!stack_trace.empty())
         {
@@ -153,12 +153,12 @@ public:
             info += _T("\r\n");
         }
 		info += theApp.GetSystemInfoString();
-        //写入日志
+        //write log
         CString crash_log = info;
         crash_log.Replace(_T("\r\n"), _T("\n"));
         crash_log.Replace(_T("\n\n"), _T("\n"));
         CCommon::WriteLog(crash_log.GetString(), theApp.m_log_path.c_str());
-        //显示崩溃对话框
+        //Show crash dialog
         CMessageDlg dlg;
         dlg.SetWindowTitle(APP_NAME);
         dlg.SetInfoText(CCommon::LoadText(IDS_ERROR_MESSAGE));
@@ -201,7 +201,7 @@ namespace CRASHREPORT
 {
     static LONG WINAPI __UnhandledExceptionFilter(PEXCEPTION_POINTERS pEP)
     {
-        ::SetErrorMode(0); //使用默认的
+        ::SetErrorMode(0); //Use the default
         CCrashReport cr;
         cr.CreateMiniDump(pEP);
 		cr.ShowCrashInfo(pEP);

@@ -4,19 +4,19 @@
 #include "ColorSettingListCtrl.h"
 #include "BaseDialog.h"
 
-// CTaskbarColorDlg 对话框
+// CTaskbarColorDlg dialog box
 
 class CTaskbarColorDlg : public CBaseDialog
 {
 	DECLARE_DYNAMIC(CTaskbarColorDlg)
 
 public:
-	CTaskbarColorDlg(const std::map<CommonDisplayItem, TaskbarItemColor>& colors, CWnd* pParent = NULL);   // 标准构造函数
+	CTaskbarColorDlg(const std::map<CommonDisplayItem, TaskbarItemColor>& colors, CWnd* pParent = NULL);   // Standard constructor
 	virtual ~CTaskbarColorDlg();
 
     const std::map<CommonDisplayItem, TaskbarItemColor>& GetColors() const { return m_colors; }
 
-	// 对话框数据
+	// Dialog data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_TASKBAR_COLOR_DIALOG };
 #endif
@@ -28,7 +28,7 @@ protected:
     virtual CString GetDialogName() const override;
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 	DECLARE_MESSAGE_MAP()
 public:

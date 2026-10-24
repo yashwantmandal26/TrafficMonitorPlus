@@ -6,7 +6,7 @@
 #include "CTabCtrlEx.h"
 #include "BaseDialog.h"
 
-// COptionsDlg 对话框
+// COptionsDlg dialog box
 
 #define OPTION_DLG_NAME _T("OptionsDlg")
 
@@ -15,10 +15,10 @@ class COptionsDlg : public CBaseDialog
     DECLARE_DYNAMIC(COptionsDlg)
 
 public:
-    COptionsDlg(int tab = 0, CWnd* pParent = NULL);   // 标准构造函数
+    COptionsDlg(int tab = 0, CWnd* pParent = NULL);   // Standard constructor
     virtual ~COptionsDlg();
 
-    // 对话框数据
+    // Dialog data
 #ifdef AFX_DESIGN_TIME
     enum { IDD = IDD_OPTIONS_DIALOG };
 #endif
@@ -34,7 +34,7 @@ protected:
     std::vector<int> m_tab_height;
 
     virtual CString GetDialogName() const override;
-    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
     DECLARE_MESSAGE_MAP()
 public:

@@ -2,20 +2,20 @@
 #include "afxdialogex.h"
 #include "BaseDialog.h"
 
-// CSkinAutoAdaptSettingDlg 对话框
+// CSkinAutoAdaptSettingDlg dialog box
 
 class CSkinAutoAdaptSettingDlg : public CBaseDialog
 {
 	DECLARE_DYNAMIC(CSkinAutoAdaptSettingDlg)
 
 public:
-	CSkinAutoAdaptSettingDlg(CWnd* pParent = nullptr);   // 标准构造函数
+	CSkinAutoAdaptSettingDlg(CWnd* pParent = nullptr);   // Standard constructor
 	virtual ~CSkinAutoAdaptSettingDlg();
 
     int GetDarkModeSkin() const { return m_dark_mode_skin; }
     int GetLightModeSkin() const { return m_light_mode_skin; }
 
-// 对话框数据
+// Dialog data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_SKIN_AUTO_ADAPT_DLG };
 #endif
@@ -28,7 +28,7 @@ private:
     int m_light_mode_skin{};
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
     virtual CString GetDialogName() const override;
     virtual bool InitializeControls() override;
 

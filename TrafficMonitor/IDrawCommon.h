@@ -13,32 +13,32 @@ class IDrawCommon : public IPluginDrawer
 public:
 
     virtual void SetBackColor(COLORREF back_color, BYTE alpha = 255) = 0;
-    // 设置绘制文本的字体
+    // Set the font for drawn text
     virtual void SetFont(CFont* pfont) = 0;
-    // 在指定的矩形区域内绘制文本
+    // Draw text within a specified rectangular area
     virtual void DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF color, Alignment align = Alignment::LEFT, bool draw_back_ground = false, bool multi_line = false, BYTE alpha = 255) = 0;
-    // 设置绘图剪辑区域
+    // Set drawing clipping area
     virtual void SetDrawRect(CRect rect) = 0;
-    // 用纯色填充矩形
+    // Fill the rectangle with a solid color
     virtual void FillRect(CRect rect, COLORREF color, BYTE alpha = 255) = 0;
-    // 绘制矩形边框。如果dot_line为true，则为虚线。radius大于0时为圆角矩形
+    // Draw a rectangular border. If dot_line is true, it is a dotted line. When radius is greater than 0, it is a rounded rectangle.
     virtual void DrawRectOutLine(CRect rect, COLORREF color, int width = 1, bool dot_line = false, BYTE alpha = 255, int radius = 0) = 0;
-    // 使用当前画笔画线
+    // Draw lines using current brush
     virtual void DrawLine(CPoint start_point, CPoint end_point, COLORREF color, BYTE alpha = 255) = 0;
-    // 使用当前画笔画线，以start_point为起点，向上画长度为height的线段
+    // Use the current brush to draw a line, taking start_point as the starting point, and draw a line segment with a length of height upward.
     virtual void DrawLine(CPoint start_point, int height, COLORREF color, BYTE alpha = 255);
     virtual void SetTextColor(const COLORREF color, BYTE alpha = 255) = 0;
-    // 绘制一个位图
+    // draw a bitmap
     virtual void DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSize size, StretchMode stretch_mode = StretchMode::STRETCH, BYTE alpha = 255) = 0;
     virtual void DrawIcon(HICON hIcon, CPoint start_point, CSize size) = 0;
     virtual ~IDrawCommon() = default;
 
-    //获取绘图上下文句柄。
+    //Gets the drawing context handle.
     virtual CDC* GetDC() = 0;
-    //获取文本宽度
+    //Get text width
     virtual int GetTextWidth(LPCTSTR lpszString) { return 0; }
 
-    // 通过 IPluginDrawer 继承
+    // Inherited through IPluginDrawer
     virtual int GetAPIVersion() override;
     virtual void DrawWindowText(int x, int y, int w, int h, const wchar_t* lpszString, unsigned long color, Alignment align, bool multi_line, unsigned char alpha) override;
     virtual void SetDrawRect(int x, int y, int w, int h) override;
@@ -53,16 +53,16 @@ public:
 namespace DrawCommonHelper
 {
     /**
-     * @brief 渲染器类型的枚举，新增渲染器类型时应当添加枚举到其中
+     * @brief is an enumeration of renderer types. When adding a new renderer type, the enumeration should be added to it.
      *
      */
     enum class RenderType
     {
-        // 使用GDI
+        // Using GDI
         DEFAULT,
-        // 如果支持，使用D2D1
+        // If supported, use D2D1
         D2D1,
-        // 如果系统大于win8.1，则在使用D2D1时利用DirectComposition呈现结果
+        // If the system is greater than win8.1, use DirectComposition to render the result when using D2D1
         D2D1_WITH_DCOMPOSITION
     };
 

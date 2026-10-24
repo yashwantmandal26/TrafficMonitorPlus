@@ -19,7 +19,7 @@ typedef struct _PROCESSOR_POWER_INFORMATION {
 CPdhCpuFreq::CPdhCpuFreq()
     : CPdhQuery(_T("\\Processor Information(_Total)\\% Processor Performance"))
 {
-    //获取max_cpu_freq
+    //Get max_cpu_freq
     SYSTEM_INFO si;
     GetSystemInfo(&si);
     auto ppInfo = std::vector<PROCESSOR_POWER_INFORMATION>(si.dwNumberOfProcessors);

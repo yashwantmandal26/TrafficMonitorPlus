@@ -5,10 +5,10 @@ public:
     CFileDialogEx(BOOL bOpenFileDialog, LPCWSTR lpszDefExt = NULL, LPCWSTR lpszFilter = NULL);
     ~CFileDialogEx();
 
-    // 显示对话框
+    // show dialog
     int DoModal(HWND hWndOwner = NULL);
 
-    // 获取选定的文件路径和文件名
+    // Get selected file path and file name
     std::wstring GetPathName() const;
     std::wstring GetFileName() const;
 
@@ -19,7 +19,7 @@ private:
     IFileDialog* pFileDialog;
     std::wstring m_filePath;
     BOOL m_bOpenFileDialog;
-    std::vector<COMDLG_FILTERSPEC> m_filterSpecs;  // 存储过滤器描述和模式
-    std::vector<std::wstring> m_filterDescriptions;  // 存储过滤器描述
-    std::vector<std::wstring> m_filterSpecsStrings;  // 存储过滤器模式
+    std::vector<COMDLG_FILTERSPEC> m_filterSpecs;  // Store filter description and schema
+    std::vector<std::wstring> m_filterDescriptions;  // Storage filter description
+    std::vector<std::wstring> m_filterSpecsStrings;  // Store filter pattern
 };

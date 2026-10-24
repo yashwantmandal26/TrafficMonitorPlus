@@ -4,7 +4,7 @@ class CWineTaskbarDlg :
     public CTaskBarDlg
 {
 private:
-    // Í¨¹ý CTaskBarDlg ¼Ì³Ð
+    // Inherited via CTaskBarDlg
     void InitTaskbarWnd() override;
     void AdjustTaskbarWndPos(bool force_adjust) override;
     void ResetTaskbarPos() override;

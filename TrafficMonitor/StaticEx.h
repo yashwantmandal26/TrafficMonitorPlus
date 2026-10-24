@@ -1,7 +1,7 @@
 /*
-CStatic类的派生类，用作带颜色的文本控件：
-调用SetTextColor设置文本颜色；
-在需要的时候调用SetWindowTextEx设置控件文本
+CStaticDerived class of class used as a colored text control:
+Call SetTextColor to set the text color;
+Call SetWindowTextEx to set the control text when needed
 */
 #pragma once
 #include "afxwin.h"
@@ -12,28 +12,28 @@ public:
 	CStaticEx();
 	~CStaticEx();
 
-	//对齐方式
+	//Alignment
 	enum Alignment
 	{
-		LEFT,       //左对齐
-		RIGHT,      //右对齐
-		CENTER,     //居中
+		LEFT,       //left aligned
+		RIGHT,      //Align right
+		CENTER,     //center
 	};
 
-	//将Static控件用作绘制有颜色的文本时
+	//When using a Static control to draw colored text
 public:
-	void SetWindowTextEx(LPCTSTR lpszString, Alignment align = Alignment::LEFT);	//为控件设置有颜色的文本（需要配合SetTextColor使用）
-	void SetTextColor(COLORREF textColor);		//设置控件文本颜色
-	void SetBackColor(COLORREF back_color);		//设置控件背景颜色
-	CString GetString() const;			//获取控件文本
+	void SetWindowTextEx(LPCTSTR lpszString, Alignment align = Alignment::LEFT);	//Set colored text for the control (need to be used with SetTextColor)
+	void SetTextColor(COLORREF textColor);		//Set control text color
+	void SetBackColor(COLORREF back_color);		//Set control background color
+	CString GetString() const;			//Get control text
 
 protected:
 	bool m_color_text{ false };
-	COLORREF m_text_color;	//控件文字颜色
+	COLORREF m_text_color;	//Control text color
 	COLORREF m_back_color;
-	CString m_text;			//控件上的文本
-	Alignment m_align{};		//文本的对齐方式
-	bool m_draw_background_color{ false };	//是否需要为控件填充背景颜色
+	CString m_text;			//text on control
+	Alignment m_align{};		//text alignment
+	bool m_draw_background_color{ false };	//Do you need to fill the background color for the control?
 
 protected:
 	virtual LRESULT DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam);

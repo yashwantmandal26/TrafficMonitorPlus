@@ -6,29 +6,29 @@
 #include "MainWndColorDlg.h"
 #include "ComboBox2.h"
 
-// CMainWndSettingsDlg 对话框
+// CMainWndSettingsDlg dialog box
 
 class CMainWndSettingsDlg : public CTabDlg
 {
     DECLARE_DYNAMIC(CMainWndSettingsDlg)
 
 public:
-    CMainWndSettingsDlg(CWnd* pParent = NULL);   // 标准构造函数
+    CMainWndSettingsDlg(CWnd* pParent = NULL);   // Standard constructor
     virtual ~CMainWndSettingsDlg();
 
-    //选项设置数据
+    //option setting data
     MainWndSettingData m_data;
 
-    bool m_text_disable{ false };   //如果为true，则不允许设置“显示文本”，并不允许交换上传和下载的位置
+    bool m_text_disable{ false };   //If true, disallows setting "display text" and swapping upload and download locations
 
-// 对话框数据
+// Dialog data
 #ifdef AFX_DESIGN_TIME
     enum { IDD = IDD_MAIN_WND_SETTINGS_DIALOG };
 #endif
 
 
 protected:
-    //控件变量
+    //control variable
     CColorStatic m_color_static;
     CToolTipCtrl m_toolTip;
     CComboBox2 m_unit_combo;
@@ -44,7 +44,7 @@ protected:
 
     virtual void SetControlMouseWheelEnable(bool enable) override;
     virtual bool InitializeControls() override;
-    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
     DECLARE_MESSAGE_MAP()
 public:

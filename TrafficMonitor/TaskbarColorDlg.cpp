@@ -1,4 +1,4 @@
-﻿// TaskbarColorDlg.cpp : 实现文件
+﻿// TaskbarColorDlg.cpp: implementation file
 //
 
 #include "stdafx.h"
@@ -8,7 +8,7 @@
 #include "CMFCColorDialogEx.h"
 
 
-// CTaskbarColorDlg 对话框
+// CTaskbarColorDlg dialog box
 
 IMPLEMENT_DYNAMIC(CTaskbarColorDlg, CBaseDialog)
 
@@ -38,18 +38,18 @@ BEGIN_MESSAGE_MAP(CTaskbarColorDlg, CBaseDialog)
 END_MESSAGE_MAP()
 
 
-// CTaskbarColorDlg 消息处理程序
+// CTaskbarColorDlg message handler
 
 
 BOOL CTaskbarColorDlg::OnInitDialog()
 {
 	CBaseDialog::OnInitDialog();
 
-	// TODO:  在此添加额外的初始化
+	// TODO: Add additional initialization here
 
-    SetIcon(theApp.GetMenuIcon(IDI_TASKBAR_WINDOW), FALSE);		// 设置小图标
+    SetIcon(theApp.GetMenuIcon(IDI_TASKBAR_WINDOW), FALSE);		// Set small icon
 
-    //初始化列表控件
+    //Initialize list control
     CRect rect;
     m_list_ctrl.GetClientRect(rect);
     m_list_ctrl.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_LABELTIP);
@@ -61,7 +61,7 @@ BOOL CTaskbarColorDlg::OnInitDialog()
     m_list_ctrl.InsertColumn(2, CCommon::LoadText(IDS_COLOR_VALUE), LVCFMT_LEFT, width2);
     m_list_ctrl.SetDrawItemRangMargin(theApp.DPI(2));
 
-    //向列表中插入行
+    //Insert row into list
     for (auto iter = theApp.m_plugins.AllDisplayItemsWithPlugins().begin(); iter != theApp.m_plugins.AllDisplayItemsWithPlugins().end(); ++iter)
     {
         CString item_name = iter->GetItemName();
@@ -76,7 +76,7 @@ BOOL CTaskbarColorDlg::OnInitDialog()
     }
 
 	return TRUE;  // return TRUE unless you set the focus to a control
-				  // 异常: OCX 属性页应返回 FALSE
+				  // Exception: OCX property page should return FALSE
 }
 
 
@@ -84,7 +84,7 @@ BOOL CTaskbarColorDlg::OnInitDialog()
 void CTaskbarColorDlg::OnNMDblclkList1(NMHDR *pNMHDR, LRESULT *pResult)
 {
     LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     int index = pNMItemActivate->iItem;
     int col = pNMItemActivate->iSubItem;
     if (col == 1 || col == 2)

@@ -19,7 +19,7 @@ CDataManager& CDataManager::Instance()
 
 void CDataManager::LoadConfig(const std::wstring& config_dir)
 {
-    //获取模块的路径
+    //Get the path of the module
     HMODULE hModule = reinterpret_cast<HMODULE>(&__ImageBase);
     wchar_t path[MAX_PATH];
     GetModuleFileNameW(hModule, path, MAX_PATH);
@@ -28,7 +28,7 @@ void CDataManager::LoadConfig(const std::wstring& config_dir)
     if (!config_dir.empty())
     {
         size_t index = module_path.find_last_of(L"\\/");
-        //模块的文件名
+        //module file name
         std::wstring module_file_name = module_path.substr(index + 1);
         m_config_path = config_dir + module_file_name;
     }

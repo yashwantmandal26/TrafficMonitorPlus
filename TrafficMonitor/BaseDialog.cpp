@@ -1,4 +1,4 @@
-﻿// BaseDialog.cpp : 实现文件
+﻿// BaseDialog.cpp: implementation file
 //
 
 #include "stdafx.h"
@@ -8,7 +8,7 @@
 #include "TrafficMonitor.h"
 #include "TrafficMonitorDlg.h"
 
-// CBaseDialog 对话框
+// CBaseDialog dialog box
 std::map<CString, HWND> CBaseDialog::m_unique_hwnd;
 
 IMPLEMENT_DYNAMIC(CBaseDialog, CDialog)
@@ -74,7 +74,7 @@ void CBaseDialog::LoadConfig()
     if (!GetDialogName().IsEmpty() && m_remember_dlg_size)
     {
         CIniHelper ini{ theApp.m_config_path };
-        //载入窗口大小设置
+        //Loading window size settings
         m_window_size.cx = ini.GetInt(_T("window_size"), GetDialogName() + _T("_width"), -1);
         m_window_size.cy = ini.GetInt(_T("window_size"), GetDialogName() + _T("_height"), -1);
     }
@@ -85,7 +85,7 @@ void CBaseDialog::SaveConfig() const
     if (!GetDialogName().IsEmpty() && m_remember_dlg_size)
     {
         CIniHelper ini{ theApp.m_config_path };
-        //保存窗口大小设置
+        //Save window size settings
         ini.WriteInt(_T("window_size"), GetDialogName() + _T("_width"), m_window_size.cx);
         ini.WriteInt(_T("window_size"), GetDialogName() + _T("_height"), m_window_size.cy);
         ini.Save();
@@ -97,18 +97,18 @@ void CBaseDialog::IterateControls(CWnd* pParent, std::function<void(CWnd*)> func
     if (pParent == nullptr)
         return;
 
-    // 获取第一个子控件
+    // Get the first child control
     CWnd* pChild = pParent->GetWindow(GW_CHILD);
 
-    // 遍历所有子控件
+    // Traverse all child controls
     while (pChild != nullptr)
     {
         func(pChild);
 
-        // 递归遍历子控件的子控件（处理嵌套控件）
+        // Recursively traverse child controls of child controls (handling nested controls)
         IterateControls(pChild, func);
 
-        // 获取下一个兄弟控件
+        // Get the next sibling control
         pChild = pChild->GetWindow(GW_HWNDNEXT);
     }
 }
@@ -141,19 +141,19 @@ int CBaseDialog::DPI(int pixel) const
 
 CRect CBaseDialog::GetTextExtent(const CString& text)
 {
-    ASSERT(m_pDC != nullptr);   // m_pDC由OnInitDialog负责申请释放
+    ASSERT(m_pDC != nullptr);   // m_pDC is responsible for applying for release by OnInitDialog
     if (m_pDC == nullptr)
         return CRect();
     if (text.IsEmpty())
         return CRect();
     CRect text_size;
-    m_pDC->DrawTextW(text, &text_size, DT_CALCRECT);    // 使用CDC::DrawTextW测量文本宽度（CDC::GetTextExtent是理论宽度，不准确）
+    m_pDC->DrawTextW(text, &text_size, DT_CALCRECT);    // Use CDC::DrawTextW to measure text width (CDC::GetTextExtent is the theoretical width and is not accurate)
     return text_size;
 }
 
 void CBaseDialog::RepositionTextBasedControls(const vector<CtrlTextInfo>& items, CtrlTextInfo::Width center_min_width)
 {
-    ASSERT(m_pDC != nullptr);   // 此方法仅在InitializeControls期间可用
+    ASSERT(m_pDC != nullptr);   // This method is only available during InitializeControls
     if (m_pDC == nullptr)
         return;
     int center_width = theApp.DPI(center_min_width);
@@ -171,7 +171,7 @@ void CBaseDialog::RepositionTextBasedControls(const vector<CtrlTextInfo>& items,
     {
         ASSERT(item.col_index != CtrlTextInfo::UN_USE);
         ASSERT(item.id != 0);
-        // 获取所有列所需dx，以及左贴靠元素的右边缘center_left，右贴靠元素的左边缘center_right
+        // Get the required dx for all columns, as well as the right edge center_left of the left-aligned element, and the left edge center_right of the right-aligned element.
         CWnd* pItem = GetDlgItem(item.id);
         if (pItem == nullptr)
             continue;
@@ -181,14 +181,14 @@ void CBaseDialog::RepositionTextBasedControls(const vector<CtrlTextInfo>& items,
         CString text;
         pItem->GetWindowTextW(text);
         int dx = GetTextExtent(text).Width() + theApp.DPI(item.ext_width) - rect.Width();
-        if (dx < 0) dx = 0;                                     // 文字只增加控件宽度
-        if (col_info[item.col_index].first < dx)                // 取此列元素中宽度增长最多的
+        if (dx < 0) dx = 0;                                     // Text only increases the width of the control
+        if (col_info[item.col_index].first < dx)                // Get the element in this column whose width has increased the most
             col_info[item.col_index].first = dx;
         if (item.col_index < 0 && center_left < rect.right)
             center_left = rect.right;
         if (item.col_index > 0 && center_right > rect.left)
             center_right = rect.left;
-        if (item.col_index == 0)    // col_index为0的控件可能有多个
+        if (item.col_index == 0)    // There may be multiple controls with col_index 0
         {
             if (center_left < rect.left)
                 center_left = rect.left;
@@ -198,21 +198,21 @@ void CBaseDialog::RepositionTextBasedControls(const vector<CtrlTextInfo>& items,
         items_info.emplace_back(itemInfo{ item.col_index, pItem, std::move(rect) });
     }
 
-    if (center_right == INT_MAX)    // 如果控件全部都是左贴靠的那么以窗口右边缘作为剩余空间的右边缘
+    if (center_right == INT_MAX)    // If all controls are left-aligned, then the right edge of the window is used as the right edge of the remaining space.
     {
         CRect dlg_rect{};
         GetClientRect(&dlg_rect);
         center_right = dlg_rect.Width();
     }
-    // 此断言触发说明资源文件中的原始布局没有给中间控件/空闲空间留够宽度
+    // This assertion trigger indicates that the original layout in the resource file did not leave enough width for the middle control/free space
     ASSERT(center_right - center_left >= center_width);
     int dx_sum_left{}, dx_sum_right{};
-    // 因为同一col_index可以有多个控件&没有要求顺序所以控件的最终位置必须可以无状态的计算出来
+    // Because the same col_index can have multiple controls & no order is required, the final position of the control must be calculated statelessly.
     for (auto& a : col_info)
     {
         if (a.first < 0)
         {
-            a.second.second = dx_sum_left;    // 存储此列之前控件的总dx，即此列控件的右移距离
+            a.second.second = dx_sum_left;    // Store the total dx of the control before this column, that is, the right movement distance of the control in this column
             dx_sum_left += a.second.first;
         }
         else if (a.first > 0)
@@ -225,8 +225,8 @@ void CBaseDialog::RepositionTextBasedControls(const vector<CtrlTextInfo>& items,
     if (center_right - center_left - dx_sum_left - dx_sum_right < center_width)
     {
         // ASSERT(false);
-        // 现在加载的文本使此行的中间控件/空闲空间被挤压的太小
-        // 这需要重新设计窗口控件排布以适应当前翻译长度，这里先简单的把缺少的空间分摊给各dx
+        // The text is now loaded so that the middle control/free space of this row is squeezed too small
+        // This requires redesigning the window control arrangement to adapt to the current translation length. Here, we simply allocate the missing space to each dx.
         scale = static_cast<float>(center_right - center_left - center_width) / (dx_sum_left + dx_sum_right);
         dx_sum_left = static_cast<int>(dx_sum_left * scale + 0.5f);
         dx_sum_right = static_cast<int>(dx_sum_right * scale + 0.5f);
@@ -299,7 +299,7 @@ BEGIN_MESSAGE_MAP(CBaseDialog, CDialog)
 END_MESSAGE_MAP()
 
 
-// CBaseDialog 消息处理程序
+// CBaseDialog message handler
 
 
 BOOL CBaseDialog::OnInitDialog()
@@ -307,9 +307,9 @@ BOOL CBaseDialog::OnInitDialog()
     m_unique_hwnd[GetDialogName()] = m_hWnd;
     CDialog::OnInitDialog();
 
-    // TODO:  在此添加额外的初始化
+    // TODO: Add additional initialization here
 
-    //初始化字体
+    //Initialize font
     CRect rect;
     GetWindowRect(rect);
     FontInfo font_info;
@@ -321,7 +321,7 @@ BOOL CBaseDialog::OnInitDialog()
 
     font_info.Create(m_dlg_font, m_dpi);
 
-    //获取初始时窗口的大小
+    //Get the initial window size
     if (m_min_size.cx <= 0 || m_min_size.cy <= 0)
     {
         CRect rect;
@@ -330,28 +330,28 @@ BOOL CBaseDialog::OnInitDialog()
         m_min_size.cy = rect.Height() * 96 / theApp.GetDpi();
     }
 
-    //载入设置
+    //Load settings
     LoadConfig();
 
-    SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);       //取消置顶
+    SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE); //Cancel top
 
-    //处理对话框中的文本翻译 
+    //Handle text translation in dialog boxes 
     IterateControls([&](CWnd* pWnd) {
-        //设置控件字体
+        //Set control font
         if (m_dlg_font.GetSafeHandle() != NULL)
             pWnd->SetFont(&m_dlg_font);
-        //获取控件文本
+        //Get control text
         CString str;
         pWnd->GetWindowText(str);
         UINT id = pWnd->GetDlgCtrlID();
         if (str.Left(4) == _T("TXT_"))
         {
-            //设置控件文本
+            //Set control text
             const std::wstring& str_translated = theApp.m_str_table.LoadText(str.GetString());
             if (!str_translated.empty())
                 pWnd->SetWindowTextW(str_translated.c_str());
         }
-        //处理标准按钮
+        //Handle standard buttons
         else
         {
             if (id == IDOK)
@@ -363,26 +363,26 @@ BOOL CBaseDialog::OnInitDialog()
         }
     });
 
-    // 在还原窗口大小之前（当前窗口状态与资源一致），派生类执行控件文本初始化及调整控件排布
-    // 与实际窗口大小相关的初始化（比如表格列宽）应在派生类的OnInitDialog进行
+    // Before restoring the window size (the current window status is consistent with the resource), the derived class performs control text initialization and adjusts the control arrangement.
+    // Initialization related to the actual window size (such as table column width) should be performed in OnInitDialog of the derived class
     m_pDC = GetDC();
     m_pDC->SelectObject(&m_dlg_font);
     bool rtn = InitializeControls();
     ReleaseDC(m_pDC);
     m_pDC = nullptr;
-    // 如果更改了控件排布那么应当返回true以向布局管理器应用控件调整（重新加载动态布局设置）
+    // If the control layout has been changed then true should be returned to apply the control adjustments to the layout manager (reloading dynamic layout settings)
     if (rtn)
         ReLoadLayoutResource();
 
 
-    //初始化窗口大小
+    //Initialize window size
     if (m_window_size.cx > 0 && m_window_size.cy > 0)
     {
         SetWindowPos(nullptr, 0, 0, m_window_size.cx, m_window_size.cy, SWP_NOZORDER | SWP_NOMOVE);
     }
 
     return TRUE;  // return TRUE unless you set the focus to a control
-                  // 异常: OCX 属性页应返回 FALSE
+                  // Exception: OCX property page should return FALSE
 }
 
 
@@ -390,11 +390,11 @@ void CBaseDialog::OnDestroy()
 {
     CDialog::OnDestroy();
 
-    // TODO: 在此处添加消息处理程序代码
+    // TODO: add message handler code here
     m_unique_hwnd[GetDialogName()] = NULL;
     SaveConfig();
 
-    //当所有对话框关闭时重新设置主窗口置顶
+    //Reset the main window to the top when all dialog boxes are closed
     CTrafficMonitorDlg* pDlg = dynamic_cast<CTrafficMonitorDlg*>(theApp.m_pMainWnd);
     if (pDlg != nullptr && IsAllDialogClosed())
         pDlg->SetAlwaysOnTop();
@@ -403,10 +403,10 @@ void CBaseDialog::OnDestroy()
 
 void CBaseDialog::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 {
-    // TODO: 在此添加消息处理程序代码和/或调用默认值
-    //限制窗口最小大小
-    lpMMI->ptMinTrackSize.x = theApp.DPI(m_min_size.cx);		//设置最小宽度
-    lpMMI->ptMinTrackSize.y = theApp.DPI(m_min_size.cy);		//设置最小高度
+    // TODO: Add message handler code and/or call defaults here
+    //Limit window minimum size
+    lpMMI->ptMinTrackSize.x = theApp.DPI(m_min_size.cx);		//Set minimum width
+    lpMMI->ptMinTrackSize.y = theApp.DPI(m_min_size.cy);		//Set minimum height
 
     CDialog::OnGetMinMaxInfo(lpMMI);
 }
@@ -416,7 +416,7 @@ void CBaseDialog::OnSize(UINT nType, int cx, int cy)
 {
     CDialog::OnSize(nType, cx, cy);
 
-    // TODO: 在此处添加消息处理程序代码
+    // TODO: add message handler code here
     if (nType != SIZE_MAXIMIZED && nType != SIZE_MINIMIZED)
     {
         //m_window_width = cx;
@@ -433,7 +433,7 @@ void CBaseDialog::OnSize(UINT nType, int cx, int cy)
 INT_PTR CBaseDialog::DoModal()
 {
     HWND unique_hwnd{ m_unique_hwnd[GetDialogName()] };
-    if (unique_hwnd != NULL && !GetDialogName().IsEmpty())      ///如果对话框已存在，则显示已存在的对话框
+    if (unique_hwnd != NULL && !GetDialogName().IsEmpty())      ///If the dialog box already exists, display the existing dialog box
     {
         ::ShowWindow(unique_hwnd, SW_RESTORE);
         ::SetForegroundWindow(unique_hwnd);
@@ -445,7 +445,7 @@ INT_PTR CBaseDialog::DoModal()
 
 BOOL CBaseDialog::OnEraseBkgnd(CDC* pDC)
 {
-    // 修改窗口背景（CDialogEx）
+    // Modify window background (CDialogEx)
     if (m_brBkgr.GetSafeHandle() != NULL)
     {
         ASSERT_VALID(pDC);
@@ -460,14 +460,14 @@ BOOL CBaseDialog::OnEraseBkgnd(CDC* pDC)
 
 HBRUSH CBaseDialog::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
-    // 修改窗口背景（CDialogEx）
+    // Modify window background (CDialogEx)
     if (m_brBkgr.GetSafeHandle() != NULL)
     {
 #define AFX_MAX_CLASS_NAME 255
 #define AFX_STATIC_CLASS _T("Static")
 #define AFX_BUTTON_CLASS _T("Button")
-#define AFX_SLIDER_CLASS _T("msctls_trackbar32")    // 滑动条控件CSliderCtrl及其派生类
-#define AFX_SYSLINK_CLASS _T("SysLink")             // 超链接控件CSysLink及其派生类
+#define AFX_SLIDER_CLASS _T("msctls_trackbar32")    // Slider control CSliderCtrl and its derived classes
+#define AFX_SYSLINK_CLASS _T("SysLink")             // Hyperlink control CSysLink and its derived classes
 
         if (nCtlColor == CTLCOLOR_STATIC)
         {

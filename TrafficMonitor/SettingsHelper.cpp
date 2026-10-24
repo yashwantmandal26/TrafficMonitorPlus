@@ -122,7 +122,7 @@ void CSettingsHelper::LoadDisplayStr(const wchar_t* AppName, DispStrings& disp_s
     {
         std::wstring str{ CommonDisplayItem(display_item).DefaultString(is_main_window)};
         bool exist = GetString(AppName, CommonDisplayItem(display_item).GetItemIniKeyName(), str);
-        //主窗口只读取配置文件中存在的项，任务栏窗口读取所有项
+        //The main window only reads items that exist in the configuration file, and the taskbar window reads all items
         if (!is_main_window || exist)
             disp_str.Get(display_item) = str;
     }
@@ -145,7 +145,7 @@ void CSettingsHelper::LoadPluginDisplayStr(const wchar_t* AppName, DispStrings& 
     {
         std::wstring str{ plugin->GetItemLableText() };
         bool exist = GetString(AppName, plugin->GetItemId(), str);
-        //主窗口只读取配置文件中存在的项，任务栏窗口读取所有项
+        //The main window only reads items that exist in the configuration file, and the taskbar window reads all items
         if (!is_main_window || exist)
             disp_str.Load(plugin->GetItemId(), str);
     }

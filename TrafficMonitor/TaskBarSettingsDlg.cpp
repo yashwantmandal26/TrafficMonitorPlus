@@ -1,4 +1,4 @@
-﻿// TaskBarSettingsDlg.cpp : 实现文件
+﻿// TaskBarSettingsDlg.cpp: implementation file
 //
 
 #include "stdafx.h"
@@ -15,7 +15,7 @@
 #include "Win11TaskbarSettingDlg.h"
 #include "TaskbarHelper.h"
 
-// CTaskBarSettingsDlg 对话框
+// CTaskBarSettingsDlg dialog box
 
 IMPLEMENT_DYNAMIC(CTaskBarSettingsDlg, CTabDlg)
 
@@ -111,7 +111,7 @@ void CTaskBarSettingsDlg::EnableControl()
     EnableDlgCtrl(IDC_CM_GRAPH_PLOT_RADIO, m_data.show_status_bar || m_data.show_netspeed_figure);
     EnableDlgCtrl(IDC_NET_SPEED_FIGURE_MAX_VALUE_EDIT, m_data.show_netspeed_figure);
     EnableDlgCtrl(IDC_NET_SPEED_FIGURE_MAX_VALUE_UNIT_COMBO, m_data.show_netspeed_figure);
-    //Win11下，任务栏左对齐时禁用“任务栏窗口显示在任务栏左侧”的选项
+    //Under Win11, when the taskbar is aligned to the left, the option "Display the taskbar window on the left side of the taskbar" is disabled.
     EnableDlgCtrl(IDC_TASKBAR_WND_ON_LEFT_CHECK, !theApp.IsWindows11Taskbar() || CWindowsSettingHelper::IsTaskbarCenterAlign());
     EnableDlgCtrl(IDC_ENABLE_COLOR_EMOJI_CHECK, !m_data.disable_d2d);
     EnableDlgCtrl(IDC_WIN11_SETTINGS_BUTTON, theApp.IsWindows11Taskbar());
@@ -275,18 +275,18 @@ BEGIN_MESSAGE_MAP(CTaskBarSettingsDlg, CTabDlg)
 END_MESSAGE_MAP()
 
 
-// CTaskBarSettingsDlg 消息处理程序
+// CTaskBarSettingsDlg message handler
 
 
 BOOL CTaskBarSettingsDlg::OnInitDialog()
 {
     CTabDlg::OnInitDialog();
 
-    // TODO:  在此添加额外的初始化
+    // TODO: Add additional initialization here
 
     theApp.m_taskbar_default_style.LoadConfig();
 
-    //初始化各控件状态
+    //Initialize the status of each control
     SetDlgItemText(IDC_FONT_NAME_EDIT1, m_data.font.name);
     //wchar_t buff[16];
     //swprintf_s(buff, L"%d", m_data.font_size);
@@ -393,7 +393,7 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     if (taskbar_dlg != nullptr)
         m_vertical_margin_edit.EnableWindow(taskbar_dlg->IsTasksbarOnTopOrBottom());
 
-    //初始化内存显示方式下拉列表
+    //Initialize the memory display mode drop-down list
     m_memory_display_combo.AddString(CCommon::LoadText(IDS_USAGE_PERCENTAGE));
     m_memory_display_combo.AddString(CCommon::LoadText(IDS_MEMORY_USED));
     m_memory_display_combo.AddString(CCommon::LoadText(IDS_MEMORY_AVAILABLE));
@@ -408,7 +408,7 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
 
     ((CButton*)GetDlgItem(IDC_SET_ORDER_BUTTON))->SetIcon(theApp.GetMenuIcon(IDI_ITEM));
 
-    //初始化“预设方案”菜单
+    //Initialize the "Default Scheme" menu
     m_default_style_menu.CreatePopupMenu();
     m_modify_default_style_menu.CreatePopupMenu();
     const wchar_t* taskbar_style_names[TASKBAR_DEFAULT_STYLE_NUM] = {
@@ -432,10 +432,10 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     m_default_style_menu.AppendMenu(MF_SEPARATOR);
     m_default_style_menu.AppendMenu(MF_POPUP | MF_STRING, (UINT)m_modify_default_style_menu.m_hMenu, CCommon::LoadText(IDS_MODIFY_PRESET));
 
-    //获取副显示器的数量
+    //Get the number of secondary monitors
     std::vector<HWND> secondary_displays;
     CTaskbarHelper::GetAllSecondaryDisplayTaskbar(secondary_displays);
-    //初始化“显示任务栏窗口的显示器”下拉列表
+    //Initialize the "Monitor to display taskbar window on" drop-down list
     m_displays_combo.AddString(CCommon::LoadText(IDS_PRIMARY_DISPLAY));
     for (size_t i = 0; i < secondary_displays.size(); i++)
     {
@@ -454,11 +454,11 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
         m_displays_combo.SetCurSel(combo_index);
     }
 
-    //设置是否禁用D2D
+    //Set whether to disable D2D
     if (!CTaskBarDlgDrawCommonSupport::CheckSupport())
     {
         m_data.disable_d2d = true;
-        //不支持时禁用选项
+        //Disable option if not supported
         EnableDlgCtrl(IDC_D2D_RADIO, false);
     }
 
@@ -472,13 +472,13 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     EnableControl();
 
     return TRUE;  // return TRUE unless you set the focus to a control
-                  // 异常: OCX 属性页应返回 FALSE
+                  // Exception: OCX property page should return FALSE
 }
 
 
 void CTaskBarSettingsDlg::OnBnClickedSetFontButton1()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     LOGFONT lf{};
     lf.lfHeight = FontSizeToLfHeight(m_data.font.size);
     lf.lfWeight = (m_data.font.bold ? FW_BOLD : FW_NORMAL);
@@ -489,18 +489,18 @@ void CTaskBarSettingsDlg::OnBnClickedSetFontButton1()
     //wcsncpy_s(lf.lfFaceName, m_data.font.name.GetString(), 32);
     CCommon::WStringCopy(lf.lfFaceName, 32, m_data.font.name.GetString());
     CCommon::NormalizeFont(lf);
-    CFontDialog fontDlg(&lf);   //构造字体对话框，初始选择字体为之前字体
-    fontDlg.m_cf.Flags |= CF_NOVERTFONTS;   //过滤掉以 "@" 开头的竖排字体
-    if (IDOK == fontDlg.DoModal())     // 显示字体对话框
+    CFontDialog fontDlg(&lf);   //Construct the font dialog box, and the initial selected font is the previous font
+    fontDlg.m_cf.Flags |= CF_NOVERTFONTS;   //Filter out vertical fonts starting with "@"
+    if (IDOK == fontDlg.DoModal())     // Show font dialog
     {
-        //获取字体信息
+        //Get font information
         m_data.font.name = fontDlg.GetFaceName();
         m_data.font.size = fontDlg.GetSize() / 10;
         m_data.font.bold = (fontDlg.IsBold() != FALSE);
         m_data.font.italic = (fontDlg.IsItalic() != FALSE);
         m_data.font.underline = (fontDlg.IsUnderline() != FALSE);
         m_data.font.strike_out = (fontDlg.IsStrikeOut() != FALSE);
-        //将字体信息显示出来
+        //Display font information
         SetDlgItemText(IDC_FONT_NAME_EDIT1, m_data.font.name);
         wchar_t buff[16];
         swprintf_s(buff, L"%d", m_data.font.size);
@@ -511,7 +511,7 @@ void CTaskBarSettingsDlg::OnBnClickedSetFontButton1()
 
 void CTaskBarSettingsDlg::OnBnClickedTaskbarWndOnLeftCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.tbar_wnd_on_left = (((CButton*)GetDlgItem(IDC_TASKBAR_WND_ON_LEFT_CHECK))->GetCheck() != 0);
     EnableControl();
 }
@@ -519,14 +519,14 @@ void CTaskBarSettingsDlg::OnBnClickedTaskbarWndOnLeftCheck()
 
 void CTaskBarSettingsDlg::OnBnClickedSpeedShortModeCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.speed_short_mode = (((CButton*)GetDlgItem(IDC_SPEED_SHORT_MODE_CHECK))->GetCheck() != 0);
 }
 
 
 BOOL CTaskBarSettingsDlg::PreTranslateMessage(MSG* pMsg)
 {
-    // TODO: 在此添加专用代码和/或调用基类
+    // TODO: Add specialized code here and/or call the base class
     if (pMsg->message == WM_MOUSEMOVE)
         m_toolTip.RelayEvent(pMsg);
 
@@ -536,7 +536,7 @@ BOOL CTaskBarSettingsDlg::PreTranslateMessage(MSG* pMsg)
 
 void CTaskBarSettingsDlg::OnCbnSelchangeUnitCombo()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.speed_unit = static_cast<SpeedUnit>(m_unit_combo.GetCurSel());
     if (m_data.speed_unit == SpeedUnit::AUTO)
     {
@@ -553,15 +553,15 @@ void CTaskBarSettingsDlg::OnCbnSelchangeUnitCombo()
 
 void CTaskBarSettingsDlg::OnBnClickedHideUnitCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.hide_unit = (m_hide_unit_chk.GetCheck() != 0);
 }
 
 
 void CTaskBarSettingsDlg::OnOK()
 {
-    // TODO: 在此添加专用代码和/或调用基类
-    //获取字体设置
+    // TODO: Add specialized code here and/or call the base class
+    //Get font settings
     int font_size;
     font_size = m_font_size_edit.GetValue();
     if (font_size > MAX_FONT_SIZE || font_size < MIN_FONT_SIZE)
@@ -587,7 +587,7 @@ void CTaskBarSettingsDlg::OnOK()
 
 void CTaskBarSettingsDlg::SaveColorSettingToDefaultStyle()
 {
-    //如果开启了自动适应Windows10深色/浅色模式功能时，自动将当前配置保存到对应预设
+    //If the automatic adaptation to Windows 10 dark/light mode function is turned on, the current configuration will be automatically saved to the corresponding preset.
     if (theApp.m_taskbar_data.auto_save_taskbar_color_settings_to_preset && m_data.auto_adapt_light_theme && IsStyleModified())
     {
         int default_style_saved{ CWindowsSettingHelper::IsWindows10LightTheme() ? m_data.light_default_style : m_data.dark_default_style };
@@ -597,14 +597,14 @@ void CTaskBarSettingsDlg::SaveColorSettingToDefaultStyle()
 
 void CTaskBarSettingsDlg::OnBnClickedValueRightAlignCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.value_right_align = (((CButton*)GetDlgItem(IDC_VALUE_RIGHT_ALIGN_CHECK))->GetCheck() != 0);
 }
 
 
 void CTaskBarSettingsDlg::OnBnClickedHidePercentageCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.hide_percent = (((CButton*)GetDlgItem(IDC_HIDE_PERCENTAGE_CHECK))->GetCheck() != 0);
 }
 
@@ -613,9 +613,9 @@ afx_msg LRESULT CTaskBarSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
 {
     switch (::GetDlgCtrlID(((CWnd*)wParam)->m_hWnd))
     {
-    case IDC_TEXT_COLOR_STATIC1:        //点击“文本颜色”时
+    case IDC_TEXT_COLOR_STATIC1:        //When clicking "Text Color"
     {
-        //设置文本颜色
+        //Set text color
         if (m_data.specify_each_item_color)
         {
             CTaskbarColorDlg colorDlg(m_data.text_colors);
@@ -640,9 +640,9 @@ afx_msg LRESULT CTaskBarSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
         }
         break;
     }
-    case IDC_TEXT_COLOR_STATIC2:        //点击“背景颜色”时
+    case IDC_TEXT_COLOR_STATIC2:        //When clicking "Background Color"
     {
-        //设置背景颜色
+        //Set background color
         CMFCColorDialogEx colorDlg(m_data.back_color, 0, this);
         if (colorDlg.DoModal() == IDOK)
         {
@@ -653,7 +653,7 @@ afx_msg LRESULT CTaskBarSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
             if (background_transparent)
             {
                 CCommon::TransparentColorConvert(m_data.back_color);
-                //如果当前设置了背景透明，则更改了背景色后同时将透明色设置成和背景色一样的颜色，以保持背景透明
+                //If the background is currently set to be transparent, after changing the background color, set the transparent color to the same color as the background color to keep the background transparent.
                 m_data.transparent_color = m_data.back_color;
             }
             DrawStaticColor();
@@ -661,7 +661,7 @@ afx_msg LRESULT CTaskBarSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
         }
         break;
     }
-    //case IDC_TRANSPARENT_COLOR_STATIC:        //点击“透明色”时
+    //case IDC_TRANSPARENT_COLOR_STATIC: //When clicking "Transparent Color"
     //{
     //  CMFCColorDialogEx colorDlg(m_data.transparent_color, 0, this);
     //  if (colorDlg.DoModal() == IDOK)
@@ -671,14 +671,14 @@ afx_msg LRESULT CTaskBarSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
     //  }
     //  break;
     //}
-    case IDC_TEXT_COLOR_STATIC3:        //点击“状态条颜色”时
+    case IDC_TEXT_COLOR_STATIC3:        //When clicking "Status Bar Color"
     {
         CMFCColorDialogEx colorDlg(m_data.status_bar_color, 0, this);
         if (colorDlg.DoModal() == IDOK)
         {
             m_data.status_bar_color = colorDlg.GetColor();
 
-            //更改了资源占用图的颜色后，去掉“跟随Windows主题颜色”的勾选
+            //After changing the color of the resource usage map, uncheck "Follow Windows theme colors"
             CheckDlgButton(IDC_USAGE_GRAPH_FOLLOW_SYSTEM_CHECK, FALSE);
             m_data.graph_color_following_system = false;
 
@@ -696,7 +696,7 @@ afx_msg LRESULT CTaskBarSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
 
 void CTaskBarSettingsDlg::OnBnClickedSpecifyEachItemColorCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.specify_each_item_color = (((CButton*)GetDlgItem(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK))->GetCheck() != 0);
     DrawStaticColor();
     m_style_modified = true;
@@ -705,7 +705,7 @@ void CTaskBarSettingsDlg::OnBnClickedSpecifyEachItemColorCheck()
 
 void CTaskBarSettingsDlg::OnCbnSelchangeDoubleClickCombo()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.double_click_action = static_cast<DoubleClickAction>(m_double_click_combo.GetCurSel());
     EnableControl();
 }
@@ -713,14 +713,14 @@ void CTaskBarSettingsDlg::OnCbnSelchangeDoubleClickCombo()
 
 void CTaskBarSettingsDlg::OnBnClickedHorizontalArrangeCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.horizontal_arrange = (((CButton*)GetDlgItem(IDC_HORIZONTAL_ARRANGE_CHECK))->GetCheck() != 0);
 }
 
 
 void CTaskBarSettingsDlg::OnBnClickedShowStatusBarCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.show_status_bar = (((CButton*)GetDlgItem(IDC_SHOW_STATUS_BAR_CHECK))->GetCheck() != 0);
     EnableControl();
 }
@@ -728,14 +728,14 @@ void CTaskBarSettingsDlg::OnBnClickedShowStatusBarCheck()
 
 void CTaskBarSettingsDlg::OnBnClickedSeparateValueUnitCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.separate_value_unit_with_space = (((CButton*)GetDlgItem(IDC_SEPARATE_VALUE_UNIT_CHECK))->GetCheck() != 0);
 }
 
 
 void CTaskBarSettingsDlg::OnBnClickedUnitByteRadio()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.unit_byte = true;
     IniUnitCombo();
 }
@@ -743,7 +743,7 @@ void CTaskBarSettingsDlg::OnBnClickedUnitByteRadio()
 
 void CTaskBarSettingsDlg::OnBnClickedUnitBitRadio()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.unit_byte = false;
     IniUnitCombo();
 }
@@ -751,14 +751,14 @@ void CTaskBarSettingsDlg::OnBnClickedUnitBitRadio()
 
 void CTaskBarSettingsDlg::OnBnClickedShowToolTipChk()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.show_tool_tip = (((CButton*)GetDlgItem(IDC_SHOW_TOOL_TIP_CHK))->GetCheck() != 0);
 }
 
 
 void CTaskBarSettingsDlg::OnBnClickedDefaultStyleButton()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     CWnd* pBtn = GetDlgItem(IDC_DEFAULT_STYLE_BUTTON);
     CPoint point;
     if (pBtn != nullptr)
@@ -776,14 +776,14 @@ void CTaskBarSettingsDlg::OnDestroy()
 {
     CTabDlg::OnDestroy();
 
-    // TODO: 在此处添加消息处理程序代码
+    // TODO: add message handler code here
     theApp.m_taskbar_default_style.SaveConfig();
 }
 
 
 void CTaskBarSettingsDlg::OnBnClickedBrowseButton()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     CString szFilter = CCommon::LoadText(IDS_EXE_FILTER);
     CFileDialogEx fileDlg(TRUE, NULL, szFilter);
     if (IDOK == fileDlg.DoModal())
@@ -806,7 +806,7 @@ void CTaskBarSettingsDlg::OnBnClickedCMGraphBarRadio()
 
 void CTaskBarSettingsDlg::OnBnClickedBackgroundTransparentCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     bool checked = (m_background_transparent_chk.GetCheck() != 0);
     m_data.SetTaskabrTransparent(checked);
     m_style_modified = true;
@@ -815,7 +815,7 @@ void CTaskBarSettingsDlg::OnBnClickedBackgroundTransparentCheck()
 
 void CTaskBarSettingsDlg::OnBnClickedAutoAdaptSettingsButton()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     CAutoAdaptSettingsDlg dlg(m_data);
     dlg.DoModal();
 }
@@ -823,7 +823,7 @@ void CTaskBarSettingsDlg::OnBnClickedAutoAdaptSettingsButton()
 
 void CTaskBarSettingsDlg::OnBnClickedAutoAdaptLightThemeCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.auto_adapt_light_theme = (m_atuo_adapt_light_theme_chk.GetCheck() != 0);
     EnableControl();
 }
@@ -831,14 +831,14 @@ void CTaskBarSettingsDlg::OnBnClickedAutoAdaptLightThemeCheck()
 
 void CTaskBarSettingsDlg::OnBnClickedAutoSetBackColorCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.auto_set_background_color = (m_auto_set_back_color_chk.GetCheck() != 0);
 }
 
 
 void CTaskBarSettingsDlg::OnBnClickedDisplayTextSettingButton()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     CDisplayTextSettingDlg dlg(m_data.disp_str);
     dlg.DoModal();
 }
@@ -846,21 +846,21 @@ void CTaskBarSettingsDlg::OnBnClickedDisplayTextSettingButton()
 
 void CTaskBarSettingsDlg::OnCbnSelchangeMemoryDisplayCombo()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.memory_display = static_cast<MemoryDisplay>(m_memory_display_combo.GetCurSel());
 }
 
 
 void CTaskBarSettingsDlg::OnBnClickedShowDashedBox()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.show_graph_dashed_box = (IsDlgButtonChecked(IDC_SHOW_DASHED_BOX) != 0);
 }
 
 
 void CTaskBarSettingsDlg::OnBnClickedSetOrderButton()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     CSetItemOrderDlg dlg;
     dlg.SetItemOrder(m_data.item_order.GetItemOrderConst());
     dlg.SetDisplayItem(m_data.display_item);
@@ -876,12 +876,12 @@ void CTaskBarSettingsDlg::OnBnClickedSetOrderButton()
 
 void CTaskBarSettingsDlg::OnEnChangeItemSpaceEdit()
 {
-    // TODO:  如果该控件是 RICHEDIT 控件，它将不
-    // 发送此通知，除非重写 CTabDlg::OnInitDialog()
-    // 函数并调用 CRichEditCtrl().SetEventMask()，
-    // 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+    // TODO: If the control is a RICHEDIT control, it will not
+    // Send this notification unless overriding CTabDlg::OnInitDialog()
+    // function and call CRichEditCtrl().SetEventMask(),
+    // Also OR's the ENM_CHANGE flag into the mask.
 
-    // TODO:  在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.item_space = m_item_space_edit.GetValue();
     m_data.ValidItemSpace();
 }
@@ -894,7 +894,7 @@ void CTaskBarSettingsDlg::OnEnChangeVerticalMarginEdit()
 
 BOOL CTaskBarSettingsDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 {
-    // TODO: 在此添加专用代码和/或调用基类
+    // TODO: Add specialized code here and/or call the base class
     UINT cmd = LOWORD(wParam);
 
     if (cmd >= ID_DEFAULT_STYLE1 && cmd < ID_DEFAULT_STYLE_MAX)
@@ -956,7 +956,7 @@ void CTaskBarSettingsDlg::OnBnClickedEnableColorEmojiCheck()
 
 void CTaskBarSettingsDlg::OnCbnSelchangeDigitNumberCombo()
 {
-    //获取数据位数的设置
+    //Get the setting of data digits
     m_data.digits_number = m_digit_number_combo.GetCurSel() + 3;
 }
 

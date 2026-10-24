@@ -1,4 +1,4 @@
-﻿// MainWndColorDlg.cpp : 实现文件
+﻿// MainWndColorDlg.cpp: implementation file
 //
 
 #include "stdafx.h"
@@ -9,7 +9,7 @@
 #include "TrafficMonitorDlg.h"
 
 
-// CMainWndColorDlg 对话框
+// CMainWndColorDlg dialog box
 
 IMPLEMENT_DYNAMIC(CMainWndColorDlg, CBaseDialog)
 
@@ -39,32 +39,32 @@ BEGIN_MESSAGE_MAP(CMainWndColorDlg, CBaseDialog)
 END_MESSAGE_MAP()
 
 
-// CMainWndColorDlg 消息处理程序
+// CMainWndColorDlg message handler
 
 
 BOOL CMainWndColorDlg::OnInitDialog()
 {
 	CBaseDialog::OnInitDialog();
 
-	// TODO:  在此添加额外的初始化
+	// TODO: Add additional initialization here
 
-    SetIcon(theApp.GetMenuIcon(IDI_MAIN_WINDOW), FALSE);		// 设置小图标
+    SetIcon(theApp.GetMenuIcon(IDI_MAIN_WINDOW), FALSE);		// Set small icon
 
-    //初始化列表控件
+    //Initialize list control
     CRect rect;
     m_list_ctrl.GetClientRect(rect);
     m_list_ctrl.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_LABELTIP);
     int width0, width1;
     width0 = rect.Width() * 2 / 3;
     width1 = rect.Width() - width0 - theApp.DPI(20) - 1;
-    m_list_ctrl.InsertColumn(0, CCommon::LoadText(IDS_ITEM), LVCFMT_LEFT, width0);		//插入第0列
-    m_list_ctrl.InsertColumn(1, CCommon::LoadText(IDS_COLOR), LVCFMT_LEFT, width1);		//插入第1列
+    m_list_ctrl.InsertColumn(0, CCommon::LoadText(IDS_ITEM), LVCFMT_LEFT, width0);		//Insert column 0
+    m_list_ctrl.InsertColumn(1, CCommon::LoadText(IDS_COLOR), LVCFMT_LEFT, width1);		//Insert column 1
     m_list_ctrl.SetDrawItemRangMargin(theApp.DPI(2));
 
     static std::set<CommonDisplayItem> all_skin_items;
     CTrafficMonitorDlg::Instance()->GetCurSkin().GetSkinDisplayItems(all_skin_items);
 
-    //向列表中插入行
+    //Insert row into list
     for (auto iter = all_skin_items.begin(); iter != all_skin_items.end(); ++iter)
     {
         CString item_name = iter->GetItemName();
@@ -79,7 +79,7 @@ BOOL CMainWndColorDlg::OnInitDialog()
 
 
 	return TRUE;  // return TRUE unless you set the focus to a control
-				  // 异常: OCX 属性页应返回 FALSE
+				  // Exception: OCX property page should return FALSE
 }
 
 
@@ -87,7 +87,7 @@ BOOL CMainWndColorDlg::OnInitDialog()
 void CMainWndColorDlg::OnNMDblclkList1(NMHDR *pNMHDR, LRESULT *pResult)
 {
     LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     int index = pNMItemActivate->iItem;
     COLORREF color = m_list_ctrl.GetItemColor(index, 1);
     CMFCColorDialogEx colorDlg(color, 0, this);

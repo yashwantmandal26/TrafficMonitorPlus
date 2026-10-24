@@ -1,4 +1,4 @@
-﻿// AppAlreadyRuningDlg.cpp: 实现文件
+﻿// AppAlreadyRuningDlg.cpp: implementation file
 //
 
 #include "stdafx.h"
@@ -7,7 +7,7 @@
 #include "afxdialogex.h"
 
 
-// CAppAlreadyRuningDlg 对话框
+// CAppAlreadyRuningDlg dialog box
 
 IMPLEMENT_DYNAMIC(CAppAlreadyRuningDlg, CBaseDialog)
 
@@ -40,18 +40,18 @@ BEGIN_MESSAGE_MAP(CAppAlreadyRuningDlg, CBaseDialog)
 END_MESSAGE_MAP()
 
 
-// CAppAlreadyRuningDlg 消息处理程序
+// CAppAlreadyRuningDlg message handler
 
 
 BOOL CAppAlreadyRuningDlg::OnInitDialog()
 {
     CBaseDialog::OnInitDialog();
 
-    // TODO:  在此添加额外的初始化
+    // TODO: Add additional initialization here
     SetIcon(AfxGetApp()->LoadIcon(IDR_MAINFRAME), FALSE);
 
     return TRUE;  // return TRUE unless you set the focus to a control
-                  // 异常: OCX 属性页应返回 FALSE
+                  // Exception: OCX property page should return FALSE
 }
 
 

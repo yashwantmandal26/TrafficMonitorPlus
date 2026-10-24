@@ -103,7 +103,7 @@ bool CTaskbarItemOrderHelper::IsItemDisplayed(CommonDisplayItem item)
 
 void CTaskbarItemOrderHelper::NormalizeItemOrder()
 {
-    //检查是否有超出范围的序号
+    //Check if there is an out-of-range sequence number
     int item_num = static_cast<int>(theApp.m_plugins.AllDisplayItemsWithPlugins().size());
     for (auto iter = m_item_order.begin(); iter != m_item_order.end();)
     {
@@ -112,7 +112,7 @@ void CTaskbarItemOrderHelper::NormalizeItemOrder()
         else
             ++iter;
     }
-    //删除不显示的序号
+    //Delete serial numbers that are not displayed
     if (m_displayed_only)
     {
         for (auto iter = m_item_order.begin(); iter != m_item_order.end();)
@@ -129,9 +129,9 @@ void CTaskbarItemOrderHelper::NormalizeItemOrder()
             ++iter;
         }
     }
-    //删除重复的序号
+    //Remove duplicate serial numbers
     CCommon::RemoveVectorDuplicateItem(m_item_order);
-    //检查是否有缺少的序号
+    //Check if there are any missing serial numbers
     for (int i = 0; i < item_num; i++)
     {
         auto iter = std::find(m_item_order.begin(), m_item_order.end(), i);

@@ -1,17 +1,17 @@
 #pragma once
 #include "Common.h"
 
-//保存一个网络连接信息
+//Save a network connection information
 struct NetWorkConection
 {
-	int index{};			//该连接在MIB_IFTABLE中的索引
-	string description;		//网络描述（获取自GetAdapterInfo）
-	string description_2;	//网络描述（获取自GetIfTable）
-	unsigned int in_bytes;	//初始时已接收字节数
-	unsigned int out_bytes;	//初始时已发送字节数
-	wstring ip_address{ L"-.-.-.-" };	//IP地址
-	wstring subnet_mask{ L"-.-.-.-" };	//子网掩码
-	wstring default_gateway{ L"-.-.-.-" };	//默认网关
+	int index{};			//The index of this connection in MIB_IFTABLE
+	string description;		//Network description (obtained from GetAdapterInfo)
+	string description_2;	//Network description (obtained from GetIfTable)
+	unsigned int in_bytes;	//Number of bytes received initially
+	unsigned int out_bytes;	//Number of bytes sent initially
+	wstring ip_address{ L"-.-.-.-" };	//IP address
+	wstring subnet_mask{ L"-.-.-.-" };	//subnet mask
+	wstring default_gateway{ L"-.-.-.-" };	//Default gateway
 };
 
 class CAdapterCommon
@@ -20,22 +20,22 @@ public:
 	CAdapterCommon();
 	~CAdapterCommon();
 
-	//获取网络连接列表，填充网络描述、IP地址、子网掩码、默认网关信息
+	//Get the network connection list and fill in the network description, IP address, subnet mask, and default gateway information
 	static void GetAdapterInfo(vector<NetWorkConection>& adapters);
 
-	//刷新网络连接列表中的IP地址、子网掩码、默认网关信息
+	//Refresh the IP address, subnet mask, and default gateway information in the network connection list
 	static void RefreshIpAddress(vector<NetWorkConection>& adapters);
 
-	//获取网络列表中每个网络连接的MIB_IFTABLE中的索引、初始时已接收/发送字节数的信息
+	//Get the index in MIB_IFTABLE of each network connection in the network list, and the information about the number of bytes received/sent initially
 	static void GetIfTableInfo(vector<NetWorkConection>& adapters, MIB_IFTABLE* pIfTable);
 
-	//直接将MIB_IFTABLE中的所有连接添加到adapters容器中
+	//Directly add all connections in MIB_IFTABLE to the adapters container
 	static void GetAllIfTableInfo(vector<NetWorkConection>& adapters, MIB_IFTABLE* pIfTable);
 private:
-	//根据一个网络连接描述判断是否在IfTable列表里，返回索引，找不到则返回-1
+	//Determine whether it is in the IfTable list based on a network connection description and return the index. If not found, return -1.
 	static int FindConnectionInIfTable(string connection, MIB_IFTABLE* pIfTable);
 
-	//根据一个网络连接描述判断是否在IfTable接列表里，返回索引，找不到则返回-1。只需要部分匹配
+	//Determine whether it is in the IfTable connection list based on a network connection description, and return the index. If not found, return -1. Only a partial match is required
 	static int FindConnectionInIfTableFuzzy(string connection, MIB_IFTABLE* pIfTable);
 };
 

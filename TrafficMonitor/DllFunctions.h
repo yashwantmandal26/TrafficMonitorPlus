@@ -1,8 +1,8 @@
 ﻿#pragma once
-#include <shellscalingapi.h> // 包含::GetDpiForMonitor
-#include <d3dcompiler.h> // 包含D3DCompile
-#include <dcomp.h> // 包含DCompositionCreateDevice
-#include <dxgi1_3.h> // 包含CreateDXGIFactory2
+#include <shellscalingapi.h> // Contains::GetDpiForMonitor
+#include <d3dcompiler.h> // ContainsD3DCompile
+#include <dcomp.h> // Contains DCompositionCreateDevice
+#include <dxgi1_3.h> // ContainsCreateDXGIFactory2
 #include <tchar.h>
 #include <utility>
 
@@ -51,14 +51,14 @@ public:
 #endif
 ;
 /**
- * @brief 可以自动管理HMODULE生命周期，并自动尝试加载指定函数的类
- 使用示例：
-    定义：CDllFunction<decltype(&::GetDpiForMonitor)> GetDpiForMonitor{_T("Shcore.dll"), "GetDpiForMonitor"};
-    使用：(某个类或者命名空间)::GetDpiForMonitor(所需的参数);
-    当然，变量GetDpiForMonitor不能暴露在全局命名空间内。
+ * @brief can automatically manage the HMODULE life cycle and automatically try to load the class with the specified function
+ Usage example:
+    Definition: CDllFunction<decltype(&::GetDpiForMonitor)> GetDpiForMonitor{_T("Shcore.dll"), "GetDpiForMonitor"};
+    Use: (a class or namespace)::GetDpiForMonitor(required parameters);
+    Of course, the variable GetDpiForMonitor cannot be exposed in the global namespace.
  *
- * @tparam R 函数返回值
- * @tparam Args 函数参数
+ * @tparam R function return value
+ * @tparam Args function parameters
  */
 template <class R, class... Args>
 class CDllFunction<R (*)(Args...)>

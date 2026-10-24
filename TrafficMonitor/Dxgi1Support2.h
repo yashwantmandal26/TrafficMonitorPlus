@@ -19,21 +19,21 @@ public:
     using typename Base::DeviceType;
 
     /**
-     * @brief 在准备Resize交换链时，此函数将被调用，用于释放所有和交换链相关的资源。\n
-     注意：此函数可能被多次调用，且调用次数不一定与OnSwapChainResizeEnd的次数相匹配，
-     因此必须保证资源可以被反复执行释放操作
+     * @brief This function will be called when preparing the Resize swap chain to release all resources related to the swap chain. \n
+     Note: This function may be called multiple times, and the number of calls does not necessarily match the number of OnSwapChainResizeEnd.
+     Therefore, it must be ensured that the resource can be released repeatedly
      *
      */
     virtual void OnSwapChainResizeBegin() noexcept = 0;
     /**
-     * @brief 在交换链完成Resize后，此函数将被调用，用于重建所有和交换链相关的资源
+     * @brief After the swap chain completes Resize, this function will be called to rebuild all resources related to the swap chain.
      *
      */
     virtual void OnSwapChainResizeEnd(DeviceType p_resized_swap_chain) noexcept = 0;
 };
 
 /**
- * @brief 此类对应的资源为CDxgiSwapChainResource<CDxgiSwapChain1>，而非CDeviceResource<CDxgiSwapChain1>
+ * @brief The corresponding resource of this type is CDxgiSwapChainResource<CDxgiSwapChain1>, not CDeviceResource<CDxgiSwapChain1>
  *
  */
 class CDxgiSwapChain1

@@ -61,17 +61,17 @@ static void _StringNormalize(T& str)
 {
     if (str.empty()) return;
 
-    int size = static_cast<int>(str.size());  //字符串的长度
+    int size = static_cast<int>(str.size());  //length of string
     if (size < 0) return;
-    int index1 = 0;     //字符串中第1个不是空格或控制字符的位置
-    int index2 = size - 1;  //字符串中最后一个不是空格或控制字符的位置
+    int index1 = 0;     //The first position in the string that is not a space or control character
+    int index2 = size - 1;  //The last position in a string that is not a space or control character
     while (index1 < size && str[index1] >= 0 && str[index1] <= 32)
         index1++;
     while (index2 >= 0 && str[index2] >= 0 && str[index2] <= 32)
         index2--;
-    if (index1 > index2)    //如果index1 > index2，说明字符串全是空格或控制字符
+    if (index1 > index2)    //If index1 > index2, it means that the string is all spaces or control characters
         str.clear();
-    else if (index1 == 0 && index2 == size - 1) //如果index1和index2的值分别为0和size - 1，说明字符串前后没有空格或控制字符，直接返回
+    else if (index1 == 0 && index2 == size - 1) //If the values of index1 and index2 are 0 and size - 1 respectively, it means that there are no spaces or control characters before and after the string, and it will be returned directly.
         return;
     else
         str = str.substr(index1, index2 - index1 + 1);
@@ -187,7 +187,7 @@ bool CCommon::GetFileContent(const wchar_t* file_path, string& contents_buff, bo
     std::ifstream file{ file_path, (binary ? std::ios::binary : std::ios::in) };
     if (file.fail())
         return false;
-    //获取文件长度
+    //Get file length
     file.seekg(0, file.end);
     size_t length = file.tellg();
     file.seekg(0, file.beg);
@@ -208,7 +208,7 @@ const char* CCommon::GetFileContent(const wchar_t* file_path, size_t& length, bo
     length = 0;
     if (file.fail())
         return nullptr;
-    //获取文件长度
+    //Get file length
     file.seekg(0, file.end);
     length = file.tellg();
     file.seekg(0, file.beg);
@@ -224,7 +224,7 @@ CString CCommon::DataSizeToString(unsigned long long size, const PublicSettingDa
 {
     //CString str;
     CString value_str, unit_str;
-    if (!cfg.unit_byte)     //如果使用比特(bit)为单位，则数值乘以8
+    if (!cfg.unit_byte)     //If using bits as the unit, multiply the value by 8
     {
         size *= 8;
     }
@@ -233,17 +233,17 @@ CString CCommon::DataSizeToString(unsigned long long size, const PublicSettingDa
     case SpeedUnit::AUTO:
         if (cfg.speed_short_mode)
         {
-            if (size < 1024 * 10)                   //10KB以下以KB为单位，保留1位小数
+            if (size < 1024 * 10)                   //Below 10KB, the unit is KB, with 1 decimal place.
             {
                 value_str.Format(_T("%.1f"), size / 1024.0f);
                 unit_str = _T("K");
             }
-            else if (size < 1024 * 1000)            //1000KB以下以KB为单位，保留整数
+            else if (size < 1024 * 1000)            //Below 1000KB, the unit is KB, keep the integer
             {
                 value_str.Format(_T("%.0f"), size / 1024.0f);
                 unit_str = _T("K");
             }
-            else if (size < 1024 * 1024 * 1000)     //1000MB以下以MB为单位，保留1位小数
+            else if (size < 1024 * 1024 * 1000)     //Below 1000MB, the unit is MB, with 1 decimal place.
             {
                 value_str.Format(_T("%.1f"), size / 1024.0f / 1024.0f);
                 unit_str = _T("M");
@@ -256,17 +256,17 @@ CString CCommon::DataSizeToString(unsigned long long size, const PublicSettingDa
         }
         else
         {
-            if (size < 1024 * 10)                   //10KB以下以KB为单位，保留2位小数
+            if (size < 1024 * 10)                   //Below 10KB, the unit is KB, with 2 decimal places.
             {
                 value_str.Format(_T("%.2f"), size / 1024.0f);
                 unit_str = _T("KB");
             }
-            else if (size < 1024 * 1000)            //1000KB以下以KB为单位，保留1位小数
+            else if (size < 1024 * 1000)            //Below 1000KB, the unit is KB, with 1 decimal place.
             {
                 value_str.Format(_T("%.1f"), size / 1024.0f);
                 unit_str = _T("KB");
             }
-            else if (size < 1024 * 1024 * 1000)     //1000MB以下以MB为单位，保留2位小数
+            else if (size < 1024 * 1024 * 1000)     //Below 1000MB, the unit is MB, with 2 decimal places.
             {
                 value_str.Format(_T("%.2f"), size / 1024.0f / 1024.0f);
                 unit_str = _T("MB");
@@ -281,18 +281,18 @@ CString CCommon::DataSizeToString(unsigned long long size, const PublicSettingDa
     case SpeedUnit::KBPS:
         if (cfg.speed_short_mode)
         {
-            if (size < 1024 * 10)                   //10KB以下保留1位小数
+            if (size < 1024 * 10)                   //1 decimal place below 10KB
                 value_str.Format(_T("%.1f"), size / 1024.0f);
-            else                    //10KB以上保留整数
+            else                    //Keep integers above 10KB
                 value_str.Format(_T("%.0f"), size / 1024.0f);
             if (!cfg.hide_unit)
                 unit_str = _T("K");
         }
         else
         {
-            if (size < 1024 * 10)                   //10KB以下保留2位小数
+            if (size < 1024 * 10)                   //Keep 2 decimal places below 10KB
                 value_str.Format(_T("%.2f"), size / 1024.0f);
-            else            //10KB以上保留1位小数
+            else            //1 decimal place for more than 10KB
                 value_str.Format(_T("%.1f"), size / 1024.0f);
             if (!cfg.hide_unit)
                 unit_str = _T("KB");
@@ -321,9 +321,9 @@ CString CCommon::DataSizeToString(unsigned long long size, const PublicSettingDa
     if (!cfg.unit_byte)
     {
         if (cfg.speed_short_mode && !cfg.hide_unit)
-            str += _T('b');     //如果使用比特(bit)为单位，即使设置了网速简洁模式，也将“b”显示出来
+            str += _T('b');     //If the unit is bit (bit), even if the network speed simple mode is set, "b" will be displayed.
         else
-            str.Replace(_T('B'), _T('b'));  //如果使用比特(bit)为单位，将B替换成b
+            str.Replace(_T('B'), _T('b'));  //If using bit as the unit, replace B with b
     }
     return str;
 }
@@ -331,11 +331,11 @@ CString CCommon::DataSizeToString(unsigned long long size, const PublicSettingDa
 CString CCommon::DataSizeToString(unsigned long long size, bool with_space)
 {
     CString str;
-    if (size < 1024 * 10)                   //10KB以下以KB为单位，保留2位小数
+    if (size < 1024 * 10)                   //Below 10KB, the unit is KB, with 2 decimal places.
         str.Format(_T("%.2f KB"), size / 1024.0);
-    else if (size < 1024 * 1024)            //1MB以下以KB为单位，保留1位小数
+    else if (size < 1024 * 1024)            //Below 1MB, the unit is KB, rounded to 1 decimal place.
         str.Format(_T("%.1f KB"), size / 1024.0);
-    else if (size < 1024 * 1024 * 1024)     //1GB以下以MB为单位，保留2位小数
+    else if (size < 1024 * 1024 * 1024)     //Below 1GB, the unit is MB, with 2 decimal places.
         str.Format(_T("%.2f MB"), size / 1024.0 / 1024.0);
     else if (size < 1024ll * 1024 * 1024 * 1024)
         str.Format(_T("%.2f GB"), size / 1024.0 / 1024.0 / 1024.0);
@@ -429,7 +429,7 @@ void CCommon::WriteLog(const char* str_text, LPCTSTR file_path)
     char buff[32];
     sprintf_s(buff, "%d/%.2d/%.2d %.2d:%.2d:%.2d.%.3d: ", cur_time.wYear, cur_time.wMonth, cur_time.wDay,
         cur_time.wHour, cur_time.wMinute, cur_time.wSecond, cur_time.wMilliseconds);
-    ofstream file{ file_path, std::ios::app };  //以追加的方式打开日志文件
+    ofstream file{ file_path, std::ios::app };  //Open the log file for appending
     file << buff;
     file << str_text << std::endl;
 }
@@ -441,7 +441,7 @@ void CCommon::WriteLog(const wchar_t* str_text, LPCTSTR file_path)
     char buff[32];
     sprintf_s(buff, "%d/%.2d/%.2d %.2d:%.2d:%.2d.%.3d: ", cur_time.wYear, cur_time.wMonth, cur_time.wDay,
         cur_time.wHour, cur_time.wMinute, cur_time.wSecond, cur_time.wMilliseconds);
-    ofstream file{ file_path, std::ios::app };  //以追加的方式打开日志文件
+    ofstream file{ file_path, std::ios::app };  //Open the log file for appending
     file << buff;
     file << UnicodeToStr(str_text).c_str() << std::endl;
 }
@@ -452,15 +452,15 @@ BOOL CCommon::CreateFileShortcut(LPCTSTR lpszLnkFileDir, LPCTSTR lpszFileName, L
         return FALSE;
 
     HRESULT hr;
-    IShellLink* pLink;  //IShellLink对象指针
-    IPersistFile* ppf; //IPersisFil对象指针
+    IShellLink* pLink;  //IShellLink object pointer
+    IPersistFile* ppf; //IPersisFil object pointer
 
-                         //创建IShellLink对象
+                         //Create IShellLink object
     hr = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (void**)&pLink);
     if (FAILED(hr))
         return FALSE;
 
-    //从IShellLink对象中获取IPersistFile接口
+    //Get the IPersistFile interface from the IShellLink object
     hr = pLink->QueryInterface(IID_IPersistFile, (void**)&ppf);
     if (FAILED(hr))
     {
@@ -471,20 +471,20 @@ BOOL CCommon::CreateFileShortcut(LPCTSTR lpszLnkFileDir, LPCTSTR lpszFileName, L
     TCHAR file_path[MAX_PATH];
     GetModuleFileName(NULL, file_path, MAX_PATH);
 
-    //目标
+    //target
     if (lpszFileName == NULL)
         pLink->SetPath(file_path);
     else
         pLink->SetPath(lpszFileName);
 
-    //工作目录
+    //working directory
     if (lpszWorkDir != NULL)
     {
         pLink->SetWorkingDirectory(lpszWorkDir);
     }
     else
     {
-        //设置工作目录为快捷方式目标所在位置
+        //Set the working directory to the location of the shortcut target
         TCHAR workDirBuf[MAX_PATH]{};
         if (lpszFileName == NULL)
             //wcscpy_s(workDirBuf, file_path);
@@ -497,25 +497,25 @@ BOOL CCommon::CreateFileShortcut(LPCTSTR lpszLnkFileDir, LPCTSTR lpszFileName, L
         pLink->SetWorkingDirectory(workDirBuf);
     }
 
-    //快捷键
+    //Shortcut keys
     if (wHotkey != 0)
         pLink->SetHotkey(wHotkey);
 
-    //备注
+    //Remarks
     if (lpszDescription != NULL)
         pLink->SetDescription(lpszDescription);
 
-    //显示方式
+    //Display mode
     pLink->SetShowCmd(iShowCmd);
 
 
-    //快捷方式的路径 + 名称
+    //Path + name of shortcut
     wchar_t szBuffer[MAX_PATH];
-    if (lpszLnkFileName != NULL) //指定了快捷方式的名称
+    if (lpszLnkFileName != NULL) //Specifies the name of the shortcut
         swprintf_s(szBuffer, L"%s\\%s", lpszLnkFileDir, lpszLnkFileName);
     else
     {
-        //没有指定名称，就从取指定文件的文件名作为快捷方式名称。
+        //If no name is specified, the file name of the specified file will be used as the shortcut name.
         const wchar_t* pstr;
         if (lpszFileName != NULL)
             pstr = wcsrchr(lpszFileName, L'\\');
@@ -528,15 +528,15 @@ BOOL CCommon::CreateFileShortcut(LPCTSTR lpszLnkFileDir, LPCTSTR lpszFileName, L
             pLink->Release();
             return FALSE;
         }
-        //注意后缀名要从.exe改为.lnk
+        //Note that the suffix name needs to be changed from .exe to .lnk
         swprintf_s(szBuffer, L"%s\\%s", lpszLnkFileDir, pstr);
         int nLen = wcslen(szBuffer);
         szBuffer[nLen - 3] = L'l';
         szBuffer[nLen - 2] = L'n';
         szBuffer[nLen - 1] = L'k';
     }
-    //保存快捷方式到指定目录下
-    //WCHAR  wsz[MAX_PATH];  //定义Unicode字符串
+    //Save the shortcut to the specified directory
+    //WCHAR wsz[MAX_PATH]; //Define Unicode string
     //MultiByteToWideChar(CP_ACP, 0, szBuffer, -1, wsz, MAX_PATH);
 
     hr = ppf->Save(szBuffer, TRUE);
@@ -560,9 +560,9 @@ wstring CCommon::GetStartUpPath()
 
 void CCommon::GetFiles(const wchar_t* path, vector<wstring>& files)
 {
-    //文件句柄
+    //file handle
     intptr_t hFile = 0;
-    //文件信息（用Unicode保存使用_wfinddata_t，多字节字符集使用_finddata_t）
+    //File information (use _wfinddata_t to save with Unicode, use _finddata_t for multi-byte character sets)
     _wfinddata_t fileinfo;
     wstring file_name;
     if ((hFile = _wfindfirst(path, &fileinfo)) != -1)
@@ -571,8 +571,8 @@ void CCommon::GetFiles(const wchar_t* path, vector<wstring>& files)
         {
             file_name.assign(fileinfo.name);
             if (file_name != L"." && file_name != L"..")
-                //files.push_back(wstring(path) + L"\\" + file_name);  //将文件名保存(忽略"."和"..")
-                files.push_back(L"\\" + file_name);  //将文件名保存(忽略"."和"..")
+                //files.push_back(wstring(path) + L"\\" + file_name); //Save the file name (ignoring "." and "..")
+                files.push_back(L"\\" + file_name);  //Save the file name (ignoring "." and "..")
         } while (_wfindnext(hFile, &fileinfo) == 0);
     }
     _findclose(hFile);
@@ -580,7 +580,7 @@ void CCommon::GetFiles(const wchar_t* path, vector<wstring>& files)
 
 void CCommon::GetFiles(const wchar_t* path, std::function<void(const wstring&)> func)
 {
-    //文件句柄
+    //file handle
     intptr_t hFile = 0;
     _wfinddata_t fileinfo;
     wstring file_name;
@@ -611,7 +611,7 @@ bool CCommon::MoveAFile(LPCTSTR exist_file, LPCTSTR new_file)
 {
     if (!FileExist(exist_file))
         return false;
-    //if (FileExist(new_file))      //如果目标文件已经存在，则先删除它
+    //if (FileExist(new_file)) //If the target file already exists, delete it first
     //  DeleteFile(new_file);
     return (MoveFile(exist_file, new_file) != 0);
 }
@@ -648,17 +648,17 @@ SYSTEMTIME CCommon::CompareSystemTime(SYSTEMTIME a, SYSTEMTIME b)
 ULONGLONG CCommon::GetCurrentTimeSinceEpochMilliseconds()
 {
     FILETIME fileTime;
-    GetSystemTimeAsFileTime(&fileTime);  // 获取当前系统时间
+    GetSystemTimeAsFileTime(&fileTime);  // Get the current system time
 
-    // 将FILETIME转换为ULARGE_INTEGER以便计算
+    // Convert FILETIME to ULARGE_INTEGER for calculation
     ULARGE_INTEGER uli;
     uli.LowPart = fileTime.dwLowDateTime;
     uli.HighPart = fileTime.dwHighDateTime;
 
-    // 从1601年1月1日到1970年1月1日的100纳秒间隔数
+    // Number of 100 nanosecond intervals from January 1, 1601 to January 1, 1970
     const ULONGLONG EPOCH_OFFSET = 116444736000000000ULL;
 
-    // 转换为从1970年1月1日开始的毫秒数
+    // Convert to milliseconds since January 1, 1970
     ULONGLONG millisecondsSince1970 = (uli.QuadPart - EPOCH_OFFSET) / 10000;
     return millisecondsSince1970;
 }
@@ -685,9 +685,9 @@ wstring CCommon::GetTemplateDir()
 {
     wstring result;
     wchar_t buff[MAX_PATH];
-    GetTempPath(MAX_PATH, buff);        //获取临时文件夹的路径
+    GetTempPath(MAX_PATH, buff);        //Get the path of the temporary folder
     result = buff;
-    if (result.back() != L'\\' && result.back() != L'/')        //确保路径后面有斜杠
+    if (result.back() != L'\\' && result.back() != L'/')        //Make sure there is a slash after the path
         result.push_back(L'\\');
     return result;
 }
@@ -701,10 +701,10 @@ wstring CCommon::GetAppDataConfigDir()
         SHGetPathFromIDList(ppidl, pszAppDataPath);
         CoTaskMemFree(ppidl);
     }
-    wstring app_data_path{ pszAppDataPath };        //获取到C:/User/用户名/AppData/Roaming路径
-    CreateDirectory(app_data_path.c_str(), NULL);       //如果Roaming不存在，则创建它
+    wstring app_data_path{ pszAppDataPath };        //Get the C:/User/username/AppData/Roaming path
+    CreateDirectory(app_data_path.c_str(), NULL);       //If Roaming does not exist, create it
     app_data_path += L"\\TrafficMonitor\\";
-    CreateDirectory(app_data_path.c_str(), NULL);       //如果C:/User/用户名/AppData/Roaming/TrafficMonitor不存在，则创建它
+    CreateDirectory(app_data_path.c_str(), NULL);       //If C:/User/username/AppData/Roaming/TrafficMonitor does not exist, create it
 
     return app_data_path;
 }
@@ -713,7 +713,7 @@ void CCommon::DrawWindowText(CDC* pDC, CRect rect, LPCTSTR lpszString, COLORREF 
 {
     pDC->SetTextColor(color);
     //m_pDC->SetBkMode(TRANSPARENT);
-    //用背景色填充矩形区域
+    //Fill rectangular area with background color
     pDC->FillSolidRect(rect, back_color);
     pDC->DrawText(lpszString, rect, DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
 
@@ -731,31 +731,31 @@ bool CCommon::IsForegroundFullscreen(HMONITOR hMonitor)
 {
     if (hMonitor == NULL)
         hMonitor = MonitorFromWindow(NULL, MONITOR_DEFAULTTOPRIMARY);
-    bool bFullscreen{ false };      //用于指示前台窗口是否是全屏
+    bool bFullscreen{ false };      //Used to indicate whether the foreground window is full screen
     HWND hWnd{};
     RECT rcApp{};
 
-    // 获取显示器信息
+    // Get monitor information
     MONITORINFOEX monitorInfo{};
     monitorInfo.cbSize = sizeof(monitorInfo);
     GetMonitorInfo(hMonitor, &monitorInfo);
     RECT monitorRect = monitorInfo.rcMonitor;
 
-    hWnd = GetForegroundWindow();   //获取当前正在与用户交互的前台窗口句柄
+    hWnd = GetForegroundWindow();   //Get the handle of the front window currently interacting with the user
     TCHAR buff[256];
-    GetClassName(hWnd, buff, 256);      //获取前台窗口的类名
+    GetClassName(hWnd, buff, 256);      //Get the class name of the front window
     CString class_name{ buff };
-    if (hWnd != GetDesktopWindow() && class_name != _T("WorkerW") && hWnd != GetShellWindow())//如果前台窗口不是桌面窗口，也不是控制台窗口
+    if (hWnd != GetDesktopWindow() && class_name != _T("WorkerW") && hWnd != GetShellWindow())//If the foreground window is not a desktop window or a console window
     {
-        GetWindowRect(hWnd, &rcApp);    //获取前台窗口的坐标
-        if (rcApp.left <= monitorRect.left && //如果前台窗口的坐标完全覆盖住桌面窗口，就表示前台窗口是全屏的
+        GetWindowRect(hWnd, &rcApp);    //Get the coordinates of the front window
+        if (rcApp.left <= monitorRect.left && //If the coordinates of the foreground window completely cover the desktop window, it means that the foreground window is full screen.
             rcApp.top <= monitorRect.top &&
             rcApp.right >= monitorRect.right &&
             rcApp.bottom >= monitorRect.bottom)
         {
             bFullscreen = true;
         }
-    }//如果前台窗口是桌面窗口，或者是控制台窗口，就直接返回不是全屏
+    }//If the foreground window is a desktop window or a console window, it will directly return to non-full screen.
     return bFullscreen;
 }
 
@@ -823,7 +823,7 @@ bool CCommon::GetURL(const wstring& url, std::string& result, const wstring& use
     }
     catch (CInternetException* e)
     {
-        //写入错误日志
+        //Write error log
         if (theApp.m_debug_log)
         {
             CString info = CCommon::LoadTextFormat(IDS_GET_URL_ERROR_LOG_INFO, { url, static_cast<size_t>(e->m_dwError) });
@@ -837,7 +837,7 @@ bool CCommon::GetURL(const wstring& url, std::string& result, const wstring& use
         if (pSession != nullptr)
             pSession->Close();
         succeed = false;
-        e->Delete();        //没有这句会造成内存泄露
+        e->Delete();        //Failure to do so will cause memory leaks
         SAFE_DELETE(pSession);
     }
     SAFE_DELETE(pSession);
@@ -871,11 +871,11 @@ void CCommon::GetInternetIp(wstring& ip_address, wstring& ip_location, bool glob
         if (index == wstring::npos || index1 == wstring::npos)
             ip_address.clear();
         else
-            ip_address = web_page.substr(index + 6, index1 - index - 6);    //获取IP地址
-        if (ip_address.size() > 15 || ip_address.size() < 7)        //IP地址最长15个字符，最短7个字符
+            ip_address = web_page.substr(index + 6, index1 - index - 6);    //Get IP address
+        if (ip_address.size() > 15 || ip_address.size() < 7)        //The maximum length of an IP address is 15 characters and the minimum length is 7 characters.
             ip_address.clear();
 
-        //获取IP地址归属地
+        //Obtain IP address ownership
         if (!global)
         {
             index = web_page.find(L"<code>", index1 + 7);
@@ -908,7 +908,7 @@ void CCommon::GetInternetIp2(wstring& ip_address, wstring& ip_location, bool ipv
     user_agent += VERSION;
     if (GetURL((ipv6 ? L"https://v6.yinghualuo.cn/bejson" : L"https://v4.yinghualuo.cn/bejson"), raw_string, true, user_agent))
     {
-        //解析获取的json字符串
+        //Parse the obtained json string
         ip_address = GetJsonValueSimple(raw_string, L"ip");
         ip_location = GetJsonValueSimple(raw_string, L"location");
 
@@ -1046,7 +1046,7 @@ void CCommon::WStringCopy(wchar_t* str_dest, int dest_size, const wchar_t* str_s
     int i;
     for (i = 0; i < dest_size && i < source_size && str_source[i] != L'\0'; i++)
         str_dest[i] = str_source[i];
-    //确保目标字符串末尾有一个\0
+    //Make sure there is a \0 at the end of the target string
     int copy_cnt = i;
     if (copy_cnt < dest_size)
         str_dest[copy_cnt] = L'\0';
@@ -1064,7 +1064,7 @@ bool CCommon::StringReplace(wstring& str, const wstring& str_old, const wstring&
     {
         str.replace(pos, str_old.length(), str_new);
         replaced = true;
-        pos += str_new.length();    // 前进到替换后的字符串末尾
+        pos += str_new.length();    // Go to the end of the replaced string
     }
     return replaced;
 }
@@ -1077,10 +1077,10 @@ static double _StringSimilarDegree_LD(const T& srcString, const T& matchString)
     //int[, ] d = new int[n + 1, m + 1]; // matrix
     vector<vector<int>> d(n + 1, vector<int>(m + 1));
     int cost; // cost
-    // Step 1（如果其中一个字符串长度为0，则相似度为1）？
+    // Step 1 (if one of the strings has length 0, the similarity is 1)?
     //if (n == 0) return (double)m / max(srcString.size(), matchString.size());
     //if (m == 0) return (double)n / max(srcString.size(), matchString.size());
-    if (n == 0 || m == 0) return 0.0;   //如果其中一个字符串长度为0，则相似度为0
+    if (n == 0 || m == 0) return 0.0;   //If one of the strings has length 0, the similarity is 0
     // Step 2
     for (int i = 0; i <= n; i++)
     {
@@ -1131,7 +1131,7 @@ void CCommon::SetColorMode(ColorMode mode)
     switch (mode)
     {
     case ColorMode::Default:
-        //Win8/8.1下背景色和透明色不使用纯黑色
+        //Do not use pure black for background color and transparent color in Win8/8.1
         if (theApp.m_win_version.IsWindows8Or8point1())
         {
             CTrafficMonitorApp::self->m_taskbar_data.dft_back_color = RGB(0, 0, 1);
@@ -1195,19 +1195,19 @@ CString CCommon::GetTextResource(UINT id, int code_type)
     HRSRC hRes = FindResource(NULL, MAKEINTRESOURCE(id), _T("TEXT"));
     if (hRes != NULL)
     {
-        DWORD resSize = SizeofResource(NULL, hRes);  // 获取资源的大小
+        DWORD resSize = SizeofResource(NULL, hRes);  // Get the size of the resource
         HGLOBAL hglobal = LoadResource(NULL, hRes);
         if (hglobal != NULL)
         {
-            LPVOID pResourceData = LockResource(hglobal);  // 获取资源数据的指针
+            LPVOID pResourceData = LockResource(hglobal);  // Get pointer to resource data
             if (code_type == 2)
             {
-                // 资源是宽字符字符串
+                // The resource is a wide character string
                 res_str = CString((const wchar_t*)pResourceData, resSize / sizeof(wchar_t));
             }
             else
             {
-                // 资源是窄字符字符串
+                // The resource is a narrow character string
                 std::string strData((const char*)pResourceData, resSize);
                 res_str = CCommon::StrToUnicode(strData.c_str(), (code_type != 0)).c_str();
             }
@@ -1244,34 +1244,34 @@ int CCommon::GetMenuItemPosition(CMenu* pMenu, UINT id)
     return pos;
 }
 
-// 递归遍历菜单项并处理多语言翻译
+// Recursively loop through menu items and handle multi-language translations
 static void TranslateMenuItems(CMenu& menu)
 {
-    // 遍历菜单项
+    // Iterate through menu items
     for (int i = 0; i < menu.GetMenuItemCount(); ++i)
     {
         UINT menuItemID = menu.GetMenuItemID(i);
         CString menuText;
         menu.GetMenuString(i, menuText, MF_BYPOSITION);
 
-        // 检查菜单项文本是否以TXT_开头
+        // Check if menu item text starts with TXT_
         if (menuText.Left(4) == _T("TXT_"))
         {
-            // 获取翻译后的文本
+            // Get translated text
             std::wstring key(menuText);
             const std::wstring& translatedText = theApp.m_str_table.LoadMenuText(key);
 
-            // 更新菜单项文本
+            // Update menu item text
             menu.ModifyMenu(i, MF_BYPOSITION | MF_STRING, menuItemID, translatedText.c_str());
         }
 
         if (menuItemID == -1)
         {
-            // 这是一个弹出菜单（子菜单），递归处理
+            // This is a popup menu (submenu), processed recursively
             CMenu* pSubMenu = menu.GetSubMenu(i);
             if (pSubMenu)
             {
-                TranslateMenuItems(*pSubMenu); // 递归调用
+                TranslateMenuItems(*pSubMenu); // recursive call
             }
         }
     }
@@ -1279,10 +1279,10 @@ static void TranslateMenuItems(CMenu& menu)
 
 void CCommon::LoadMenuResource(CMenu& menu, UINT res_id)
 {
-    // 加载菜单资源
+    // Load menu resources
     menu.LoadMenu(res_id);
 
-    // 处理菜单项翻译
+    // Handle menu item translation
     TranslateMenuItems(menu);
 }
 

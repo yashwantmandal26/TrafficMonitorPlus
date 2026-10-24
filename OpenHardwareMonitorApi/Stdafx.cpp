@@ -1,5 +1,5 @@
-// stdafx.cpp : 只包括标准包含文件的源文件
-// OpenHardwareMonitorApi.pch 将作为预编译头
-// stdafx.obj 将包含预编译类型信息
+// stdafx.cpp : source file including only standard include files
+// OpenHardwareMonitorApi.pch will serve as a precompiled header
+// stdafx.obj will contain precompiled type information
 
 #include "stdafx.h"

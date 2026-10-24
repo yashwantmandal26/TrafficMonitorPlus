@@ -4,7 +4,7 @@
 
 bool CTinyXml2Helper::LoadXmlFile(tinyxml2::XMLDocument& doc, const wchar_t* file_path)
 {
-    //由于XMLDocument::LoadFile函数不支持Unicode，因此这里自行读取文件内容，并调用XMLDocument::Parse函数解析
+    //Since the XMLDocument::LoadFile function does not support Unicode, the file content is read here and the XMLDocument::Parse function is called to parse it.
     size_t length;
     const char* xml_contents = CCommon::GetFileContent(file_path, length);
     auto err = doc.Parse(xml_contents, length);

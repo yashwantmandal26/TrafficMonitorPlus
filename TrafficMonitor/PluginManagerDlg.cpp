@@ -1,4 +1,4 @@
-﻿// PluginManagerDlg.cpp: 实现文件
+﻿// PluginManagerDlg.cpp: implementation file
 //
 
 #include "stdafx.h"
@@ -9,7 +9,7 @@
 #include "WIC.h"
 
 
-// CPluginManagerDlg 对话框
+// CPluginManagerDlg dialog box
 
 IMPLEMENT_DYNAMIC(CPluginManagerDlg, CBaseDialog)
 
@@ -91,17 +91,17 @@ BEGIN_MESSAGE_MAP(CPluginManagerDlg, CBaseDialog)
 END_MESSAGE_MAP()
 
 
-// CPluginManagerDlg 消息处理程序
+// CPluginManagerDlg message handler
 
 
 BOOL CPluginManagerDlg::OnInitDialog()
 {
     CBaseDialog::OnInitDialog();
 
-    // TODO:  在此添加额外的初始化
+    // TODO: Add additional initialization here
     SetIcon(theApp.GetMenuIcon(IDI_PLUGINS), FALSE);
 
-    //初始化列表控件
+    //Initialize list control
     CRect rect;
     m_list_ctrl.GetClientRect(rect);
     m_list_ctrl.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_LABELTIP);
@@ -114,7 +114,7 @@ BOOL CPluginManagerDlg::OnInitDialog()
     m_list_ctrl.InsertColumn(COL_VERSION, CCommon::LoadText(IDS_VERSION), LVCFMT_LEFT, width2);
     m_list_ctrl.InsertColumn(COL_STATUS, CCommon::LoadText(IDS_STATUS), LVCFMT_LEFT, width3);
 
-    //添加图标
+    //add icon
     int item_num = theApp.m_plugins.GetPlugins().size();
     m_plugin_icon_list.Create(theApp.DPI(16), theApp.DPI(16), ILC_COLOR32, item_num, item_num);
     for (const auto& plugin : theApp.m_plugins.GetPlugins())
@@ -135,7 +135,7 @@ BOOL CPluginManagerDlg::OnInitDialog()
     }
     m_list_ctrl.SetImageList(&m_plugin_icon_list, LVSIL_SMALL);
 
-    //向列表中插入行
+    //Insert row into list
     for (const auto& plugin : theApp.m_plugins.GetPlugins())
     {
         std::wstring file_name = CFilePathHelper(plugin.file_path).GetFileName();
@@ -167,7 +167,7 @@ BOOL CPluginManagerDlg::OnInitDialog()
         m_list_ctrl.SetItemText(index, COL_NAME, plugin.Property(ITMPlugin::TMI_NAME).c_str());
         if (plugin.state == CPluginManager::PluginState::PS_SUCCEED)
         {
-            //如果插件有更新，在版本号后添加更新信息
+            //If the plug-in is updated, add the update information after the version number
             PluginVersion cur_version(plugin.Property(ITMPlugin::TMI_VERSION));
             PluginVersion latest_version(theApp.m_plugin_update.GetPluginLatestVersions(file_name));
             if (cur_version < latest_version)
@@ -187,50 +187,50 @@ BOOL CPluginManagerDlg::OnInitDialog()
         m_list_ctrl.SetItemText(index, COL_STATUS, status);
     }
 
-    if (theApp.m_general_data.update_source == 1)   //更新源为Gitee，跳转到Gitee的链接
+    if (theApp.m_general_data.update_source == 1)   //The update source is Gitee, jump to the link to Gitee
         m_plugin_download_lnk.SetURL(L"https://gitee.com/zhongyang219/TrafficMonitorPlugins/blob/main/download/plugin_download.md");
-    else //更新源为Github
+    else //Update source is Github
         m_plugin_download_lnk.SetURL(L"https://github.com/zhongyang219/TrafficMonitorPlugins/blob/main/download/plugin_download.md");
     m_plugin_dev_guide_lnk.SetURL(L"https://github.com/zhongyang219/TrafficMonitor/wiki/%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97");
     m_open_plugin_dir_lnk.SetLinkIsURL(false);
 
     EnableControl();
 
-    CCommon::LoadMenuResource(m_menu, IDR_PLUGIN_MANAGER_MENU); //装载右键菜单
+    CCommon::LoadMenuResource(m_menu, IDR_PLUGIN_MANAGER_MENU); //Load right-click menu
 
-    //设置菜单图标
+    //settings menu icon
     CMenuIcon::AddIconToMenuItem(m_menu.GetSubMenu(0)->GetSafeHmenu(), ID_PLUGIN_DETAIL, FALSE, theApp.GetMenuIcon(IDI_INFO));
     CMenuIcon::AddIconToMenuItem(m_menu.GetSubMenu(0)->GetSafeHmenu(), ID_PLUGIN_OPTIONS, FALSE, theApp.GetMenuIcon(IDI_SETTINGS));
 
-    //设置按钮图标
+    //Set button icon
     SetButtonIcon(IDC_PLUGIN_INFO_BUTTON, theApp.GetMenuIcon(IDI_INFO));
     SetButtonIcon(IDC_OPTINS_BUTTON, theApp.GetMenuIcon(IDI_SETTINGS));
 
     return TRUE;  // return TRUE unless you set the focus to a control
-                  // 异常: OCX 属性页应返回 FALSE
+                  // Exception: OCX property page should return FALSE
 }
 
 
 void CPluginManagerDlg::OnNMRClickList1(NMHDR* pNMHDR, LRESULT* pResult)
 {
     LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_item_selected = pNMItemActivate->iItem;
     EnableControl();
 
-    //弹出右键菜单
-    CMenu* pContextMenu = m_menu.GetSubMenu(0);	//获取第一个弹出菜单
+    //Pop up right-click menu
+    CMenu* pContextMenu = m_menu.GetSubMenu(0);	//Get the first popup menu
     pContextMenu->SetDefaultItem(ID_PLUGIN_DETAIL);
-    //更新插件子菜单
+    //Update plugin submenu
     if (m_item_selected >= 0 && m_item_selected < static_cast<int>(theApp.m_plugins.GetPlugins().size()))
     {
         auto plugin_info = theApp.m_plugins.GetPlugins()[m_item_selected];
         theApp.UpdatePluginMenu(pContextMenu, plugin_info.plugin, 3);
     }
 
-    CPoint point1;	//定义一个用于确定光标位置的位置
-    GetCursorPos(&point1);	//获取当前光标的位置，以便使得菜单可以跟随光标
-    pContextMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
+    CPoint point1;	//Define a position used to determine the cursor position
+    GetCursorPos(&point1);	//Get the current cursor position so that the menu can follow the cursor
+    pContextMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //Show popup menu at specified location
 
     *pResult = 0;
 }
@@ -239,7 +239,7 @@ void CPluginManagerDlg::OnNMRClickList1(NMHDR* pNMHDR, LRESULT* pResult)
 void CPluginManagerDlg::OnNMClickList1(NMHDR* pNMHDR, LRESULT* pResult)
 {
     LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_item_selected = pNMItemActivate->iItem;
     EnableControl();
     *pResult = 0;
@@ -248,7 +248,7 @@ void CPluginManagerDlg::OnNMClickList1(NMHDR* pNMHDR, LRESULT* pResult)
 
 void CPluginManagerDlg::OnBnClickedOptinsButton()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     if (m_item_selected >= 0 && m_item_selected < static_cast<int>(theApp.m_plugins.GetPlugins().size()))
     {
         auto plugin_info = theApp.m_plugins.GetPlugins()[m_item_selected];
@@ -266,7 +266,7 @@ void CPluginManagerDlg::OnBnClickedOptinsButton()
 
 void CPluginManagerDlg::OnBnClickedPluginInfoButton()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     if (IsSelectedPluginEnable())
     {
         CPluginInfoDlg dlg(m_item_selected);
@@ -278,7 +278,7 @@ void CPluginManagerDlg::OnBnClickedPluginInfoButton()
 void CPluginManagerDlg::OnNMDblclkList1(NMHDR* pNMHDR, LRESULT* pResult)
 {
     LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_item_selected = pNMItemActivate->iItem;
     OnBnClickedPluginInfoButton();
     *pResult = 0;
@@ -289,7 +289,7 @@ void CPluginManagerDlg::OnInitMenu(CMenu* pMenu)
 {
     CBaseDialog::OnInitMenu(pMenu);
 
-    // TODO: 在此处添加消息处理程序代码
+    // TODO: add message handler code here
     bool enable{ IsSelectedPluginEnable() };
     pMenu->EnableMenuItem(ID_PLUGIN_DETAIL, MF_BYCOMMAND | (enable ? MF_ENABLED : MF_GRAYED));
     pMenu->EnableMenuItem(ID_PLUGIN_OPTIONS, MF_BYCOMMAND | (enable ? MF_ENABLED : MF_GRAYED));
@@ -335,11 +335,11 @@ void CPluginManagerDlg::OnPluginDisable()
 afx_msg LRESULT CPluginManagerDlg::OnLinkClicked(WPARAM wParam, LPARAM lParam)
 {
     CWnd* pCtrl = (CWnd*)wParam;
-    //点击了“打开插件目录”
+    //Clicked "Open plugin directory"
     if (pCtrl == &m_open_plugin_dir_lnk)
     {
         wstring plugin_dir = CCommon::GetModuleDir() + L"plugins";
-        CreateDirectory(plugin_dir.c_str(), NULL);       //如果plugins不存在，则创建它
+        CreateDirectory(plugin_dir.c_str(), NULL);       //If plugins does not exist, create it
         ShellExecute(NULL, _T("open"), _T("explorer"), plugin_dir.c_str(), NULL, SW_SHOWNORMAL);
     }
 
@@ -350,7 +350,7 @@ afx_msg LRESULT CPluginManagerDlg::OnLinkClicked(WPARAM wParam, LPARAM lParam)
 BOOL CPluginManagerDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 {
     UINT uMsg = LOWORD(wParam);
-    //选择了插件命令
+    //Plugin command selected
     if (uMsg >= ID_PLUGIN_COMMAND_START && uMsg <= ID_PLUGIN_COMMAND_MAX)
     {
         int index = uMsg - ID_PLUGIN_COMMAND_START;

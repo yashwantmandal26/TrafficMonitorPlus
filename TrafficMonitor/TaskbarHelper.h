@@ -3,13 +3,13 @@
 class CTaskbarHelper
 {
 public:
-    //获取所有副显示器上的任务栏，并确保按显示器的顺序
+    //Get the taskbars on all secondary monitors and make sure they are in monitor order
     static void GetAllSecondaryDisplayTaskbar(std::vector<HWND>& secondary_taskbars);
 
-    //获取显示器数量
+    //Get the number of monitors
     static int GetDisplayNum();
 
-    //获取副显示器任务栏的数量
+    //Get the number of taskbars on the secondary monitor
     static int GetSecondaryTaskbarNum();
 };
 

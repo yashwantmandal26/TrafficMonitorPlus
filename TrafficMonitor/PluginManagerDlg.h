@@ -3,17 +3,17 @@
 #include "LinkStatic.h"
 #include "ListCtrlEx.h"
 
-// CPluginManagerDlg 对话框
+// CPluginManagerDlg dialog box
 
 class CPluginManagerDlg : public CBaseDialog
 {
     DECLARE_DYNAMIC(CPluginManagerDlg)
 
 public:
-    CPluginManagerDlg(CWnd* pParent = nullptr);   // 标准构造函数
+    CPluginManagerDlg(CWnd* pParent = nullptr);   // Standard constructor
     virtual ~CPluginManagerDlg();
 
-    // 对话框数据
+    // Dialog data
 #ifdef AFX_DESIGN_TIME
     enum { IDD = IDD_PLUGIN_MANAGER_DIALOG };
 #endif
@@ -28,10 +28,10 @@ private:
     CImageList m_plugin_icon_list;
 
 protected:
-    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
     void EnableControl();
     bool IsSelectedValid();
-    bool IsSelectedPluginEnable();     //选中插件是否可用
+    bool IsSelectedPluginEnable();     //Check whether the plug-in is available
 
     enum Column
     {
@@ -44,7 +44,7 @@ protected:
 
     DECLARE_MESSAGE_MAP()
 
-    // 通过 CBaseDialog 继承
+    // Inherited through CBaseDialog
     virtual CString GetDialogName() const override;
     virtual bool InitializeControls() override;
 

@@ -14,21 +14,21 @@ CAdapterCommon::~CAdapterCommon()
 void CAdapterCommon::GetAdapterInfo(vector<NetWorkConection>& adapters)
 {
 	adapters.clear();
-	PIP_ADAPTER_INFO pIpAdapterInfo = (PIP_ADAPTER_INFO)new BYTE[sizeof(IP_ADAPTER_INFO)];		//PIP_ADAPTER_INFO结构体指针存储本机网卡信息
-	unsigned long stSize = sizeof(IP_ADAPTER_INFO);		//得到结构体大小,用于GetAdaptersInfo参数
-	int nRel = GetAdaptersInfo(pIpAdapterInfo, &stSize);	//调用GetAdaptersInfo函数,填充pIpAdapterInfo指针变量;其中stSize参数既是一个输入量也是一个输出量
+	PIP_ADAPTER_INFO pIpAdapterInfo = (PIP_ADAPTER_INFO)new BYTE[sizeof(IP_ADAPTER_INFO)];		//The PIP_ADAPTER_INFO structure pointer stores local network card information
+	unsigned long stSize = sizeof(IP_ADAPTER_INFO);		//Get the structure size, used for GetAdaptersInfo parameters
+	int nRel = GetAdaptersInfo(pIpAdapterInfo, &stSize);	//Call the GetAdaptersInfo function and fill in the pIpAdapterInfo pointer variable; the stSize parameter is both an input and an output.
 
 	if (ERROR_BUFFER_OVERFLOW == nRel)
 	{
-		//如果函数返回的是ERROR_BUFFER_OVERFLOW
-		//则说明GetAdaptersInfo参数传递的内存空间不够,同时其传出stSize,表示需要的空间大小
-		//这也是说明为什么stSize既是一个输入量也是一个输出量
-		delete[] (BYTE*)pIpAdapterInfo;	//释放原来的内存空间
-		pIpAdapterInfo = (PIP_ADAPTER_INFO)new BYTE[stSize];	//重新申请内存空间用来存储所有网卡信息
-		nRel = GetAdaptersInfo(pIpAdapterInfo, &stSize);		//再次调用GetAdaptersInfo函数,填充pIpAdapterInfo指针变量
+		//If the function returns ERROR_BUFFER_OVERFLOW
+		//It means that the memory space passed by the GetAdaptersInfo parameter is not enough, and at the same time, it passes out stSize, indicating the required space size.
+		//This also explains why stSize is both an input quantity and an output quantity.
+		delete[] (BYTE*)pIpAdapterInfo;	//Release original memory space
+		pIpAdapterInfo = (PIP_ADAPTER_INFO)new BYTE[stSize];	//Reapply for memory space to store all network card information
+		nRel = GetAdaptersInfo(pIpAdapterInfo, &stSize);		//Call the GetAdaptersInfo function again to fill in the pIpAdapterInfo pointer variable
 	}
 
-	PIP_ADAPTER_INFO pIpAdapterInfoHead = pIpAdapterInfo;	//保存pIpAdapterInfo链表中第一个元素的地址
+	PIP_ADAPTER_INFO pIpAdapterInfoHead = pIpAdapterInfo;	//Save the address of the first element in the pIpAdapterInfo linked list
 	if (ERROR_SUCCESS == nRel)
 	{
 		while (pIpAdapterInfo)
@@ -43,7 +43,7 @@ void CAdapterCommon::GetAdapterInfo(vector<NetWorkConection>& adapters)
 			pIpAdapterInfo = pIpAdapterInfo->Next;
 		}
 	}
-	//释放内存空间
+	//Free up memory space
 	if (pIpAdapterInfoHead)
 	{
 		delete[] (BYTE*)pIpAdapterInfoHead;
@@ -76,14 +76,14 @@ void CAdapterCommon::RefreshIpAddress(vector<NetWorkConection>& adapters)
 
 void CAdapterCommon::GetIfTableInfo(vector<NetWorkConection>& adapters, MIB_IFTABLE* pIfTable)
 {
-	//依次在IfTable里查找每个连接
+	//Find each connection in the IfTable in turn
 	for (size_t i{}; i < adapters.size(); i++)
 	{
 		if (adapters[i].description.empty())
 			continue;
 		int index;
 		index = FindConnectionInIfTable(adapters[i].description, pIfTable);
-		if (index == -1)		//如果使用精确匹配的方式没有找到，则采用模糊匹配的方式再查找一次
+		if (index == -1)		//If the exact match is not found, the fuzzy match will be used to search again.
 			index = FindConnectionInIfTableFuzzy(adapters[i].description, pIfTable);
 		//if (index != -1)
 		//{
@@ -98,7 +98,7 @@ void CAdapterCommon::GetIfTableInfo(vector<NetWorkConection>& adapters, MIB_IFTA
 void CAdapterCommon::GetAllIfTableInfo(vector<NetWorkConection>& adapters, MIB_IFTABLE * pIfTable)
 {
 	vector<NetWorkConection> adapters_tmp;
-	GetAdapterInfo(adapters_tmp);		//获取IP地址
+	GetAdapterInfo(adapters_tmp);		//Get IP address
 	adapters.clear();
 	for (size_t i{}; i < pIfTable->dwNumEntries; i++)
 	{
@@ -138,7 +138,7 @@ int CAdapterCommon::FindConnectionInIfTableFuzzy(string connection, MIB_IFTABLE*
 	{
 		string descr = (const char*)pIfTable->table[i].bDescr;
 		size_t index;
-		//在较长的字符串里查找较短的字符串
+		//Find a shorter string within a longer string
 		if (descr.size() >= connection.size())
 			index = descr.find(connection);
 		else
@@ -146,7 +146,7 @@ int CAdapterCommon::FindConnectionInIfTableFuzzy(string connection, MIB_IFTABLE*
 		if (index != wstring::npos)
 			return i;
 	}
-	//如果还是没有找到，则使用字符串匹配算法查找
+	//If still not found, use string matching algorithm to find
 	double max_degree{};
 	int best_index{};
 	for (size_t i{}; i < pIfTable->dwNumEntries; i++)

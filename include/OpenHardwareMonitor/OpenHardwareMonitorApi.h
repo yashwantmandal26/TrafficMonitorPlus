@@ -9,17 +9,17 @@ namespace OpenHardwareMonitorApi
     class IOpenHardwareMonitor
     {
     public:
-        virtual void GetHardwareInfo() = 0;     //获取一次硬件信息
-        virtual float CpuTemperature() = 0;     //返回获取到的CPU温度
-        virtual float GpuTemperature() = 0;     //返回获取到的GPU温度
-        virtual float HDDTemperature() = 0;     //返回获取到的硬盘温度
-        virtual float MainboardTemperature() = 0;   //返回获取到的主板温度
-        virtual float GpuUsage() = 0;           //返回获取到的GPU利用率
-        virtual float CpuFreq() = 0;            //返回获取到的CPU频率
-        virtual float CpuUsage() = 0;           //返回获取的CPU利用率
-        virtual const std::map<std::wstring, float>& AllHDDTemperature() = 0;   //返回所有硬盘的温度。map的key是硬盘的名称，value是硬盘的温度
-        virtual const std::map<std::wstring, float>& AllCpuTemperature() = 0;   //返回所有CPU（核心）的温度。map的key是CPU的名称，value是硬盘的温度
-        virtual const std::map<std::wstring, float>& AllHDDUsage() = 0;         //返回所有硬盘的使用率
+        virtual void GetHardwareInfo() = 0;     //Get hardware information once
+        virtual float CpuTemperature() = 0;     //Returns the obtained CPU temperature
+        virtual float GpuTemperature() = 0;     //Returns the obtained GPU temperature
+        virtual float HDDTemperature() = 0;     //Returns the obtained hard disk temperature
+        virtual float MainboardTemperature() = 0;   //Returns the obtained motherboard temperature
+        virtual float GpuUsage() = 0;           //Returns the obtained GPU utilization
+        virtual float CpuFreq() = 0;            //Returns the obtained CPU frequency
+        virtual float CpuUsage() = 0;           //Returns the obtained CPU utilization
+        virtual const std::map<std::wstring, float>& AllHDDTemperature() = 0;   //Returns the temperature of all hard drives. The key of the map is the name of the hard disk, and the value is the temperature of the hard disk.
+        virtual const std::map<std::wstring, float>& AllCpuTemperature() = 0;   //Returns the temperature of all CPUs (cores). The key of the map is the name of the CPU, and the value is the temperature of the hard disk.
+        virtual const std::map<std::wstring, float>& AllHDDUsage() = 0;         //Returns the usage of all hard disks
 
         virtual void SetCpuEnable(bool enable) = 0;
         virtual void SetGpuEnable(bool enable) = 0;

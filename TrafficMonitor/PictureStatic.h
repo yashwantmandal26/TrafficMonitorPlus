@@ -1,10 +1,10 @@
-/*一个用于显示图片的静态控件
-在需要的时候调用SetPicture()函数设置静态图片。
-控件在重绘时会向父窗口发送WM_CONTROL_REPAINT消息，
-并通过wParam传递当前控件的CWnd指针，通过lParam传递CDC的指针
+/*A static control for displaying images
+Call the SetPicture() function to set a static picture when needed.
+When the control is redrawn, it will send the WM_CONTROL_REPAINT message to the parent window.
+And pass the CWnd pointer of the current control through wParam, and pass the CDC pointer through lParam.
 */
 #pragma once
-#define WM_CONTROL_REPAINT (WM_USER + 1003)		//控件重绘消息
+#define WM_CONTROL_REPAINT (WM_USER + 1003)		//Control redraw message
 
 class CPictureStatic : public CStatic
 {

@@ -22,12 +22,12 @@ using UniqueIDrawCommon = std::unique_ptr<void, StackObjectDeleter<IDrawCommon>>
 using UniqueIDrawBuffer = std::unique_ptr<void, StackObjectDeleter<IDrawBuffer>>;
 
 /**
- * @brief 新增渲染器类型后，将新类型写到下面类型的模板参数中
+ * @brief After adding the renderer type, write the new type into the template parameters of the following types
  *
  */
 using DrawCommonUnionStorage = AlignedUnionStorage<CDrawCommon, CTaskBarDlgDrawCommon>;
 /**
- * @brief 新增缓冲器（即析构时提交窗口绘制内容到系统的对象）类型后，将新类型写入到下面类型的模板参数中
+ * @brief After adding the buffer type (that is, the object that submits the window drawing content to the system during destruction), write the new type into the template parameters of the following types
  *
  */
 using DrawBufferUnionStorage = AlignedUnionStorage<CDrawDoubleBuffer, CTaskBarDlgDrawBuffer, CTaskBarDlgDrawBufferUseDComposition>;
@@ -37,20 +37,20 @@ struct InvolvedDrawCommonStorages
     DrawCommonUnionStorage m_draw_common_union_storage{};
 };
 /**
- * @brief 具有DrawCommon和DrawBuffer栈内存以及它们对应独占指针的栈内存块，
- 注意：它会先析构DrawCommon再析构DrawBuffer
+ * @brief A stack memory block with DrawCommon and DrawBuffer stack memory and their corresponding exclusive pointers,
+ Note: It will destroy DrawCommon first and then DrawBuffer.
  *
  */
 struct AllInvolvedDrawCommonObjectsStorage
 {
     InvolvedDrawCommonStorages m_storage{};
-    // 先析构DrawCommon再析构DrawBuffer
+    // Destruct DrawCommon first and then DrawBuffer
     UniqueIDrawBuffer m_unique_draw_buffer{};
     UniqueIDrawCommon m_unique_draw_common{};
 
     AllInvolvedDrawCommonObjectsStorage() = default;
     ~AllInvolvedDrawCommonObjectsStorage() = default;
-    // 禁用复制移动
+    // Disable copy move
     AllInvolvedDrawCommonObjectsStorage(const AllInvolvedDrawCommonObjectsStorage&) = delete;
     AllInvolvedDrawCommonObjectsStorage& operator=(const AllInvolvedDrawCommonObjectsStorage&) = delete;
 };
@@ -59,12 +59,12 @@ using TaggedAllInvolvedDrawCommonObjectsInitializer =
     std::pair<DrawCommonHelper::RenderType, AllInvolvedDrawCommonObjectsInitializer>;
 
 /**
- * @brief 从栈内存中使用对应RenderType的函数初始化渲染器和缓冲器
+ * @brief Initialize the renderer and buffer using the function corresponding to RenderType from the stack memory
  *
- * @param ref_object_storage 栈内存对象，其中包含具有该内存独占所有权的指针
- * @param render_type 渲染器类型枚举
- * @param initializer_list 渲染器类型枚举和对应的初始化函数的总的集合
- * @return std::tuple<IDrawBuffer*, IDrawCommon*> 不具有所有权的裸指针
+ * @param ref_object_storage stack memory object containing a pointer with exclusive ownership of the memory
+ * @param render_type renderer type enumeration
+ * @param initializer_list The total collection of renderer type enumerations and corresponding initialization functions
+ * @return std::tuple<IDrawBuffer*, IDrawCommon*> raw pointer without ownership
  */
 auto GetInterfaceFromAllInvolvedDrawCommonObjects(
     AllInvolvedDrawCommonObjectsStorage& ref_object_storage,

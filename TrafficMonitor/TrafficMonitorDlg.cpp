@@ -1,5 +1,5 @@
 ﻿
-// TrafficMonitorDlg.cpp : 实现文件
+// TrafficMonitorDlg.cpp: Implementation file
 //
 
 #include "stdafx.h"
@@ -25,10 +25,10 @@
 
 
 
-// CTrafficMonitorDlg 对话框
+// CTrafficMonitorDlg dialog box
 
-//静态成员初始化
-unsigned int CTrafficMonitorDlg::m_WM_TASKBARCREATED{ ::RegisterWindowMessage(_T("TaskbarCreated")) };  //注册任务栏建立的消息
+//Static member initialization
+unsigned int CTrafficMonitorDlg::m_WM_TASKBARCREATED{ ::RegisterWindowMessage(_T("TaskbarCreated")) };  //Register messages created by the taskbar
 
 CTrafficMonitorDlg::CTrafficMonitorDlg(CWnd* pParent /*=NULL*/)
     : CDialog(IDD_TRAFFICMONITOR_DIALOG, pParent)
@@ -151,8 +151,8 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
         CCommon::LoadText(IDS_DOWNLOAD), CCommon::KBytesToString(theApp.m_today_down_traffic / 1024u)
     );
     tip_info += temp;
-    const CSkinFile::Layout& skin_layout{ theApp.m_cfg_data.m_show_more_info ? m_skin.GetLayoutInfo().layout_l : m_skin.GetLayoutInfo().layout_s }; //当前的皮肤布局
-    if (!skin_layout.GetItem(TDI_UP).show)      //如果主窗口中没有显示上传速度，则在提示信息中显示上传速度
+    const CSkinFile::Layout& skin_layout{ theApp.m_cfg_data.m_show_more_info ? m_skin.GetLayoutInfo().layout_l : m_skin.GetLayoutInfo().layout_s }; //Current skin layout
+    if (!skin_layout.GetItem(TDI_UP).show)      //If the upload speed is not displayed in the main window, the upload speed will be displayed in the prompt message.
     {
         temp.Format(_T("\r\n%s: %s/s"), CCommon::LoadText(IDS_UPLOAD),
             CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_main_wnd_data));
@@ -224,7 +224,7 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
         tip_info += temp;
 }
 
-    //添加插件项目的鼠标提示
+    //Add mouse hints for plugin projects
     tip_info += theApp.GetPlauginTooltipInfo().c_str();
 
     //if (IsTaskbarWndValid())
@@ -250,7 +250,7 @@ void CTrafficMonitorDlg::SetTransparency(int transparency)
     }
     else
     {
-        SetLayeredWindowAttributes(0, transparency * 255 / 100, LWA_ALPHA);  //透明度取值范围为0~255
+        SetLayeredWindowAttributes(0, transparency * 255 / 100, LWA_ALPHA);  //Transparency value range is 0~255
     }
 }
 
@@ -259,19 +259,19 @@ void CTrafficMonitorDlg::SetAlwaysOnTop()
     //if (!m_is_foreground_fullscreen || (m_is_foreground_fullscreen && !theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen))
     //{
     //  if (m_always_on_top)
-    //      SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);         //设置置顶
+    //      SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE); //Set top
     //  else
-    //      SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);       //取消置顶
+    //      SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE); //Cancel top
     //}
     if (theApp.m_cfg_data.m_hide_main_window)
         return;
-    else if (theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen && m_is_foreground_fullscreen)        //当设置有程序全屏时隐藏悬浮窗且有程序在全屏运行时，不执行置顶操作
+    else if (theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen && m_is_foreground_fullscreen)        //When a program is set to full screen and the floating window is hidden and a program is running in full screen, the top operation will not be performed.
         return;
 
     if (theApp.m_main_wnd_data.m_always_on_top)
-        SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);         //设置置顶
+        SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE); //Set top
     else
-        SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);       //取消置顶
+        SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE); //Cancel top
 
 }
 
@@ -279,31 +279,31 @@ void CTrafficMonitorDlg::SetMousePenetrate()
 {
     if (theApp.m_main_wnd_data.m_mouse_penetrate)
     {
-        SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) | WS_EX_TRANSPARENT);     //设置鼠标穿透
+        SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) | WS_EX_TRANSPARENT);     //Set mouse penetration
     }
     else
     {
-        SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) & (~WS_EX_TRANSPARENT));      //取消鼠标穿透
+        SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) & (~WS_EX_TRANSPARENT));      //Cancel mouse penetration
     }
 }
 
 POINT CTrafficMonitorDlg::CalculateWindowMoveOffset(CRect rect, bool screen_changed)
 {
-    POINT mov{};    // 所需偏移量
+    POINT mov{};    // required offset
     if (m_screen_rects.size() != 0)
     {
-        // 确保窗口完整在一个监视器内并且可见，判断移动距离并向所需移动距离较小的方向移动
-        LONG mov_xy = 0;          // 记录移动距离
+        // Make sure the window is completely within one monitor and visible, determine the movement distance and move in the direction with the smaller required movement distance
+        LONG mov_xy = 0;          // Record moving distance
         int i = 0;
         for (auto& a : m_screen_rects)
         {
             LONG x = 0, y = 0;
-            if (rect.left < a.left)                 // 需要向右移动
+            if (rect.left < a.left)                 // Need to move right
                 x = a.left - rect.left;
-            if (rect.top < a.top)                   // 需要向下移动
+            if (rect.top < a.top)                   // need to move down
                 y = a.top - rect.top;
 
-            //防止连接新屏幕时 m_last_screen_rects 的数量小于 m_screen_rects 的数量导致访问到过大的索引
+            //Prevent the number of m_last_screen_rects from being less than the number of m_screen_rects when connecting to a new screen, resulting in access to an overly large index.
             if (i >= m_last_screen_rects.size())
             {
                 break;
@@ -318,12 +318,12 @@ POINT CTrafficMonitorDlg::CalculateWindowMoveOffset(CRect rect, bool screen_chan
             }
             else
             {
-                if (rect.right > a.right)          // 需要向左移动
+                if (rect.right > a.right)          // Need to move left
                     x = a.right - rect.right;
-                if (rect.bottom > a.bottom)        // 需要向上移动
+                if (rect.bottom > a.bottom)        // need to move up
                     y = a.bottom - rect.bottom;
             }
-            if (x == 0 && y == 0)           // 窗口已在一个监视器内
+            if (x == 0 && y == 0)           // The window is already within a monitor
             {
                 mov.x = 0;
                 mov.y = 0;
@@ -356,9 +356,9 @@ void CTrafficMonitorDlg::GetScreenSize()
     m_screen_size.cx = GetSystemMetrics(SM_CXSCREEN);
     m_screen_size.cy = GetSystemMetrics(SM_CYSCREEN);
 
-    //::SystemParametersInfo(SPI_GETWORKAREA, 0, &m_screen_rect, 0);   // 获得工作区大小
+    //::SystemParametersInfo(SPI_GETWORKAREA, 0, &m_screen_rect, 0); // Get the work area size
 
-    //获取所有屏幕工作区的大小
+    //Get the size of all screen workspaces
     m_last_screen_rects = m_screen_rects;
     m_screen_rects.clear();
     Monitors monitors;
@@ -375,11 +375,11 @@ void CTrafficMonitorDlg::AutoSelect()
     unsigned __int64 in_out_bytes;
     //m_connection_selected = m_connections[0].index;
     m_connection_selected = 0;
-    //自动选择连接时，查找已发送和已接收字节数之和最多的那个连接，并将其设置为当前查看的连接
+    //When automatically selecting a connection, find the connection with the largest sum of sent and received bytes and set it as the currently viewed connection
     for (size_t i{}; i < m_connections.size(); i++)
     {
         auto table = GetConnectIfTable(i);
-        if (table.dwOperStatus == IF_OPER_STATUS_OPERATIONAL)     //只选择网络状态为正常的连接
+        if (table.dwOperStatus == IF_OPER_STATUS_OPERATIONAL)     //Only select connections with normal network status
         {
             in_out_bytes = table.dwInOctets + table.dwOutOctets;
             if (in_out_bytes > max_in_out_bytes)
@@ -395,20 +395,20 @@ void CTrafficMonitorDlg::AutoSelect()
 
 void CTrafficMonitorDlg::IniConnection()
 {
-    //为m_pIfTable开辟所需大小的内存
+    //Allocate the required size of memory for m_pIfTable
     free(m_pIfTable);
     m_dwSize = sizeof(MIB_IFTABLE);
     m_pIfTable = (MIB_IFTABLE*)malloc(m_dwSize);
     int rtn;
     rtn = GetIfTable(m_pIfTable, &m_dwSize, FALSE);
-    if (rtn == ERROR_INSUFFICIENT_BUFFER)	//如果函数返回值为ERROR_INSUFFICIENT_BUFFER，说明m_pIfTable的大小不够
+    if (rtn == ERROR_INSUFFICIENT_BUFFER)	//If the function return value is ERROR_INSUFFICIENT_BUFFER, it means that the size of m_pIfTable is not enough.
     {
         free(m_pIfTable);
-        m_pIfTable = (MIB_IFTABLE*)malloc(m_dwSize);	//用新的大小重新开辟一块内存
+        m_pIfTable = (MIB_IFTABLE*)malloc(m_dwSize);	//Re-open a piece of memory with a new size
     }
     GetIfTable(m_pIfTable, &m_dwSize, FALSE);
 
-    //获取当前所有的连接，并保存到m_connections容器中
+    //Get all current connections and save them in the m_connections container
     if (!theApp.m_general_data.show_all_interface)
     {
         m_connections.clear();
@@ -426,14 +426,14 @@ void CTrafficMonitorDlg::IniConnection()
         CAdapterCommon::GetAllIfTableInfo(m_connections, m_pIfTable);
     }
 
-    //如果在设置了“显示所有网络连接”时设置了“选择全部”，则改为“自动选择”
+    //If "Select All" is set when "Show All Network Connections" is set, it is changed to "Auto Select"
     if (theApp.m_general_data.show_all_interface && theApp.m_cfg_data.m_select_all)
     {
         theApp.m_cfg_data.m_select_all = false;
         theApp.m_cfg_data.m_auto_select = true;
     }
 
-    //写入调试日志
+    //Write debug log
     if (theApp.m_debug_log)
     {
         CString log_str;
@@ -459,10 +459,10 @@ void CTrafficMonitorDlg::IniConnection()
 
     //if (m_connection_selected < 0 || m_connection_selected >= m_connections.size() || m_auto_select)
     //  AutoSelect();
-    //选择网络连接
-    if (theApp.m_cfg_data.m_auto_select)    //自动选择
+    //Select network connection
+    if (theApp.m_cfg_data.m_auto_select)    //automatic selection
     {
-        if (m_restart_cnt != -1)    //当m_restart_cnt不等于-1时，即不是第一次初始化时，需要延时5秒再重新初始化连接
+        if (m_restart_cnt != -1)    //When m_restart_cnt is not equal to -1, that is, it is not the first initialization, you need to delay for 5 seconds before reinitializing the connection.
         {
             KillTimer(DELAY_TIMER);
             SetTimer(DELAY_TIMER, 5000, NULL);
@@ -472,7 +472,7 @@ void CTrafficMonitorDlg::IniConnection()
             AutoSelect();
         }
     }
-    else        //查找网络名为上次选择的连接
+    else        //Find the network named last selected connection
     {
         m_connection_selected = 0;
         for (size_t i{}; i < m_connections.size(); i++)
@@ -485,13 +485,13 @@ void CTrafficMonitorDlg::IniConnection()
         m_connection_selected = 0;
     theApp.m_cfg_data.m_connection_name = GetConnection(m_connection_selected).description_2;
 
-    //根据已获取到的连接在菜单中添加相应项目
-    IniConnectionMenu(theApp.m_main_menu.GetSubMenu(0)->GetSubMenu(0));      //向“选择网络连接”子菜单项添加项目
-    IniConnectionMenu(theApp.m_main_menu_plugin.GetSubMenu(0)->GetSubMenu(0));      //向“选择网络连接”子菜单项添加项目
+    //Add corresponding items to the menu based on the obtained connection
+    IniConnectionMenu(theApp.m_main_menu.GetSubMenu(0)->GetSubMenu(0));      //Add an item to the "Select a network connection" submenu item
+    IniConnectionMenu(theApp.m_main_menu_plugin.GetSubMenu(0)->GetSubMenu(0));      //Add an item to the "Select a network connection" submenu item
 
-    IniTaskBarConnectionMenu();     //初始化任务栏窗口中的“选择网络连接”子菜单项
+    IniTaskBarConnectionMenu();     //Initialize the "Select Network Connection" submenu item in the taskbar window
 
-    m_restart_cnt++;    //记录初始化次数
+    m_restart_cnt++;    //Record initialization times
     m_connection_change_flag = true;
 }
 
@@ -519,7 +519,7 @@ void CTrafficMonitorDlg::IniConnectionMenu(CMenu* pMenu)
     ASSERT(pMenu != nullptr);
     if (pMenu != nullptr)
     {
-        //先将ID_SELECT_ALL_CONNECTION后面的所有菜单项删除
+        //First delete all menu items after ID_SELECT_ALL_CONNECTION
         int start_pos = CCommon::GetMenuItemPosition(pMenu, ID_SELECT_ALL_CONNECTION) + 1;
         while (pMenu->GetMenuItemCount() > start_pos)
         {
@@ -533,7 +533,7 @@ void CTrafficMonitorDlg::IniConnectionMenu(CMenu* pMenu)
             pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SELECT_ALL_CONNECTION + i + 1, connection_descr);
         }
 
-        //添加“刷新网络列表”命令
+        //Added "Refresh Network List" command
         pMenu->AppendMenu(MF_SEPARATOR);
         pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_REFRESH_CONNECTION_LIST, CCommon::LoadText(IDS_REFRESH_CONNECTION_LIST));
     }
@@ -541,7 +541,7 @@ void CTrafficMonitorDlg::IniConnectionMenu(CMenu* pMenu)
 
 void CTrafficMonitorDlg::IniTaskBarConnectionMenu()
 {
-    //向“选择网络连接”子菜单项添加项目
+    //Add an item to the "Select a network connection" submenu item
     IniConnectionMenu(theApp.m_taskbar_menu.GetSubMenu(0)->GetSubMenu(0));
     IniConnectionMenu(theApp.m_taskbar_menu_plugin.GetSubMenu(0)->GetSubMenu(0));
 }
@@ -550,12 +550,12 @@ void CTrafficMonitorDlg::SetConnectionMenuState(CMenu* pMenu)
 {
     if (theApp.m_cfg_data.m_select_all)
         pMenu->CheckMenuRadioItem(0, m_connections.size() + 1, 1, MF_BYPOSITION | MF_CHECKED);
-    else if (theApp.m_cfg_data.m_auto_select)       //m_auto_select为true时为自动选择，选中菜单的第1项
+    else if (theApp.m_cfg_data.m_auto_select)       //When m_auto_select is true, it is automatically selected and the first item of the menu is selected.
         pMenu->CheckMenuRadioItem(0, m_connections.size() + 1, 0, MF_BYPOSITION | MF_CHECKED);
-    else        //m_auto_select为false时非自动选择，根据m_connection_selected的值选择对应的项
+    else        //When m_auto_select is false, it is not automatically selected. The corresponding item is selected based on the value of m_connection_selected.
         pMenu->CheckMenuRadioItem(0, m_connections.size() + 1, m_connection_selected + 2, MF_BYPOSITION | MF_CHECKED);
 
-    //没有设置为“选择全部”时，将当前选择项设置为默认菜单项（加粗显示）
+    //When not set to "Select All", the current selection is set as the default menu item (displayed in bold)
     if (!theApp.m_cfg_data.m_select_all)
         pMenu->SetDefaultItem(m_connection_selected + 2, TRUE);
     else
@@ -576,7 +576,7 @@ void CTrafficMonitorDlg::CloseTaskBarWnd()
 
 void CTrafficMonitorDlg::OpenTaskBarWnd()
 {
-    // 强制初始化theApp.m_is_windows11_taskbar的值
+    // Force initialization of theApp.m_is_windows11_taskbar value
     theApp.CheckWindows11Taskbar();
     if (theApp.m_win_version.IsWine())
         m_tBarDlg = new CWineTaskbarDlg();
@@ -588,16 +588,16 @@ void CTrafficMonitorDlg::OpenTaskBarWnd()
     CSupportedRenderEnums supported_render_enums{};
     CTaskBarDlg::DisableRenderFeatureIfNecessary(supported_render_enums);
     auto render_type = supported_render_enums.GetAutoFitEnum();
-    // WS_EX_LAYERED 和 WS_EX_NOREDIRECTIONBITMAP 可以共存，见微软示例代码
+    // WS_EX_LAYERED and WS_EX_NOREDIRECTIONBITMAP can coexist, see Microsoft sample code
     // https://github.com/microsoft/Windows-classic-samples/blob/7cbd99ac1d2b4a0beffbaba29ea63d024ceff700/Samples/DynamicDPI/cpp/SampleDesktopWindow.cpp#L179
-    // 但是WS_EX_NOREDIRECTIONBITMAP似乎会导致UpdateLayeredWindowIndirect失败
+    // But WS_EX_NOREDIRECTIONBITMAP seems to cause UpdateLayeredWindowIndirect to fail
     switch (render_type)
     {
         using namespace DrawCommonHelper;
     case RenderType::D2D1_WITH_DCOMPOSITION:
         m_tBarDlg->Create(IDD_TASK_BAR_DIALOG_NOREDIRECTIONBITMAP, this);
         break;
-    // 包括RenderType::D2D1在内的其他值
+    // Other values including RenderType::D2D1
     default:
         m_tBarDlg->Create(IDD_TASK_BAR_DIALOG, this);
         break;
@@ -611,7 +611,7 @@ void CTrafficMonitorDlg::AddNotifyIcon()
 {
     if (theApp.m_cfg_data.m_show_task_bar_wnd)
         CloseTaskBarWnd();
-    //添加通知栏图标
+    //Add notification bar icon
     ::Shell_NotifyIcon(NIM_ADD, &m_ntIcon);
     if (theApp.m_cfg_data.m_show_task_bar_wnd)
         OpenTaskBarWnd();
@@ -621,7 +621,7 @@ void CTrafficMonitorDlg::DeleteNotifyIcon()
 {
     if (theApp.m_cfg_data.m_show_task_bar_wnd)
         CloseTaskBarWnd();
-    //删除通知栏图标
+    //Delete notification bar icon
     ::Shell_NotifyIcon(NIM_DELETE, &m_ntIcon);
     if (theApp.m_cfg_data.m_show_task_bar_wnd)
         OpenTaskBarWnd();
@@ -629,13 +629,13 @@ void CTrafficMonitorDlg::DeleteNotifyIcon()
 
 void CTrafficMonitorDlg::ShowNotifyTip(const wchar_t* title, const wchar_t* message)
 {
-    //要显示通知区提示，必须先将通知区图标显示出来
+    //To display the notification area prompt, you must first display the notification area icon.
     if (!theApp.m_general_data.show_notify_icon)
     {
-        //添加通知栏图标
+        //Add notification bar icon
         AddNotifyIcon();
     }
-    //显示通知提示
+    //Show notification prompts
     m_ntIcon.uFlags |= NIF_INFO;
     //wcscpy_s(m_ntIcon.szInfo, message ? message : _T(""));
     //wcscpy_s(m_ntIcon.szInfoTitle, title ? title : _T(""));
@@ -644,10 +644,10 @@ void CTrafficMonitorDlg::ShowNotifyTip(const wchar_t* title, const wchar_t* mess
     ::Shell_NotifyIcon(NIM_MODIFY, &m_ntIcon);
     m_ntIcon.uFlags &= ~NIF_INFO;
 
-    //如果不显示通知区域图标，则在弹出通知的一段时间后删除通知区图标
+    //If the notification area icon is not displayed, delete the notification area icon after a period of time after the notification pops up.
     if (!theApp.m_general_data.show_notify_icon)
     {
-        //延迟一定时间后删除通知区图标
+        //Delete the notification area icon after a certain delay
         KillTimer(DELETE_NOTIFY_ICON_TIMER);
         SetTimer(DELETE_NOTIFY_ICON_TIMER, 8000, NULL);
     }
@@ -655,7 +655,7 @@ void CTrafficMonitorDlg::ShowNotifyTip(const wchar_t* title, const wchar_t* mess
 
 void CTrafficMonitorDlg::UpdateNotifyIconTip()
 {
-    CString strTip;         //鼠标指向图标时显示的提示
+    CString strTip;         //Tips displayed when the mouse points to the icon
 #ifdef _DEBUG
     strTip = CCommon::LoadText(IDS_TRAFFICMONITOR, _T(" (Debug)"));
 #else
@@ -692,13 +692,13 @@ void CTrafficMonitorDlg::UpdateNotifyIconTip()
 
 void CTrafficMonitorDlg::SaveHistoryTraffic()
 {
-    // 使用增量保存，只更新第一行和今天的记录，减少I/O操作
+    // Use incremental save to only update the first row and today's record to reduce I/O operations
     m_history_traffic.SaveTodayOnly();
 }
 
 void CTrafficMonitorDlg::SaveHistoryTrafficFull()
 {
-    // 完整保存，用于程序退出时确保所有数据都保存
+    // Complete save, used to ensure that all data is saved when the program exits
     m_history_traffic.Save();
 }
 
@@ -706,23 +706,23 @@ void CTrafficMonitorDlg::LoadHistoryTraffic()
 {
     m_history_traffic.Load();
     CHistoryTrafficFile backup_file(theApp.m_history_traffic_path + L".bak");
-    backup_file.LoadSize();     //读取备份文件中流量记录的数量
+    backup_file.LoadSize();     //Read the number of traffic records in the backup file
     
-    // 如果备份文件中流量记录的数量大于当前的数量，尝试从备份文件中恢复
+    // If the number of traffic records in the backup file is greater than the current number, try to restore from the backup file
     if (backup_file.Size() > m_history_traffic.Size())
     {
         size_t size_before = m_history_traffic.Size();
-        backup_file.Load();     //加载备份文件（会清理"未来"的记录）
-        size_t backup_size_after_load = backup_file.Size();  //加载后实际的记录数（可能因为清理"未来"记录而减少）
+        backup_file.Load();     //Load backup file (will clear "future" records)
+        size_t backup_size_after_load = backup_file.Size();  //Actual number of records after loading (may be reduced due to cleaning of "future" records)
         
-        // 加载后，如果备份文件的记录数仍然大于当前文件，才进行恢复
+        // After loading, if the number of records in the backup file is still greater than the current file, restore it
         if (backup_size_after_load > m_history_traffic.Size())
         {
             m_history_traffic.Merge(backup_file, true);
             size_t size_after = m_history_traffic.Size();
-            size_t recovered_count = size_after - size_before;  //实际恢复的记录数
+            size_t recovered_count = size_after - size_before;  //Actual number of records recovered
             
-            // 只有当实际恢复了记录时才记录日志
+            // Only log when the record is actually restored
             if (recovered_count > 0)
             {
                 CString log_info = CCommon::LoadTextFormat(IDS_HISTORY_TRAFFIC_LOST_ERROR_LOG, { size_before, recovered_count });
@@ -737,18 +737,18 @@ void CTrafficMonitorDlg::LoadHistoryTraffic()
 
 void CTrafficMonitorDlg::BackupHistoryTrafficFile()
 {
-    // 确保文件已保存到磁盘
+    // Make sure the file is saved to disk
     wstring latest_file_path = theApp.m_history_traffic_path;
     wstring backup_file_path = latest_file_path + L".bak";
     
-    // 检查当前文件是否存在
+    // Check if current file exists
     if (!CCommon::FileExist(latest_file_path.c_str()))
     {
-        return; // 当前文件不存在，无需备份
+        return; // The current file does not exist, no backup is needed
     }
     
-    // 直接备份当前文件（当前文件是最新的，包含最新的数据）
-    // 备份文件可能包含"未来"的记录，但恢复时会自动清理，所以总是备份当前文件即可
+    // Directly back up the current file (the current file is the latest and contains the latest data)
+    // Backup files may contain "future" records, but they will be automatically cleaned up when restoring, so always back up the current file.
     CopyFile(latest_file_path.c_str(), backup_file_path.c_str(), FALSE);
 }
 
@@ -756,8 +756,8 @@ void CTrafficMonitorDlg::_OnOptions(int tab, CWnd* pParent)
 {
     COptionsDlg optionsDlg(tab, pParent);
 
-    //将选项设置数据传递给选项设置对话框
-    if (COptionsDlg::GetUniqueHandel(OPTION_DLG_NAME) == NULL)     //确保此时选项设置对话框已经关闭
+    //Pass option settings data to the option settings dialog box
+    if (COptionsDlg::GetUniqueHandel(OPTION_DLG_NAME) == NULL)     //Make sure the Options Settings dialog box is closed at this time
     {
         optionsDlg.m_tab1_dlg.m_data = theApp.m_main_wnd_data;
         optionsDlg.m_tab2_dlg.m_data = theApp.m_taskbar_data;
@@ -780,7 +780,7 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
     bool is_show_notify_icon_changed = (optionsDlg.m_tab3_dlg.m_data.show_notify_icon != theApp.m_general_data.show_notify_icon);
     bool is_connections_hide_changed = (optionsDlg.m_tab3_dlg.m_data.connections_hide.data() != theApp.m_general_data.connections_hide.data());
     bool d2d_turned_on = (theApp.m_taskbar_data.disable_d2d && !optionsDlg.m_tab2_dlg.m_data.disable_d2d);
-    //需要重新关闭再打开任务栏窗口的情况
+    //When you need to close and reopen the taskbar window again
     bool taskbar_changed = (theApp.m_taskbar_data.show_taskbar_wnd_in_secondary_display != optionsDlg.m_tab2_dlg.m_data.show_taskbar_wnd_in_secondary_display
         || theApp.m_taskbar_data.secondary_display_index != optionsDlg.m_tab2_dlg.m_data.secondary_display_index
         || theApp.m_taskbar_data.disable_d2d != optionsDlg.m_tab2_dlg.m_data.disable_d2d
@@ -798,7 +798,7 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
 
     SetTextFont();
 
-    //打开了D2D渲染后自动开启“背景透明”并关闭“根据任务栏颜色自动设置背景色”
+    //After turning on D2D rendering, "Background Transparency" is automatically turned on and "Automatically set background color based on taskbar color" is turned off.
     if (d2d_turned_on)
     {
         theApp.m_taskbar_data.SetTaskabrTransparent(true);
@@ -809,7 +809,7 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
     if (IsTaskbarWndValid())
     {
         m_tBarDlg->ApplySettings();
-        //如果更改了任务栏窗口字体或显示的文本，则任务栏窗口可能要变化，于是关闭再打开任务栏窗口
+        //If you change the taskbar window font or displayed text, the taskbar window may change, so close and reopen the taskbar window.
         if (taskbar_changed)
         {
             CloseTaskBarWnd();
@@ -831,7 +831,7 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
     if (optionsDlg.m_tab3_dlg.IsShowAllInterfaceModified() || is_connections_hide_changed)
         IniConnection();
 
-    if (optionsDlg.m_tab3_dlg.IsMonitorTimeSpanModified())      //如果监控时间间隔改变了，则重设定时器
+    if (optionsDlg.m_tab3_dlg.IsMonitorTimeSpanModified())      //If the monitoring interval has changed, reset the timer
     {
         KillTimer(MONITOR_TIMER);
         SetTimer(MONITOR_TIMER, theApp.m_general_data.monitor_time_span, NULL);
@@ -840,7 +840,7 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
 #ifndef WITHOUT_TEMPERATURE
     if (is_hardware_monitor_item_changed)
     {
-        //如果关闭了硬件监控，则析构硬件监控类
+        //If hardware monitoring is turned off, the hardware monitoring class is destroyed
         if (theApp.m_general_data.hardware_monitor_item == 0)
         {
             CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
@@ -854,7 +854,7 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
         {
             theApp.InitOpenHardwareLibInThread();
         }
-        //更新任务栏窗口右键菜单
+        //Update taskbar window right-click menu
         //theApp.UpdateTaskbarWndMenu();
     }
 #endif
@@ -867,9 +867,9 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
     if (is_mouse_penerate_changed)
     {
         SetMousePenetrate();
-        if (!theApp.m_general_data.show_notify_icon && theApp.IsForceShowNotifyIcon())   //鼠标穿透时，如果通知图标没有显示，则将它显示出来，否则无法呼出右键菜单
+        if (!theApp.m_general_data.show_notify_icon && theApp.IsForceShowNotifyIcon())   //When the mouse penetrates, if the notification icon is not displayed, display it, otherwise the right-click menu cannot be called out.
         {
-            //添加通知栏图标
+            //Add notification bar icon
             AddNotifyIcon();
             theApp.m_general_data.show_notify_icon = true;
         }
@@ -892,7 +892,7 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
 
     if (is_skin_data_changed)
     {
-        //将当前皮肤设置保存到SkinManager
+        //Save current skin settings to SkinManager
         SkinSettingData skin_data = theApp.m_main_wnd_data.ToSkinSettingData();
         CSkinManager::Instance().AddSkinSettingData(theApp.m_cfg_data.m_skin_name, skin_data);
         CSkinManager::Instance().Save();
@@ -917,7 +917,7 @@ void CTrafficMonitorDlg::SetItemPosition()
 bool CTrafficMonitorDlg::LoadSkinLayout()
 {
     bool rtn = m_skin.Load(CSkinManager::Instance().GetSkinName(m_skin_selected));
-    if (m_skin.GetLayoutInfo().no_label)        //如果皮肤布局不显示文本，则不允许交换上传和下载的位置，因为上传和下载的位置已经固定在皮肤中了
+    if (m_skin.GetLayoutInfo().no_label)        //If the skin layout does not display text, it is not allowed to exchange the upload and download positions, because the upload and download positions are already fixed in the skin
         theApp.m_main_wnd_data.swap_up_down = false;
     return rtn;
 }
@@ -935,9 +935,9 @@ void CTrafficMonitorDlg::LoadBackGroundImage()
         image_size.SetSize(m_skin.GetLayoutInfo().layout_s.width, m_skin.GetLayoutInfo().layout_s.height);
     }
 
-    //创建窗口区域
+    //Create window area
     CImage img_mask;
-    //载入掩码图片
+    //Load mask image
     if (theApp.m_cfg_data.m_show_more_info)
         img_tmp.Load((theApp.m_skin_path + CSkinManager::Instance().GetSkinName(m_skin_selected) + BACKGROUND_MASK_L).c_str());
     else
@@ -945,22 +945,22 @@ void CTrafficMonitorDlg::LoadBackGroundImage()
     CRgn wnd_rgn;
     if (!img_tmp.IsNull())
     {
-        CDrawCommon::BitmapStretch(&img_tmp, &img_mask, image_size);        //拉伸掩码图片
+        CDrawCommon::BitmapStretch(&img_tmp, &img_mask, image_size);        //Stretch mask image
         CBitmap bitmap;
         bitmap.Attach(img_mask);
-        CDrawCommon::GetRegionFromImage(wnd_rgn, bitmap, 128);      //从掩码图片获得窗口的区域
+        CDrawCommon::GetRegionFromImage(wnd_rgn, bitmap, 128);      //Get the area of the window from the mask image
         bitmap.Detach();
     }
     else
     {
-        wnd_rgn.CreateRectRgnIndirect(CRect(CPoint(0, 0), image_size));     //载入掩码图片失败，则使用窗口大小作为窗口区域
+        wnd_rgn.CreateRectRgnIndirect(CRect(CPoint(0, 0), image_size));     //If loading the mask image fails, the window size is used as the window area.
     }
-    //避免获取到的窗口区域为空
+    //Prevent the obtained window area from being empty
     CRgn empty_rgn;
-    empty_rgn.CreateRectRgnIndirect(CRect{});   //创建一个空的CRgn对象
+    empty_rgn.CreateRectRgnIndirect(CRect{});   //Create an empty CRgn object
     if (wnd_rgn.EqualRgn(&empty_rgn))
-        wnd_rgn.SetRectRgn(CRect(CPoint(0, 0), image_size));    //如果获取到的窗口区域为空，则使用窗口大小作为窗口区域
-    SetWindowRgn(wnd_rgn, TRUE);        //设置窗口区域
+        wnd_rgn.SetRectRgn(CRect(CPoint(0, 0), image_size));    //If the obtained window area is empty, use the window size as the window area.
+    SetWindowRgn(wnd_rgn, TRUE);        //Set window area
     wnd_rgn.DeleteObject();
     empty_rgn.DeleteObject();
 }
@@ -996,7 +996,7 @@ void CTrafficMonitorDlg::TaskbarShowHideItem(DisplayItem type)
 
 void CTrafficMonitorDlg::CheckClickedItem(CPoint point)
 {
-    const CSkinFile::Layout& skin_layout{ theApp.m_cfg_data.m_show_more_info ? m_skin.GetLayoutInfo().layout_l : m_skin.GetLayoutInfo().layout_s }; //当前的皮肤布局
+    const CSkinFile::Layout& skin_layout{ theApp.m_cfg_data.m_show_more_info ? m_skin.GetLayoutInfo().layout_l : m_skin.GetLayoutInfo().layout_s }; //Current skin layout
     for (const auto& layout_item : skin_layout.layout_items)
     {
         CRect rect(CPoint(layout_item.second.x, layout_item.second.y), CSize(layout_item.second.width, m_skin.GetLayoutInfo().text_height));
@@ -1014,11 +1014,11 @@ void CTrafficMonitorDlg::ApplySkin(int skin_index)
         return;
     m_skin_selected = skin_index;
     theApp.m_cfg_data.m_skin_name = CSkinManager::Instance().GetSkinName(m_skin_selected);
-    //获取皮肤布局
+    //Get skin layout
     LoadSkinLayout();
-    //载入背景图片
+    //Load background image
     LoadBackGroundImage();
-    //获取皮肤设置
+    //Get skin settings
     SkinSettingData cur_skin_data;
     if (!CSkinManager::Instance().GetSkinSettingDataByIndex(m_skin_selected, cur_skin_data))
     {
@@ -1027,11 +1027,11 @@ void CTrafficMonitorDlg::ApplySkin(int skin_index)
     theApp.m_main_wnd_data.FormSkinSettingData(cur_skin_data);
     SetTextFont();
     SetItemPosition();
-    Invalidate(FALSE);      //更换皮肤后立即刷新窗口信息
-    //重新设置WS_EX_LAYERED样式，以解决在png皮肤和bmp皮肤之间切换时显示不正常的问题
-    //清除窗口的分层样式
+    Invalidate(FALSE);      //Immediately refresh the window information after changing the skin
+    //Reset the WS_EX_LAYERED style to solve the problem of abnormal display when switching between png skin and bmp skin
+    //Clear layered styles for windows
     SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) & ~WS_EX_LAYERED);
-    //重新设置透明度
+    //Reset transparency
     SetTransparency();
 
     theApp.SaveConfig();
@@ -1039,8 +1039,8 @@ void CTrafficMonitorDlg::ApplySkin(int skin_index)
 
 bool CTrafficMonitorDlg::IsTemperatureNeeded() const
 {
-    //判断是否需要从OpenHardwareMonitor获取信息。
-    ////只有主窗口和任务栏窗口中CPU温度、显卡利用率、显卡温度、硬盘温度和主板温度中至少有一个要显示，才返回true
+    //Determine whether information needs to be obtained from OpenHardwareMonitor.
+    ////Return true only if at least one of the CPU temperature, graphics card utilization, graphics card temperature, hard disk temperature and motherboard temperature needs to be displayed in the main window and taskbar window
     //bool needed = false;
     //if (theApp.m_cfg_data.m_show_task_bar_wnd && IsTaskbarWndValid())
     //{
@@ -1054,7 +1054,7 @@ bool CTrafficMonitorDlg::IsTemperatureNeeded() const
 
     //if (!theApp.m_cfg_data.m_hide_main_window)
     //{
-    //    const CSkinFile::Layout& skin_layout{ theApp.m_cfg_data.m_show_more_info ? m_skin.GetLayoutInfo().layout_l : m_skin.GetLayoutInfo().layout_s }; //当前的皮肤布局
+    //    const CSkinFile::Layout& skin_layout{ theApp.m_cfg_data.m_show_more_info ? m_skin.GetLayoutInfo().layout_l : m_skin.GetLayoutInfo().layout_s }; //Current skin layout
     //    needed |= skin_layout.GetItem(TDI_CPU_TEMP).show;
     //    needed |= skin_layout.GetItem(TDI_GPU_USAGE).show;
     //    needed |= skin_layout.GetItem(TDI_GPU_TEMP).show;
@@ -1068,56 +1068,56 @@ bool CTrafficMonitorDlg::IsTemperatureNeeded() const
         || theApp.m_general_data.IsHardwareEnable(HI_HDD) || theApp.m_general_data.IsHardwareEnable(HI_MBD);
 }
 
-// CTrafficMonitorDlg 消息处理程序
+// CTrafficMonitorDlg message handler
 
 BOOL CTrafficMonitorDlg::OnInitDialog()
 {
     CDialog::OnInitDialog();
 
-    // 设置此对话框的图标。  当应用程序主窗口不是对话框时，框架将自动
-    //  执行此操作
-    SetIcon(m_hIcon, TRUE);         // 设置大图标
-    SetIcon(m_hIcon, FALSE);        // 设置小图标
+    // Sets the icon for this dialog box.  When the application's main window is not a dialog box, the frame will automatically
+    //  do this
+    SetIcon(m_hIcon, TRUE);         // Set large icons
+    SetIcon(m_hIcon, FALSE);        // Set small icon
 
-    // TODO: 在此添加额外的初始化代码
+    // TODO: Add additional initialization code here
     SetWindowText(APP_NAME);
-    //设置隐藏任务栏图标
+    //Set to hide taskbar icons
     ModifyStyleEx(WS_EX_APPWINDOW, WS_EX_TOOLWINDOW);
 
     theApp.DPIFromWindow(this);
-    //获取屏幕大小
+    //Get screen size
     GetScreenSize();
     m_last_screen_rects = m_screen_rects;
-    //::SystemParametersInfo(SPI_GETWORKAREA, 0, &m_screen_rect, 0);   // 获得工作区大小
+    //::SystemParametersInfo(SPI_GETWORKAREA, 0, &m_screen_rect, 0); // Get the work area size
 
-    //初始化菜单
+    //Initialization menu
     theApp.InitMenuResourse();
     //theApp.UpdateTaskbarWndMenu();
 
-    //初始化皮肤
+    //Initialize skin
     CSkinManager::Instance().Init();
     m_skin_selected = CSkinManager::Instance().FindSkinIndex(theApp.m_cfg_data.m_skin_name);
 
-    //根据当前选择的皮肤获取布局数据
+    //Get layout data based on the currently selected skin
     if (LoadSkinLayout())
     {
-        //从SkinManager中获取当前皮肤的设置
+        //Get the current skin's settings from SkinManager
         SkinSettingData cur_skin_data;
-        CSkinManager::SkinSettingDataFronSkin(cur_skin_data, m_skin);   //获取皮肤的默认设置
-        CSkinManager::Instance().GetSkinSettingDataByIndex(m_skin_selected, cur_skin_data); //获取皮肤的用户保存的数据
+        CSkinManager::SkinSettingDataFronSkin(cur_skin_data, m_skin);   //Get the skin's default settings
+        CSkinManager::Instance().GetSkinSettingDataByIndex(m_skin_selected, cur_skin_data); //Get the skin's user-saved data
         theApp.m_main_wnd_data.FormSkinSettingData(cur_skin_data);
     }
 
-    //设置窗口透明度
+    //Set window transparency
     SetTransparency();
 
-    IniConnection();    //初始化连接
+    IniConnection();    //Initialize connection
 
-    //如果启动时设置了鼠标穿透或隐藏主窗口，并且没有显示任务栏窗口，则显示通知区图标
+    //If mouse penetration is set at startup or the main window is hidden, and the taskbar window is not displayed, the notification area icon is displayed.
     if ((theApp.m_main_wnd_data.m_mouse_penetrate || theApp.m_cfg_data.m_hide_main_window) && !theApp.m_cfg_data.m_show_task_bar_wnd)
         theApp.m_general_data.show_notify_icon = true;
 
-    //载入通知区图标
+    //Load notification area icon
     theApp.m_notify_icons[0] = (HICON)LoadImage(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_NOFITY_ICON), IMAGE_ICON, theApp.DPI(16), theApp.DPI(16), LR_DEFAULTCOLOR | LR_CREATEDIBSECTION);
     theApp.m_notify_icons[1] = (HICON)LoadImage(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_NOFITY_ICON2), IMAGE_ICON, theApp.DPI(16), theApp.DPI(16), LR_DEFAULTCOLOR | LR_CREATEDIBSECTION);
     theApp.m_notify_icons[2] = (HICON)LoadImage(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_NOFITY_ICON3), IMAGE_ICON, theApp.DPI(16), theApp.DPI(16), LR_DEFAULTCOLOR | LR_CREATEDIBSECTION);
@@ -1125,13 +1125,13 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
     theApp.m_notify_icons[4] = (HICON)LoadImage(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_NOFITY_ICON4), IMAGE_ICON, theApp.DPI(16), theApp.DPI(16), LR_DEFAULTCOLOR | LR_CREATEDIBSECTION);
     theApp.m_notify_icons[5] = (HICON)LoadImage(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_NOTIFY_ICON5), IMAGE_ICON, theApp.DPI(16), theApp.DPI(16), LR_DEFAULTCOLOR | LR_CREATEDIBSECTION);
 
-    //设置通知区域图标
-    m_ntIcon.cbSize = sizeof(NOTIFYICONDATA);   //该结构体变量的大小
+    //Set notification area icon
+    m_ntIcon.cbSize = sizeof(NOTIFYICONDATA);   //The size of the structure variable
     if (theApp.m_cfg_data.m_notify_icon_selected < 0 || theApp.m_cfg_data.m_notify_icon_selected >= MAX_NOTIFY_ICON)
         theApp.m_cfg_data.m_notify_icon_selected = 0;
-    m_ntIcon.hIcon = theApp.m_notify_icons[theApp.m_cfg_data.m_notify_icon_selected];       //设置图标
-    m_ntIcon.hWnd = this->m_hWnd;               //接收托盘图标通知消息的窗口句柄
-    CString atip;           //鼠标指向图标时显示的提示
+    m_ntIcon.hIcon = theApp.m_notify_icons[theApp.m_cfg_data.m_notify_icon_selected];       //settings icon
+    m_ntIcon.hWnd = this->m_hWnd;               //Window handle to receive tray icon notification messages
+    CString atip;           //Tips displayed when the mouse points to the icon
 #ifdef _DEBUG
     atip = CCommon::LoadText(IDS_TRAFFICMONITOR, _T(" (Debug)"));
 #else
@@ -1139,58 +1139,58 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
 #endif
     //wcscpy_s(m_ntIcon.szTip, 128, strTip);
     CCommon::WStringCopy(m_ntIcon.szTip, 128, atip.GetString());
-    m_ntIcon.uCallbackMessage = MY_WM_NOTIFYICON;   //应用程序定义的消息ID号
-    m_ntIcon.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP; //图标的属性：设置成员uCallbackMessage、hIcon、szTip有效
+    m_ntIcon.uCallbackMessage = MY_WM_NOTIFYICON;   //Application-defined message ID number
+    m_ntIcon.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP; //Icon properties: Setting members uCallbackMessage, hIcon, and szTip is valid
     if (theApp.m_general_data.show_notify_icon)
-        ::Shell_NotifyIcon(NIM_ADD, &m_ntIcon); //在系统通知区域增加这个图标
+        ::Shell_NotifyIcon(NIM_ADD, &m_ntIcon); //Add this icon to the system notification area
 
-    //载入流量历史记录
+    //Load traffic history
     LoadHistoryTraffic();
 
-    //设置1000毫秒触发的定时器
+    //Set a timer that triggers in 1000 milliseconds
     SetTimer(MAIN_TIMER, 1000, NULL);
 
     SetTimer(MONITOR_TIMER, theApp.m_general_data.monitor_time_span, NULL);
     AfxBeginThread(MonitorThreadCallback, (LPVOID)this);
 
-    //初始化窗口位置
+    //Initialize window position
     SetItemPosition();
     if (theApp.m_cfg_data.m_position_x != -1 && theApp.m_cfg_data.m_position_y != -1)
         SetWindowPos(nullptr, theApp.m_cfg_data.m_position_x, theApp.m_cfg_data.m_position_y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
     CheckWindowPos();
 
-    //载入背景图片
+    //Load background image
     LoadBackGroundImage();
 
-    //设置字体
+    //Set font
     SetTextFont();
 
-    //获取启动时的时间
+    //Get the time at startup
     GetLocalTime(&m_start_time);
 
-    //初始化鼠标提示
+    //Initialize mouse tips
     m_tool_tips.Create(this, TTS_ALWAYSTIP);
     m_tool_tips.SetMaxTipWidth(600);
     m_tool_tips.AddTool(this, _T(""));
 
-    //如果程序启动时设置了隐藏主窗口，或窗口的位置在左上角，则先将其不透明度设为0
+    //If the main window is set to be hidden when the program is started, or the window is located in the upper left corner, first set its opacity to 0
     if (theApp.m_cfg_data.m_hide_main_window || (theApp.m_cfg_data.m_position_x == 0 && theApp.m_cfg_data.m_position_y == 0))
         SetTransparency(0);
 
     SetTimer(TASKBAR_TIMER, 100, NULL);
 
-    return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
+    return TRUE;  // Returns TRUE unless focus is set to the control
 }
 
 
-//当用户拖动最小化窗口时系统调用此函数取得光标
-//显示。
+//When the user drags the minimized window, the system calls this function to obtain the cursor.
+//display.
 HCURSOR CTrafficMonitorDlg::OnQueryDragIcon()
 {
     return static_cast<HCURSOR>(m_hIcon);
 }
 
-//计算指定秒数的时间内Monitor定时器会触发的次数
+//Calculate the number of times the Monitor timer triggers within the specified number of seconds
 static int GetMonitorTimerCount(int second)
 {
     int count = second * 1000 / theApp.m_general_data.monitor_time_span;
@@ -1201,7 +1201,7 @@ static int GetMonitorTimerCount(int second)
 
 void CTrafficMonitorDlg::DoMonitorAcquisition()
 {
-    //获取网络连接速度
+    //Get network connection speed
     int rtn{};
     auto getLfTable = [&]() {
         __try
@@ -1214,10 +1214,10 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
             m_dwSize = sizeof(MIB_IFTABLE);
             m_pIfTable = (MIB_IFTABLE*)malloc(m_dwSize);
             rtn = GetIfTable(m_pIfTable, &m_dwSize, FALSE);
-            if (rtn == ERROR_INSUFFICIENT_BUFFER)	//如果函数返回值为ERROR_INSUFFICIENT_BUFFER，说明m_pIfTable的大小不够
+            if (rtn == ERROR_INSUFFICIENT_BUFFER)	//If the function return value is ERROR_INSUFFICIENT_BUFFER, it means that the size of m_pIfTable is not enough.
             {
                 free(m_pIfTable);
-                m_pIfTable = (MIB_IFTABLE*)malloc(m_dwSize);	//用新的大小重新开辟一块内存
+                m_pIfTable = (MIB_IFTABLE*)malloc(m_dwSize);	//Re-open a piece of memory with a new size
             }
             GetIfTable(m_pIfTable, &m_dwSize, FALSE);
         }
@@ -1225,13 +1225,13 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
 
     getLfTable();
 
-    if (!theApp.m_cfg_data.m_select_all)        //获取当前选中连接的网速
+    if (!theApp.m_cfg_data.m_select_all)        //Get the network speed of the currently selected connection
     {
         auto table = GetConnectIfTable(m_connection_selected);
         m_in_bytes = table.dwInOctets;
         m_out_bytes = table.dwOutOctets;
     }
-    else        //获取全部连接的网速
+    else        //Get the speed of all connections
     {
         m_in_bytes = 0;
         m_out_bytes = 0;
@@ -1240,15 +1240,15 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
             auto table = GetConnectIfTable(i);
             //if (i > 0 && m_pIfTable->table[m_connections[i].index].dwInOctets == m_pIfTable->table[m_connections[i - 1].index].dwInOctets
             //  && m_pIfTable->table[m_connections[i].index].dwOutOctets == m_pIfTable->table[m_connections[i - 1].index].dwOutOctets)
-            //  continue;       //连接列表中可能会有相同的连接，统计所有连接的网速时，忽略掉已发送和已接收字节数完全相同的连接
+            //  continue; //There may be the same connection in the connection list. When counting the network speed of all connections, connections with exactly the same number of bytes sent and received are ignored.
             m_in_bytes += table.dwInOctets;
             m_out_bytes += table.dwOutOctets;
         }
     }
 
-    unsigned __int64 cur_in_speed{}, cur_out_speed{};       //本次监控时间间隔内的上传和下载速度
+    unsigned __int64 cur_in_speed{}, cur_out_speed{};       //Upload and download speeds during this monitoring time interval
 
-    //如果发送和接收的字节数为0或上次发送和接收的字节数为0或当前连接已改变时，网速无效
+    //If the number of bytes sent and received is 0 or the last number of bytes sent and received is 0 or the current connection has changed, the network speed is invalid.
     if ((m_in_bytes == 0 && m_out_bytes == 0) || (m_last_in_bytes == 0 && m_last_out_bytes == 0) || m_connection_change_flag
         || m_last_in_bytes > m_in_bytes || m_last_out_bytes > m_out_bytes)
     {
@@ -1260,13 +1260,13 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
         cur_in_speed = m_in_bytes - m_last_in_bytes;
         cur_out_speed = m_out_bytes - m_last_out_bytes;
     }
-    ////如果大于1GB/s，说明可能产生了异常，网速无效
+    ////If it is greater than 1GB/s, it means that an exception may have occurred and the network speed is invalid.
     //if (cur_in_speed > 1073741824)
     //  cur_in_speed = 0;
     //if (cur_out_speed > 1073741824)
     //  cur_out_speed = 0;
 
-    //计算两次获取网速的时间间隔
+    //Calculate the time interval between two acquisitions of network speed
     static ULONGLONG last_net_speed_time = 0;
     ULONGLONG net_speed_time = CCommon::GetCurrentTimeSinceEpochMilliseconds();
     int time_span = theApp.m_general_data.monitor_time_span;
@@ -1274,16 +1274,16 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
         time_span = static_cast<int>(net_speed_time - last_net_speed_time);
     last_net_speed_time = net_speed_time;
 
-    //将当前监控时间间隔的流量转换成每秒时间间隔内的流量
+    //Convert the traffic of the current monitoring interval into the traffic of every second interval
     theApp.m_in_speed = static_cast<unsigned __int64>(cur_in_speed * 1000 / time_span);
     theApp.m_out_speed = static_cast<unsigned __int64>(cur_out_speed * 1000 / time_span);
 
-    m_connection_change_flag = false;    //清除连接发生变化的标志
+    m_connection_change_flag = false;    //Clear the flag that the connection has changed
 
     m_last_in_bytes = m_in_bytes;
     m_last_out_bytes = m_out_bytes;
 
-    //处于自动选择状态时，如果连续30秒没有网速，则可能自动选择的网络不对，此时执行一次自动选择
+    //When in the automatic selection state, if there is no network speed for 30 consecutive seconds, the automatically selected network may be incorrect. In this case, perform an automatic selection.
     if (theApp.m_cfg_data.m_auto_select)
     {
         if (cur_in_speed == 0 && cur_out_speed == 0)
@@ -1297,38 +1297,38 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
         }
     }
 
-    //检测当前日期是否改变，如果已改变，就向历史流量列表插入一个新的日期
+    //Check whether the current date has changed. If it has changed, insert a new date into the historical traffic list.
     SYSTEMTIME current_time;
     GetLocalTime(&current_time);
-    static int last_check_day = -1;  //用于检测日期变化，重置保存状态
+    static int last_check_day = -1;  //Used to detect date changes and reset the saved state
     if (m_history_traffic.GetTodayTraffic().day != current_time.wDay)
     {
         m_history_traffic.OnDateChanged();
         theApp.m_today_up_traffic = 0;
         theApp.m_today_down_traffic = 0;
-        last_check_day = -1;  //重置日期标记，下次检查时会重新初始化保存状态
+        last_check_day = -1;  //Resets the date stamp and the saved state will be reinitialized the next time it is checked
     }
 
-    //统计今天已使用的流量
+    //Statistics of traffic used today
     theApp.m_today_up_traffic += cur_out_speed;
     theApp.m_today_down_traffic += cur_in_speed;
     m_history_traffic.GetTodayTraffic().up_kBytes = theApp.m_today_up_traffic / 1024u;
     m_history_traffic.GetTodayTraffic().down_kBytes = theApp.m_today_down_traffic / 1024u;
-    //每隔30秒保存一次流量历史记录
+    //Save traffic history every 30 seconds
     if (m_monitor_time_cnt % GetMonitorTimerCount(30) == GetMonitorTimerCount(30) - 1)
     {
         static unsigned __int64 last_today_kbytes = 0;
         static bool last_today_kbytes_initialized = false;
         unsigned __int64 current_kbytes = m_history_traffic.GetTodayTraffic().kBytes();
         
-        //如果日期改变了，重置初始化状态
+        //If the date has changed, reset the initialization state
         if (last_check_day != current_time.wDay)
         {
             last_today_kbytes_initialized = false;
             last_check_day = current_time.wDay;
         }
         
-        //首次检查时初始化，不保存
+        //Initialized on first check, not saved
         if (!last_today_kbytes_initialized)
         {
             last_today_kbytes = current_kbytes;
@@ -1336,7 +1336,7 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
         }
         else
         {
-            //只有当30秒内流量变化超过10MB时才保存历史流量记录，防止磁盘写入过于频繁
+            //Historical traffic records are only saved when the traffic change exceeds 10MB within 30 seconds to prevent disk writes from being written too frequently.
             unsigned __int64 change_kbytes = current_kbytes - last_today_kbytes;
             if (change_kbytes >= 10240u) // 10MB = 10240KB
             {
@@ -1356,11 +1356,11 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
 
     if (m_monitor_time_cnt % GetMonitorTimerCount(3) == GetMonitorTimerCount(3) - 1)
     {
-        //重新获取当前连接数量
+        //Retrieve the current number of connections
         static DWORD last_interface_num = -1;
         DWORD interface_num;
         GetNumberOfInterfaces(&interface_num);
-        if (last_interface_num != -1 && interface_num != last_interface_num)    //如果连接数发生变化，则重新初始化连接
+        if (last_interface_num != -1 && interface_num != last_interface_num)    //If the number of connections changes, reinitialize the connections
         {
             if (theApp.m_debug_log)
             {
@@ -1378,7 +1378,7 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
         descr = (const char*)GetConnectIfTable(m_connection_selected).bDescr;
         if (descr != theApp.m_cfg_data.m_connection_name)
         {
-            //写入额外的调试信息
+            //Write additional debugging information
             if (theApp.m_debug_log)
             {
                 CString log_str;
@@ -1406,17 +1406,17 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     bool gpu_usage_acquired = false;
     m_get_disk_usage_by_pdh = false;
 
-    //获取CPU使用率
+    //Get CPU usage
     theApp.m_cpu_usage = m_cpu_usage_helper.GetCpuUsage(theApp.m_general_data.cpu_usage_acquire_method == GeneralSettingData::CA_CPU_TIME);
 
-    //获取CPU频率
+    //Get CPU frequency
     //if (lite_version || is_arm64ec || !theApp.m_general_data.IsHardwareEnable(HI_CPU))
     //{
     if (m_cpu_freq_helper.GetCpuFreq(theApp.m_cpu_freq))
         cpu_freq_acquired = true;
     //}
 
-    //获取GPU利用率
+    //Get GPU utilization
     if (lite_version /*|| is_arm64ec*/ || !theApp.m_general_data.IsHardwareEnable(HI_GPU))
     {
         if (m_gpu_usage_helper.GetGpuUsage(theApp.m_gpu_usage))
@@ -1425,11 +1425,11 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
             theApp.m_gpu_usage = -1;
     }
 
-    //获取硬盘利用率
+    //Get hard drive utilization
     if (lite_version /*|| is_arm64ec*/ || !theApp.m_general_data.IsHardwareEnable(HI_HDD))
     {
         int disk_index = m_disk_usage_helper.FindDiskIndex(theApp.m_general_data.hard_disk_name);
-        //没有找到要监控的硬盘时默认使用总体利用率
+        //When no hard disk is found to be monitored, the overall utilization is used by default.
         if (disk_index < 0)
         {
             disk_index = m_disk_usage_helper.FindDiskIndex(L"_Total");
@@ -1437,7 +1437,7 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
             {
                 theApp.m_general_data.hard_disk_name = L"_Total";
             }
-            //仍然没有找到使用第1块硬盘
+            //Still not found using the 1st hard drive
             else
             {
                 const auto& disk_names = m_disk_usage_helper.GetDiskNames();
@@ -1454,7 +1454,7 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
             theApp.m_hdd_usage = -1;
     }
 
-    //获取内存利用率
+    //Get memory utilization
     MEMORYSTATUSEX statex;
     statex.dwLength = sizeof(statex);
     GlobalMemoryStatusEx(&statex);
@@ -1463,7 +1463,7 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     theApp.m_total_memory = static_cast<int>(statex.ullTotalPhys / 1024);
 
 #ifndef WITHOUT_TEMPERATURE
-    //获取温度
+    //Get temperature
     if (IsTemperatureNeeded() && theApp.m_pMonitor != nullptr)
     {
         CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
@@ -1494,10 +1494,10 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
             theApp.m_gpu_usage = theApp.m_pMonitor->GpuUsage();
         if (!cpu_freq_acquired)
             theApp.m_cpu_freq = theApp.m_pMonitor->CpuFreq();
-        //获取CPU温度
+        //Get CPU temperature
         if (!theApp.m_pMonitor->AllCpuTemperature().empty())
         {
-            if (theApp.m_general_data.cpu_core_name == CCommon::LoadText(IDS_AVREAGE_TEMPERATURE).GetString())  //如果选择了平均温度
+            if (theApp.m_general_data.cpu_core_name == CCommon::LoadText(IDS_AVREAGE_TEMPERATURE).GetString())  //If average temperature is selected
             {
                 theApp.m_cpu_temperature = theApp.m_pMonitor->CpuTemperature();
             }
@@ -1516,7 +1516,7 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
         {
             theApp.m_cpu_temperature = -1;
         }
-        //获取硬盘温度
+        //Get hard drive temperature
         if (!theApp.m_pMonitor->AllHDDTemperature().empty())
         {
             auto iter = theApp.m_pMonitor->AllHDDTemperature().find(theApp.m_general_data.hard_disk_name);
@@ -1531,7 +1531,7 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
         {
             theApp.m_hdd_temperature = -1;
         }
-        //获取硬盘利用率
+        //Get hard drive utilization
         if (!m_get_disk_usage_by_pdh)
         {
             if (!theApp.m_pMonitor->AllHDDUsage().empty())
@@ -1552,7 +1552,7 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     }
 #endif
 
-    //通知插件获取数据，以及向插件传递监控数据
+    //Notify the plug-in to obtain data and pass monitoring data to the plug-in
     for (const auto& plugin_info : theApp.m_plugins.GetPlugins())
     {
         if (plugin_info.plugin != nullptr)
@@ -1576,7 +1576,7 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
 
     m_monitor_time_cnt++;
 
-    //发送监控信息更新消息
+    //Send monitoring information update message
     SendMessage(WM_MONITOR_INFO_UPDATED);
 }
 
@@ -1585,11 +1585,11 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
     CTrafficMonitorDlg* pThis = (CTrafficMonitorDlg*)dwUser;
     while (true)
     {
-        //获取一次监控数据
+        //Get monitoring data once
         if (pThis->m_monitor_data_required)
         {
             pThis->DoMonitorAcquisition();
-            //获取到监控数据后重置flag
+            //Reset the flag after obtaining monitoring data
             pThis->m_monitor_data_required = false;
         }
         else
@@ -1597,10 +1597,10 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
             Sleep(10);
         }
 
-        // 检查退出标志
+        // Check exit flag
         if (pThis->m_is_thread_exit)
         {
-            // 触发事件，通知主线程工作线程已退出
+            // Trigger an event to notify the main thread that the worker thread has exited
             pThis->m_threadExitEvent.SetEvent();
             return 0;
         }
@@ -1612,47 +1612,47 @@ UINT CTrafficMonitorDlg::MonitorThreadCallback(LPVOID dwUser)
 
 void CTrafficMonitorDlg::ExitMonitorThread()
 {
-    // 通知线程退出
+    // Notify thread to exit
     m_is_thread_exit = true;
 
-    // 等待线程退出
+    // Wait for thread to exit
     ::WaitForSingleObject(m_threadExitEvent.m_hObject, 1000);
 }
 
 
 void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 {
-    // TODO: 在此添加消息处理程序代码和/或调用默认值
+    // TODO: Add message handler code and/or call defaults here
     if (nIDEvent == MONITOR_TIMER)
     {
-        //通知线程获取监控数据
+        //Notify the thread to obtain monitoring data
         m_monitor_data_required = true;
     }
 
     if (nIDEvent == MAIN_TIMER)
     {
         m_timer_cnt++;
-        if (m_first_start)      //这个if语句在程序启动后1秒执行
+        if (m_first_start)      //This if statement is executed 1 second after the program starts
         {
-            //将设置窗口置顶的处理放在这里是用于解决
-            //放在初始化函数中可能会出现设置置顶无效的问题
-            SetAlwaysOnTop();       //设置窗口置顶
-            SetMousePenetrate();    //设置鼠标穿透
-            if (theApp.m_cfg_data.m_hide_main_window)   //设置隐藏主窗口
+            //Putting the setting window on top is here to solve the problem
+            //Putting it in the initialization function may cause the problem of invalid setting.
+            SetAlwaysOnTop();       //Set window to top
+            SetMousePenetrate();    //Set mouse penetration
+            if (theApp.m_cfg_data.m_hide_main_window)   //Set to hide the main window
                 ShowWindow(SW_HIDE);
 
-            //打开任务栏窗口
+            //Open taskbar window
             if (theApp.m_cfg_data.m_show_task_bar_wnd && m_tBarDlg == nullptr)
                 OpenTaskBarWnd();
 
-            //如果窗口的位置为(0, 0)，则在初始化时MoveWindow函数无效，此时再移动一次窗口
+            //If the position of the window is (0, 0), the MoveWindow function is invalid during initialization. At this time, move the window again.
             if (theApp.m_cfg_data.m_position_x == 0 && theApp.m_cfg_data.m_position_y == 0)
             {
                 SetWindowPos(nullptr, theApp.m_cfg_data.m_position_x, theApp.m_cfg_data.m_position_y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
             }
-            SetTransparency();              //重新设置窗口不透明度
+            SetTransparency();              //Reset window opacity
 
-            //检查主窗口所在位置的DPI是否变化
+            //Check whether the DPI at the location of the main window has changed
             UINT dpi_x, dpi_y;
             CRect rect;
             GetWindowRect(rect);
@@ -1661,11 +1661,11 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             if (rtn && dpi != theApp.GetDpi())
             {
                 theApp.SetDPI(dpi_x);
-                LoadSkinLayout();   //根据当前选择的皮肤获取布局数据
-                SetItemPosition();  //初始化窗口位置
+                LoadSkinLayout();   //Get layout data based on the currently selected skin
+                SetItemPosition();  //Initialize window position
                 LoadBackGroundImage();
-                SetTextFont();      //重新加载字体
-                Invalidate(FALSE);  //重绘界面
+                SetTextFont();      //Reload font
+                Invalidate(FALSE);  //Redraw interface
             }
 
             m_first_start = false;
@@ -1673,19 +1673,19 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
         if (theApp.m_main_wnd_data.m_always_on_top && !theApp.m_cfg_data.m_hide_main_window)
         {
-            //每隔1秒钟就判断一下前台窗口是否全屏
+            //Determine whether the foreground window is full screen every 1 second
             CRect rect;
             GetWindowRect(rect);
             HMONITOR h_current_monitor = ::MonitorFromRect(&rect, MONITOR_DEFAULTTONEAREST);
             m_is_foreground_fullscreen = CCommon::IsForegroundFullscreen(h_current_monitor);
-            if (theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen)       //当设置了全屏时隐藏悬浮窗时
+            if (theApp.m_main_wnd_data.hide_main_wnd_when_fullscreen)       //When full screen is set to hide the floating window
             {
                 if (m_is_foreground_fullscreen || theApp.m_cfg_data.m_hide_main_window)
                     ShowWindow(SW_HIDE);
                 else
                     ShowWindow(SW_RESTORE);
             }
-            else            //如果没有设置全屏时隐藏悬浮窗，则如果有程序进入全屏状态，则设置一次窗口置顶
+            else            //If the floating window is not set to be hidden in full screen, then if a program enters the full screen state, set the window to be on top.
             {
                 static bool last_foreground_fullscreen;
                 if (!last_foreground_fullscreen && m_is_foreground_fullscreen)
@@ -1698,7 +1698,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
         if (!m_menu_popuped)
         {
-            //程序启动后若干秒的时候根据设置重新执行“总是置顶”、“鼠标穿透”和“隐藏主窗口”的操作，防止设置没有生效
+            //A few seconds after the program starts, re-execute the operations of "Always on Top", "Mouse Penetration" and "Hide Main Window" according to the settings to prevent the settings from not taking effect.
             if (m_timer_cnt == 5 || m_timer_cnt == 9)
             {
                 if (!theApp.m_cfg_data.m_hide_main_window)
@@ -1714,15 +1714,15 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
             if (m_timer_cnt % 300 == 299 && CBaseDialog::IsAllDialogClosed() && !theApp.m_cfg_data.m_hide_main_window && theApp.m_main_wnd_data.m_always_on_top)
             {
-                SetAlwaysOnTop();       //每5分钟执行一次设置窗口置顶
+                SetAlwaysOnTop();       //Execute setting window top every 5 minutes
             }
         }
         else
         {
-            m_tool_tips.Pop();          //显示了右键菜单时，不显示鼠标提示
+            m_tool_tips.Pop();          //When the right-click menu is displayed, the mouse prompt is not displayed
         }
 
-        if (m_timer_cnt % 30 == 26)     //每隔30秒钟检测一次窗口位置，当窗口位置发生变化时保存设置
+        if (m_timer_cnt % 30 == 26)     //Detect the window position every 30 seconds and save the settings when the window position changes
         {
             static int last_pos_x{ -1 }, last_pos_y{ -1 };
             if (last_pos_x != theApp.m_cfg_data.m_position_x || last_pos_y != theApp.m_cfg_data.m_position_y)
@@ -1733,16 +1733,16 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             }
         }
 
-        if (m_timer_cnt % 2 == 1)       //每隔2秒钟获取一次屏幕区域
+        if (m_timer_cnt % 2 == 1)       //Get the screen area every 2 seconds
         {
             GetScreenSize();
             CheckWindowPos();
         }
 
-        //只有主窗口和任务栏窗口至少有一个显示时才执行下面的处理
+        //The following processing is performed only when at least one of the main window and the taskbar window is displayed.
         if (!theApp.m_cfg_data.m_hide_main_window || theApp.m_cfg_data.m_show_task_bar_wnd)
         {
-            //每隔10秒钟检测一次是否可以嵌入任务栏
+            //Check whether the taskbar can be embedded every 10 seconds
             if (!theApp.m_win_version.IsWine() && IsTaskbarWndValid() && m_timer_cnt % 10 == 1)
             {
                 if (m_tBarDlg->GetCannotInsertToTaskBar() && m_insert_to_taskbar_cnt < MAX_INSERT_TO_TASKBAR_CNT)
@@ -1752,14 +1752,14 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
                     m_insert_to_taskbar_cnt++;
                     if (m_tBarDlg->GetCannotInsertToTaskBar() && m_insert_to_taskbar_cnt >= WARN_INSERT_TO_TASKBAR_CNT)
                     {
-                        //写入错误日志
+                        //Write error log
                         CString info = CCommon::LoadText(IDS_CONNOT_INSERT_TO_TASKBAR_ERROR_LOG);
                         info.Replace(_T("<%cnt%>"), CCommon::IntToString(m_insert_to_taskbar_cnt));
                         info.Replace(_T("<%error_code%>"), CCommon::IntToString(m_tBarDlg->GetErrorCode()));
                         CCommon::WriteLog(info, theApp.m_log_path.c_str());
-                        if (m_cannot_insert_to_task_bar_warning)      //确保提示信息只弹出一次
+                        if (m_cannot_insert_to_task_bar_warning)      //Make sure the prompt message only pops up once
                         {
-                            //弹出错误信息
+                            //Pop up error message
                             m_cannot_insert_to_task_bar_warning = false;
                             MessageBox(CCommon::LoadText(IDS_CONNOT_INSERT_TO_TASKBAR, CCommon::IntToString(m_tBarDlg->GetErrorCode())), NULL, MB_ICONWARNING);
                         }
@@ -1772,12 +1772,12 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             }
         }
 
-        //检查是否需要弹出鼠标提示
-        //setting_data: 消息提示的设置数据
-        //value: 当前的值
-        //last_value: 传递一个static或可以在此lambda表达式调用结束后继续存在的变量，用于保存上一次的值
-        //notify_time: 传递一个static或可以在此lambda表达式调用结束后继续存在的变量，用于记录上次弹出提示的时间（定时器触发次数）
-        //tip_str: 要提示的消息
+        //Check whether you need to pop up mouse prompts
+        //setting_data: setting data of message prompt
+        //value: current value
+        //last_value: Pass a static or variable that can continue to exist after the lambda expression is called to save the last value.
+        //notify_time: Pass a static or variable that can continue to exist after the lambda expression is called, used to record the time when the last prompt popped up (the number of timer triggers)
+        //tip_str: message to be prompted
         auto checkNotifyTip = [&](GeneralSettingData::NotifyTipSettings setting_data, int value, int& last_value, int& notify_time, LPCTSTR tip_str)
         {
             if (setting_data.enable)
@@ -1791,39 +1791,39 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             }
         };
 
-        //检查是否要弹出内存使用率超出提示
+        //Check whether you want to pop up the memory usage exceeded prompt
         CString info;
         info.Format(CCommon::LoadText(IDS_MEMORY_UDAGE_EXCEED, _T(" %d%%!")), theApp.m_memory_usage);
         static int last_memory_usage;
-        static int memory_usage_notify_time{ -theApp.m_notify_interval };       //记录上次弹出提示时的时间
+        static int memory_usage_notify_time{ -theApp.m_notify_interval };       //Record the time when the prompt popped up last time
         checkNotifyTip(theApp.m_general_data.memory_usage_tip, theApp.m_memory_usage, last_memory_usage, memory_usage_notify_time, info.GetString());
 
-        //检查是否要弹出CPU温度使用率超出提示
+        //Check whether you want to pop up the CPU temperature usage exceeded prompt
         info.Format(CCommon::LoadText(IDS_CPU_TEMPERATURE_EXCEED, _T(" %d°C!")), static_cast<int>(theApp.m_cpu_temperature));
         static int last_cpu_temp;
-        static int cpu_temp_notify_time{ -theApp.m_notify_interval };       //记录上次弹出提示时的时间
+        static int cpu_temp_notify_time{ -theApp.m_notify_interval };       //Record the time when the prompt popped up last time
         checkNotifyTip(theApp.m_general_data.cpu_temp_tip, theApp.m_cpu_temperature, last_cpu_temp, cpu_temp_notify_time, info.GetString());
 
-        //检查是否要弹出显卡温度使用率超出提示
+        //Check whether you want to pop up the graphics card temperature usage exceeded prompt
         info.Format(CCommon::LoadText(IDS_GPU_TEMPERATURE_EXCEED, _T(" %d°C!")), static_cast<int>(theApp.m_gpu_temperature));
         static int last_gpu_temp;
-        static int gpu_temp_notify_time{ -theApp.m_notify_interval };       //记录上次弹出提示时的时间
+        static int gpu_temp_notify_time{ -theApp.m_notify_interval };       //Record the time when the prompt popped up last time
         checkNotifyTip(theApp.m_general_data.gpu_temp_tip, theApp.m_gpu_temperature, last_gpu_temp, gpu_temp_notify_time, info.GetString());
 
-        //检查是否要弹出硬盘温度使用率超出提示
+        //Check whether you want to pop up the hard disk temperature usage exceeded prompt
         info.Format(CCommon::LoadText(IDS_HDD_TEMPERATURE_EXCEED, _T(" %d°C!")), static_cast<int>(theApp.m_hdd_temperature));
         static int last_hdd_temp;
-        static int hdd_temp_notify_time{ -theApp.m_notify_interval };       //记录上次弹出提示时的时间
+        static int hdd_temp_notify_time{ -theApp.m_notify_interval };       //Record the time when the prompt popped up last time
         checkNotifyTip(theApp.m_general_data.hdd_temp_tip, theApp.m_hdd_temperature, last_hdd_temp, hdd_temp_notify_time, info.GetString());
 
-        //检查是否要弹出主板温度使用率超出提示
+        //Check whether you want to pop up the motherboard temperature usage exceeded prompt
         info.Format(CCommon::LoadText(IDS_MBD_TEMPERATURE_EXCEED, _T(" %d°C!")), static_cast<int>(theApp.m_main_board_temperature));
         static int last_main_board_temp;
-        static int main_board_temp_notify_time{ -theApp.m_notify_interval };        //记录上次弹出提示时的时间
+        static int main_board_temp_notify_time{ -theApp.m_notify_interval };        //Record the time when the prompt popped up last time
         checkNotifyTip(theApp.m_general_data.mainboard_temp_tip, theApp.m_main_board_temperature, last_main_board_temp, main_board_temp_notify_time, info.GetString());
 
 
-        //检查是否要弹出流量使用超出提示
+        //Check whether you want to pop up a traffic usage exceeding prompt
         if (theApp.m_general_data.traffic_tip_enable)
         {
             static __int64 last_today_traffic;
@@ -1842,9 +1842,9 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             last_today_traffic = today_traffic;
         }
 
-        CWindowsSettingHelper::CheckWindows10LightTheme();        //每隔1秒钟检查一下当前系统是否为白色主题
+        CWindowsSettingHelper::CheckWindows10LightTheme();        //Checks every 1 second whether the current system is in white theme
 
-        //根据当前Win10颜色模式自动切换任务栏颜色
+        //Automatically switch taskbar colors based on the current Win10 color mode
         bool light_mode = CWindowsSettingHelper::IsWindows10LightTheme();
         if (theApp.m_last_light_mode != light_mode)
         {
@@ -1869,7 +1869,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
                 //CloseTaskBarWnd();
                 //OpenTaskBarWnd();
 
-                //写入调试日志
+                //Write debug log
                 if (theApp.m_debug_log)
                 {
                     CString log_str;
@@ -1902,7 +1902,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
                 }
             }
 
-            //根据当前Win10颜色模式自动切换通知区图标
+            //Automatically switch the notification area icon according to the current Win10 color mode
             if (theApp.m_cfg_data.m_notify_icon_auto_adapt)
             {
                 int notify_icon_selected = theApp.m_cfg_data.m_notify_icon_selected;
@@ -1918,7 +1918,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
                 }
             }
 
-            //根据深色/浅色模式自动切换皮肤
+            //Automatically switch skin based on dark/light mode
             if (theApp.m_win_version.IsWindows10OrLater() && theApp.m_cfg_data.skin_auto_adapt)
             {
                 int skin_index = CSkinManager::Instance().FindSkinIndex(light_mode ? theApp.m_cfg_data.skin_name_light_mode : theApp.m_cfg_data.skin_name_dark_mode);
@@ -1926,7 +1926,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             }
         }
 
-        //根据任务栏颜色自动设置任务栏窗口背景色
+        //Automatically set the taskbar window background color based on the taskbar color
         if (theApp.m_taskbar_data.auto_set_background_color && theApp.m_win_version.IsWindows8OrLater()
             && IsTaskbarWndValid() && theApp.m_taskbar_data.transparent_color != 0
             && !m_is_foreground_fullscreen && theApp.m_taskbar_data.disable_d2d)
@@ -1941,7 +1941,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             if (pointx >= m_screen_size.cx) pointx = m_screen_size.cx - 1;
             if (pointy < 0) pointy = 0;
             if (pointy >= m_screen_size.cy) pointy = m_screen_size.cy - 1;
-            COLORREF color = ::GetPixel(m_desktop_dc, pointx, pointy);        //取任务栏窗口左侧1像素处的颜色作为背景色
+            COLORREF color = ::GetPixel(m_desktop_dc, pointx, pointy);        //Take the color 1 pixel on the left side of the taskbar window as the background color
             if (!CCommon::IsColorSimilar(color, theApp.m_taskbar_data.back_color) && (/*CWindowsSettingHelper::IsWindows10LightTheme() ||*/ color != 0))
             {
                 bool is_taskbar_transparent{ theApp.m_taskbar_data.IsTaskbarTransparent()};
@@ -1952,7 +1952,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             }
         }
 
-        //当检测到背景色和文字颜色都为黑色写入错误日志
+        //When it is detected that both the background color and text color are black, an error log is written.
         static bool erro_log_write{ false };
         if (theApp.m_taskbar_data.back_color == 0 && !theApp.m_taskbar_data.text_colors.empty() && theApp.m_taskbar_data.text_colors.begin()->second.label == 0)
         {
@@ -1988,11 +1988,11 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
         {
             static int last_taskbar_num = 0;
             int taskbar_num = CTaskbarHelper::GetSecondaryTaskbarNum();
-            //如果副显示器的任务栏数量发生变化，则重启任务栏窗口
+            //If the number of taskbars on the secondary monitor changes, restart the taskbar window
             if (last_taskbar_num != taskbar_num)
             {
                 last_taskbar_num = taskbar_num;
-                //延迟一段时间后重启任务栏窗口
+                //Restart the taskbar window after a delay
                 KillTimer(RESTART_TASKBAR_TIMER);
                 SetTimer(RESTART_TASKBAR_TIMER, 500, [](HWND, UINT, UINT_PTR, DWORD) {
                     theApp.m_pMainWnd->SendMessage(WM_REOPEN_TASKBAR_WND);
@@ -2003,8 +2003,8 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
         if (IsTaskbarWndValid())
         {
-            //启动时就隐藏主窗体的情况下，无法收到dpichange消息，故需要手动检查
-            //每次100ms*10执行一次屏幕DPI检查，并且尽可能少的检查操作系统版本
+            //When the main form is hidden at startup, the dpichange message cannot be received, so it needs to be checked manually.
+            //Perform a screen DPI check every 100ms*10, and check the operating system version as little as possible
             if (m_taskbar_timer_cnt % 10 == 0 && theApp.m_win_version.IsWindows8Point1OrLater())
             {
                 CTaskBarDlg::CheckWindowMonitorDPIAndHandle(*m_tBarDlg, [p_TaskBarDlg = m_tBarDlg](UINT new_dpi_x, UINT new_dpi_y)
@@ -2012,8 +2012,8 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
                                                                 // auto s_dpi = std::to_string(new_dpi_x);
                                                                 // s_dpi += '\n';
                                                                 // TRACE(s_dpi.c_str());
-                                                                //考虑到任务栏窗口可能和主窗口不在同一个屏幕上，dpi可能不同
-                                                                //设置DPI并刷新窗口
+                                                                //Considering that the taskbar window may not be on the same screen as the main window, the dpi may be different
+                                                                //Set DPI and refresh window
                                                                 p_TaskBarDlg->SetDPI(new_dpi_x);
                                                                 p_TaskBarDlg->SetTextFont();
                                                                 p_TaskBarDlg->CalculateWindowSize(); });
@@ -2036,7 +2036,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
 
 void CTrafficMonitorDlg::OnRButtonUp(UINT nFlags, CPoint point)
 {
-    // TODO: 在此添加消息处理程序代码和/或调用默认值
+    // TODO: Add message handler code and/or call defaults here
     CheckClickedItem(point);
     bool is_plugin_item_clicked = (m_clicked_item.IsPlugin() && m_clicked_item.PluginItem() != nullptr);
     ITMPlugin* plugin{};
@@ -2049,11 +2049,11 @@ void CTrafficMonitorDlg::OnRButtonUp(UINT nFlags, CPoint point)
                 return;
         }
     }
-    //设置点击鼠标右键弹出菜单
+    //Set the pop-up menu when clicking the right mouse button
     CMenu* pContextMenu = (is_plugin_item_clicked ? theApp.m_main_menu_plugin.GetSubMenu(0) : theApp.m_main_menu.GetSubMenu(0));
-    CPoint point1;  //定义一个用于确定光标位置的位置
-    GetCursorPos(&point1);  //获取当前光标的位置，以便使得菜单可以跟随光标
-    //设置默认菜单项
+    CPoint point1;  //Define a position used to determine the cursor position
+    GetCursorPos(&point1);  //Get the current cursor position so that the menu can follow the cursor
+    //Set default menu items
     switch (theApp.m_main_wnd_data.double_click_action)
     {
     case DoubleClickAction::CONNECTION_INFO:
@@ -2078,20 +2078,20 @@ void CTrafficMonitorDlg::OnRButtonUp(UINT nFlags, CPoint point)
 
     if (plugin != nullptr)
     {
-        //将右键菜单中插件菜单的显示文本改为插件名
+        //Change the displayed text of the plug-in menu in the right-click menu to the plug-in name
         pContextMenu->ModifyMenu(17, MF_BYPOSITION, 17, plugin->GetInfo(ITMPlugin::TMI_NAME));
-        //获取插件图标
+        //Get plugin icon
         HICON plugin_icon{};
         if (plugin->GetAPIVersion() >= 5)
             plugin_icon = (HICON)plugin->GetPluginIcon();
-        //设置插件图标
+        //Set plugin icon
         if (plugin_icon != nullptr)
             CMenuIcon::AddIconToMenuItem(pContextMenu->GetSafeHmenu(), 17, TRUE, plugin_icon);
     }
-    //更新插件子菜单
+    //Update plugin submenu
     theApp.UpdatePluginMenu(&theApp.m_main_menu_plugin_sub_menu, plugin, 2);
 
-    pContextMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
+    pContextMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //Show popup menu at specified location
 
     CDialog::OnRButtonUp(nFlags, point1);
 }
@@ -2099,10 +2099,10 @@ void CTrafficMonitorDlg::OnRButtonUp(UINT nFlags, CPoint point)
 
 void CTrafficMonitorDlg::OnLButtonDown(UINT nFlags, CPoint point)
 {
-    // TODO: 在此添加消息处理程序代码和/或调用默认值
+    // TODO: Add message handler code and/or call defaults here
     CheckClickedItem(point);
-    bool plugin_item_clicked = false;   //是否响应了插件项目的左键点击事件
-    if (m_clicked_item.IsPlugin() && m_clicked_item.PluginItem() != nullptr)      //点击的是否为插件项目
+    bool plugin_item_clicked = false;   //Whether to respond to the left-click event of the plug-in project
+    if (m_clicked_item.IsPlugin() && m_clicked_item.PluginItem() != nullptr)      //Whether the clicked item is a plug-in project
     {
         ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.PluginItem());
         if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
@@ -2115,7 +2115,7 @@ void CTrafficMonitorDlg::OnLButtonDown(UINT nFlags, CPoint point)
         }
     }
 
-    //在未锁定窗口位置时允许通过点击窗口内部来拖动窗口
+    //Allow window dragging by clicking inside window when window position is not locked
     if (!theApp.m_main_wnd_data.m_lock_window_pos && !plugin_item_clicked)
         PostMessage(WM_NCLBUTTONDOWN, HTCAPTION, MAKELPARAM(point.x, point.y));
     CDialog::OnLButtonDown(nFlags, point);
@@ -2124,23 +2124,23 @@ void CTrafficMonitorDlg::OnLButtonDown(UINT nFlags, CPoint point)
 
 void CTrafficMonitorDlg::OnNetworkInfo()
 {
-    // TODO: 在此添加命令处理程序代码
-    //弹出“连接详情”对话框
+    // TODO: Add command handler code here
+    //The "Connection Details" dialog box pops up
     CNetworkInfoDlg aDlg(m_connections, m_pIfTable->table, m_connection_selected);
-    ////向CNetworkInfoDlg类传递自启动以来已发送和接收的字节数
+    ////Pass the CNetworkInfoDlg class the number of bytes sent and received since startup
     //aDlg.m_in_bytes = m_pIfTable->table[m_connections[m_connection_selected].index].dwInOctets - m_connections[m_connection_selected].in_bytes;
     //aDlg.m_out_bytes = m_pIfTable->table[m_connections[m_connection_selected].index].dwOutOctets - m_connections[m_connection_selected].out_bytes;
     aDlg.m_start_time = m_start_time;
     aDlg.DoModal();
-    //SetAlwaysOnTop(); //由于在“连接详情”对话框内设置了取消窗口置顶，所有在对话框关闭后，重新设置窗口置顶
+    //SetAlwaysOnTop(); //Since the cancellation of the window on top is set in the "Connection Details" dialog box, after the dialog box is closed, the window on top is reset.
     if (m_tBarDlg != nullptr)
-        m_tBarDlg->m_tool_tips.SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);  //重新设置任务栏窗口的提示信息置顶
+        m_tBarDlg->m_tool_tips.SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);  //Reset the prompt message of the taskbar window to the top
 }
 
 
 void CTrafficMonitorDlg::OnAlwaysOnTop()
 {
-    // TODO: 在此添加命令处理程序代码
+    // TODO: Add command handler code here
     theApp.m_main_wnd_data.m_always_on_top = !theApp.m_main_wnd_data.m_always_on_top;
     SetAlwaysOnTop();
     theApp.SaveConfig();
@@ -2149,7 +2149,7 @@ void CTrafficMonitorDlg::OnAlwaysOnTop()
 
 void CTrafficMonitorDlg::OnTransparency100()
 {
-    // TODO: 在此添加命令处理程序代码
+    // TODO: Add command handler code here
     theApp.m_cfg_data.m_transparency = 100;
     SetTransparency();
     theApp.SaveConfig();
@@ -2158,7 +2158,7 @@ void CTrafficMonitorDlg::OnTransparency100()
 
 void CTrafficMonitorDlg::OnTransparency80()
 {
-    // TODO: 在此添加命令处理程序代码
+    // TODO: Add command handler code here
     theApp.m_cfg_data.m_transparency = 80;
     SetTransparency();
     theApp.SaveConfig();
@@ -2167,7 +2167,7 @@ void CTrafficMonitorDlg::OnTransparency80()
 
 void CTrafficMonitorDlg::OnTransparency60()
 {
-    // TODO: 在此添加命令处理程序代码
+    // TODO: Add command handler code here
     theApp.m_cfg_data.m_transparency = 60;
     SetTransparency();
     theApp.SaveConfig();
@@ -2176,7 +2176,7 @@ void CTrafficMonitorDlg::OnTransparency60()
 
 void CTrafficMonitorDlg::OnTransparency40()
 {
-    // TODO: 在此添加命令处理程序代码
+    // TODO: Add command handler code here
     theApp.m_cfg_data.m_transparency = 40;
     SetTransparency();
     theApp.SaveConfig();
@@ -2185,18 +2185,18 @@ void CTrafficMonitorDlg::OnTransparency40()
 
 void CTrafficMonitorDlg::OnClose()
 {
-    // TODO: 在此添加消息处理程序代码和/或调用默认值
+    // TODO: Add message handler code and/or call defaults here
     theApp.m_cannot_save_config_warning = true;
     theApp.m_cannot_save_global_config_warning = true;
-    theApp.SaveConfig();    //退出前保存设置到ini文件
+    theApp.SaveConfig();    //Save settings to ini file before exiting
     theApp.SaveGlobalConfig();
-    SaveHistoryTrafficFull();  // 退出时使用完整保存，确保所有数据都保存
+    SaveHistoryTrafficFull();  // Use full save when exiting to ensure all data is saved
     BackupHistoryTrafficFile();
 
     if (IsTaskbarWndValid())
         m_tBarDlg->OnCancel();
 
-    //确保在退出前关闭所有窗口
+    //Make sure to close all windows before exiting
     for (const auto& item : CBaseDialog::AllUniqueHandels())
     {
         ::SendMessage(item.second, WM_COMMAND, IDCANCEL, 0);
@@ -2208,7 +2208,7 @@ void CTrafficMonitorDlg::OnClose()
 
 BOOL CTrafficMonitorDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 {
-    // TODO: 在此添加专用代码和/或调用基类
+    // TODO: Add specialized code here and/or call the base class
     UINT uMsg = LOWORD(wParam);
     if (uMsg == ID_SELECT_ALL_CONNECTION)
     {
@@ -2216,8 +2216,8 @@ BOOL CTrafficMonitorDlg::OnCommand(WPARAM wParam, LPARAM lParam)
         theApp.m_cfg_data.m_auto_select = false;
         m_connection_change_flag = true;
     }
-    //选择了“选择网络连接”子菜单中项目时的处理
-    if (uMsg == ID_SELETE_CONNECTION)   //选择了“自动选择”菜单项
+    //Processing when an item in the "Select Network Connection" submenu is selected
+    if (uMsg == ID_SELETE_CONNECTION)   //The "Autoselect" menu item is selected
     {
         AutoSelect();
         theApp.m_cfg_data.m_auto_select = true;
@@ -2225,7 +2225,7 @@ BOOL CTrafficMonitorDlg::OnCommand(WPARAM wParam, LPARAM lParam)
         theApp.SaveConfig();
         m_connection_change_flag = true;
     }
-    if (uMsg > ID_SELECT_ALL_CONNECTION && uMsg <= ID_SELECT_ALL_CONNECTION + m_connections.size()) //选择了一个网络连接
+    if (uMsg > ID_SELECT_ALL_CONNECTION && uMsg <= ID_SELECT_ALL_CONNECTION + m_connections.size()) //Selected a network connection
     {
         m_connection_selected = uMsg - ID_SELECT_ALL_CONNECTION - 1;
         theApp.m_cfg_data.m_connection_name = GetConnection(m_connection_selected).description_2;
@@ -2243,7 +2243,7 @@ BOOL CTrafficMonitorDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 
     }
 #endif // DEBUG
-    //选择了插件命令
+    //Plugin command selected
     if (uMsg >= ID_PLUGIN_COMMAND_START && uMsg <= ID_PLUGIN_COMMAND_MAX)
     {
         int index = uMsg - ID_PLUGIN_COMMAND_START;
@@ -2266,7 +2266,7 @@ void CTrafficMonitorDlg::OnInitMenu(CMenu* pMenu)
 {
     CDialog::OnInitMenu(pMenu);
 
-    // TODO: 在此处添加消息处理程序代码
+    // TODO: add message handler code here
     m_menu_popuped = true;
 
     pMenu->CheckMenuItem(ID_ALWAYS_ON_TOP, MF_BYCOMMAND | (theApp.m_main_wnd_data.m_always_on_top ? MF_CHECKED : MF_UNCHECKED));
@@ -2277,11 +2277,11 @@ void CTrafficMonitorDlg::OnInitMenu(CMenu* pMenu)
     pMenu->CheckMenuItem(ID_SHOW_MAIN_WND, MF_BYCOMMAND | (!theApp.m_cfg_data.m_hide_main_window ? MF_CHECKED : MF_UNCHECKED));
     pMenu->CheckMenuItem(ID_ALOW_OUT_OF_BORDER, MF_BYCOMMAND | (theApp.m_main_wnd_data.m_alow_out_of_border ? MF_CHECKED : MF_UNCHECKED));
 
-    //设置“选择连接”子菜单项中各单选项的选择状态
+    //Set the selection status of each option in the "Select Connection" submenu item
     SetConnectionMenuState(theApp.m_main_menu.GetSubMenu(0)->GetSubMenu(0));
     SetConnectionMenuState(theApp.m_main_menu_plugin.GetSubMenu(0)->GetSubMenu(0));
 
-    //设置“窗口不透明度”子菜单下各单选项的选择状态
+    //Set the selection status of each option under the "Window Opacity" submenu
     switch (theApp.m_cfg_data.m_transparency)
     {
     case 100: pMenu->CheckMenuRadioItem(ID_TRANSPARENCY_100, ID_TRANSPARENCY_40, ID_TRANSPARENCY_100, MF_BYCOMMAND | MF_CHECKED); break;
@@ -2291,7 +2291,7 @@ void CTrafficMonitorDlg::OnInitMenu(CMenu* pMenu)
     default: break;
     }
 
-    if (theApp.IsForceShowNotifyIcon())    //如果没有显示任务栏窗口，且隐藏了主窗口或设置了鼠标穿透，则禁用“显示通知区图标”菜单项
+    if (theApp.IsForceShowNotifyIcon())    //If the taskbar window is not displayed and the main window is hidden or mouse penetration is set, disable the "Show notification area icon" menu item
         pMenu->EnableMenuItem(ID_SHOW_NOTIFY_ICON, MF_BYCOMMAND | MF_GRAYED);
     else
         pMenu->EnableMenuItem(ID_SHOW_NOTIFY_ICON, MF_BYCOMMAND | MF_ENABLED);
@@ -2300,7 +2300,7 @@ void CTrafficMonitorDlg::OnInitMenu(CMenu* pMenu)
 
     pMenu->EnableMenuItem(ID_CHECK_UPDATE, MF_BYCOMMAND | (theApp.IsCheckingForUpdate() ? MF_GRAYED : MF_ENABLED));
 
-    //设置插件命令的勾选状态
+    //Set the check status of the plug-in command
     ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.PluginItem());
     if (plugin != nullptr && plugin->GetAPIVersion() >= 5)
     {
@@ -2317,8 +2317,8 @@ void CTrafficMonitorDlg::OnInitMenu(CMenu* pMenu)
 
 BOOL CTrafficMonitorDlg::PreTranslateMessage(MSG* pMsg)
 {
-    // TODO: 在此添加专用代码和/或调用基类
-    //屏蔽按回车键和ESC键退出
+    // TODO: Add specialized code here and/or call the base class
+    //To shield, press Enter and ESC to exit.
     if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_ESCAPE) return TRUE;
     if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN) return TRUE;
 
@@ -2346,7 +2346,7 @@ BOOL CTrafficMonitorDlg::PreTranslateMessage(MSG* pMsg)
 
 void CTrafficMonitorDlg::OnLockWindowPos()
 {
-    // TODO: 在此添加命令处理程序代码
+    // TODO: Add command handler code here
     theApp.m_main_wnd_data.m_lock_window_pos = !theApp.m_main_wnd_data.m_lock_window_pos;
     theApp.SaveConfig();
 }
@@ -2356,7 +2356,7 @@ void CTrafficMonitorDlg::OnMove(int x, int y)
 {
     CDialog::OnMove(x, y);
 
-    // TODO: 在此处添加消息处理程序代码
+    // TODO: add message handler code here
 
     if (!m_first_start)
     {
@@ -2364,7 +2364,7 @@ void CTrafficMonitorDlg::OnMove(int x, int y)
         theApp.m_cfg_data.m_position_y = y;
     }
 
-    ////确保窗口不会超出屏幕范围
+    ////Make sure the window does not extend beyond the screen
     //CheckWindowPos();
 }
 
@@ -2391,11 +2391,11 @@ afx_msg LRESULT CTrafficMonitorDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
     {
         if (!theApp.m_cfg_data.m_hide_main_window)
         {
-            if (dialog_exist)       //有打开的对话框时，点击通知区图标后将焦点设置到对话框
+            if (dialog_exist)       //When there is an open dialog box, click the notification area icon to set focus to the dialog box.
             {
                 ::SetForegroundWindow(handle);
             }
-            else        //没有打开的对话框时，则显示主窗口
+            else        //When there is no open dialog box, the main window is displayed.
             {
                 ShowWindow(SW_RESTORE);
                 theApp.m_cfg_data.m_hide_main_window = false;
@@ -2408,32 +2408,32 @@ afx_msg LRESULT CTrafficMonitorDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
     }
     if (lParam == WM_RBUTTONUP)
     {
-        if (dialog_exist)       //有打开的对话框时，点击通知区图标后将焦点设置到对话框
+        if (dialog_exist)       //When there is an open dialog box, click the notification area icon to set focus to the dialog box.
         {
             ::SetForegroundWindow(handle);
         }
         else
         {
-            //在通知区点击右键弹出右键菜单
-            if (IsTaskbarWndValid())        //如果显示了任务栏窗口，则在右击了通知区图标后将焦点设置到任务栏窗口
+            //Right-click in the notification area to pop up the right-click menu
+            if (IsTaskbarWndValid())        //If a taskbar window is displayed, set focus to the taskbar window after right-clicking the notification area icon
                 m_tBarDlg->SetForegroundWindow();
-            else                //否则将焦点设置到主窗口
+            else                //Otherwise set focus to the main window
                 SetForegroundWindow();
-            CPoint point1;  //定义一个用于确定光标位置的位置
-            GetCursorPos(&point1);  //获取当前光标的位置，以便使得菜单可以跟随光标
-            theApp.m_main_menu.GetSubMenu(0)->SetDefaultItem(-1);       //设置没有默认菜单项
-            theApp.m_main_menu.GetSubMenu(0)->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
+            CPoint point1;  //Define a position used to determine the cursor position
+            GetCursorPos(&point1);  //Get the current cursor position so that the menu can follow the cursor
+            theApp.m_main_menu.GetSubMenu(0)->SetDefaultItem(-1);       //Settings has no default menu item
+            theApp.m_main_menu.GetSubMenu(0)->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //Show popup menu at specified location
 
             CheckWindowPos();
         }
     }
     if (lParam == WM_LBUTTONDBLCLK)
     {
-        if (dialog_exist)       //有打开的对话框时，点击通知区图标后将焦点设置到对话框
+        if (dialog_exist)       //When there is an open dialog box, click the notification area icon to set focus to the dialog box.
         {
             ::SetForegroundWindow(handle);
         }
-        else        //没有打开的对话框时，则显示主窗口
+        else        //When there is no open dialog box, the main window is displayed.
         {
             ShowWindow(SW_RESTORE);
             theApp.m_cfg_data.m_hide_main_window = false;
@@ -2449,7 +2449,7 @@ afx_msg LRESULT CTrafficMonitorDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
 
 void CTrafficMonitorDlg::OnShowNotifyIcon()
 {
-    // TODO: 在此添加命令处理程序代码
+    // TODO: Add command handler code here
     if (theApp.m_general_data.show_notify_icon)
     {
         DeleteNotifyIcon();
@@ -2468,17 +2468,17 @@ void CTrafficMonitorDlg::OnDestroy()
 {
     CDialog::OnDestroy();
 
-    //程序退出时删除通知栏图标
+    //Remove notification bar icon when program exits
     ::Shell_NotifyIcon(NIM_DELETE, &m_ntIcon);
 
-    // 停止监控线程
+    // Stop monitoring thread
     ExitMonitorThread();
 }
 
 
 void CTrafficMonitorDlg::OnShowCpuMemory()
 {
-    // TODO: 在此添加命令处理程序代码
+    // TODO: Add command handler code here
     CRect rect;
     GetWindowRect(rect);
     theApp.m_cfg_data.m_show_more_info = !theApp.m_cfg_data.m_show_more_info;
@@ -2503,10 +2503,10 @@ void CTrafficMonitorDlg::OnShowCpuMemory()
 }
 
 
-//任务栏窗口切换显示CPU和内存利用率时的处理
+//Processing when the taskbar window switches to display CPU and memory utilization
 void CTrafficMonitorDlg::OnShowCpuMemory2()
 {
-    // TODO: 在此添加命令处理程序代码
+    // TODO: Add command handler code here
     if (IsTaskbarWndValid())
     {
         bool show_cpu_memory = (theApp.m_taskbar_data.display_item.Contains(TDI_CPU) || theApp.m_taskbar_data.display_item.Contains(TDI_MEMORY));
@@ -2521,7 +2521,7 @@ void CTrafficMonitorDlg::OnShowCpuMemory2()
             theApp.m_taskbar_data.display_item.Add(TDI_MEMORY);
         }
         //theApp.m_cfg_data.m_tbar_show_cpu_memory = !theApp.m_cfg_data.m_tbar_show_cpu_memory;
-        //切换显示CPU和内存利用率时，删除任务栏窗口，再重新显示
+        //When switching to display CPU and memory utilization, delete the taskbar window and then redisplay it.
         //CloseTaskBarWnd();
         //OpenTaskBarWnd();
         m_tBarDlg->WidthChanged();
@@ -2531,20 +2531,20 @@ void CTrafficMonitorDlg::OnShowCpuMemory2()
 
 void CTrafficMonitorDlg::OnMousePenetrate()
 {
-    // TODO: 在此添加命令处理程序代码
+    // TODO: Add command handler code here
     theApp.m_main_wnd_data.m_mouse_penetrate = !theApp.m_main_wnd_data.m_mouse_penetrate;
     SetMousePenetrate();
-    if (!theApp.m_general_data.show_notify_icon && theApp.IsForceShowNotifyIcon())   //鼠标穿透时，如果通知图标没有显示，则将它显示出来，否则无法呼出右键菜单
+    if (!theApp.m_general_data.show_notify_icon && theApp.IsForceShowNotifyIcon())   //When the mouse penetrates, if the notification icon is not displayed, display it, otherwise the right-click menu cannot be called out.
     {
-        //添加通知栏图标
+        //Add notification bar icon
         AddNotifyIcon();
         theApp.m_general_data.show_notify_icon = true;
     }
 
-    //设置鼠标穿透后，弹出消息提示用户如何关闭鼠标穿透
+    //After setting mouse penetration, a message pops up prompting the user how to turn off mouse penetration.
     if (theApp.m_main_wnd_data.m_mouse_penetrate && theApp.m_show_mouse_panetrate_tip)
     {
-        if (MessageBox(CCommon::LoadText(IDS_MOUSE_PENETRATE_TIP_INFO), NULL, MB_ICONINFORMATION | MB_OKCANCEL) == IDCANCEL)        //点击“取消”后不再提示
+        if (MessageBox(CCommon::LoadText(IDS_MOUSE_PENETRATE_TIP_INFO), NULL, MB_ICONINFORMATION | MB_OKCANCEL) == IDCANCEL)        //No more prompts after clicking "Cancel"
         {
             theApp.m_show_mouse_panetrate_tip = false;
         }
@@ -2556,7 +2556,7 @@ void CTrafficMonitorDlg::OnMousePenetrate()
 
 void CTrafficMonitorDlg::OnShowTaskBarWnd()
 {
-    // TODO: 在此添加命令处理程序代码
+    // TODO: Add command handler code here
     if (m_tBarDlg != nullptr)
     {
         CloseTaskBarWnd();
@@ -2569,7 +2569,7 @@ void CTrafficMonitorDlg::OnShowTaskBarWnd()
     else
     {
         theApp.m_cfg_data.m_show_task_bar_wnd = false;
-        //关闭任务栏窗口后，如果没有显示通知区图标，且没有显示主窗口或设置了鼠标穿透，则将通知区图标显示出来
+        //After closing the taskbar window, if the notification area icon is not displayed and the main window is not displayed or mouse penetration is set, the notification area icon will be displayed.
         if (!theApp.m_general_data.show_notify_icon && theApp.IsForceShowNotifyIcon())
         {
             AddNotifyIcon();
@@ -2582,14 +2582,14 @@ void CTrafficMonitorDlg::OnShowTaskBarWnd()
 
 void CTrafficMonitorDlg::OnAppAbout()
 {
-    // TODO: 在此添加命令处理程序代码
-    //弹出“关于”对话框
+    // TODO: Add command handler code here
+    //Pop up the "About" dialog box
     CAboutDlg aDlg;
     aDlg.DoModal();
 }
 
 
-//当资源管理器重启时会触发此消息
+//This message is triggered when the resource manager is restarted
 LRESULT CTrafficMonitorDlg::OnTaskBarCreated(WPARAM wParam, LPARAM lParam)
 {
     if (m_tBarDlg != nullptr)
@@ -2597,7 +2597,7 @@ LRESULT CTrafficMonitorDlg::OnTaskBarCreated(WPARAM wParam, LPARAM lParam)
         CloseTaskBarWnd();
         if (theApp.m_general_data.show_notify_icon)
         {
-            //重新添加通知栏图标
+            //Re-add notification bar icon
             ::Shell_NotifyIcon(NIM_ADD, &m_ntIcon);
         }
         OpenTaskBarWnd();
@@ -2613,12 +2613,12 @@ LRESULT CTrafficMonitorDlg::OnTaskBarCreated(WPARAM wParam, LPARAM lParam)
 
 void CTrafficMonitorDlg::OnShowMainWnd()
 {
-    // TODO: 在此添加命令处理程序代码
+    // TODO: Add command handler code here
     if (!theApp.m_cfg_data.m_hide_main_window)
     {
         ShowWindow(SW_HIDE);
         theApp.m_cfg_data.m_hide_main_window = true;
-        //隐藏主窗口后，如果没有显示通知栏图标，则将其显示出来
+        //After hiding the main window, if the notification bar icon is not shown, show it
         if (!theApp.m_general_data.show_notify_icon && theApp.IsForceShowNotifyIcon())
         {
             AddNotifyIcon();
@@ -2636,9 +2636,9 @@ void CTrafficMonitorDlg::OnShowMainWnd()
 
 void CTrafficMonitorDlg::OnChangeSkin()
 {
-    // TODO: 在此添加命令处理程序代码
+    // TODO: Add command handler code here
     CSkinDlg skinDlg;
-    //初始化CSkinDlg对象的数据
+    //Initialize the data of the CSkinDlg object
     skinDlg.m_skin_selected = m_skin_selected;
     if (skinDlg.DoModal() == IDOK)
     {
@@ -2650,7 +2650,7 @@ void CTrafficMonitorDlg::OnChangeSkin()
 
 void CTrafficMonitorDlg::OnTrafficHistory()
 {
-    // TODO: 在此添加命令处理程序代码
+    // TODO: Add command handler code here
     CHistoryTrafficDlg historyDlg(m_history_traffic.GetTraffics());
     historyDlg.DoModal();
 }
@@ -2658,7 +2658,7 @@ void CTrafficMonitorDlg::OnTrafficHistory()
 
 void CTrafficMonitorDlg::OnMouseMove(UINT nFlags, CPoint point)
 {
-    // TODO: 在此添加消息处理程序代码和/或调用默认值
+    // TODO: Add message handler code and/or call defaults here
 
     CDialog::OnMouseMove(nFlags, point);
 }
@@ -2666,7 +2666,7 @@ void CTrafficMonitorDlg::OnMouseMove(UINT nFlags, CPoint point)
 
 void CTrafficMonitorDlg::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-    // TODO: 在此添加消息处理程序代码和/或调用默认值
+    // TODO: Add message handler code and/or call defaults here
     CheckClickedItem(point);
     if (m_clicked_item.IsPlugin() && m_clicked_item.PluginItem() != nullptr)
     {
@@ -2681,25 +2681,25 @@ void CTrafficMonitorDlg::OnLButtonDblClk(UINT nFlags, CPoint point)
     switch (theApp.m_main_wnd_data.double_click_action)
     {
     case DoubleClickAction::CONNECTION_INFO:
-        OnNetworkInfo();            //双击后弹出“连接详情”对话框
+        OnNetworkInfo();            //After double-clicking, the "Connection Details" dialog box will pop up.
         break;
     case DoubleClickAction::HISTORY_TRAFFIC:
-        OnTrafficHistory();         //双击后弹出“历史流量统计”对话框
+        OnTrafficHistory();         //After double-clicking, the "Historical Traffic Statistics" dialog box will pop up.
         break;
     case DoubleClickAction::SHOW_MORE_INFO:
-        OnShowCpuMemory();          //切换显示CPU和内存利用率
+        OnShowCpuMemory();          //Toggle display of CPU and memory utilization
         break;
     case DoubleClickAction::OPTIONS:
-        OnOptions();                //双击后弹出“选项设置”对话框
+        OnOptions();                //After double-clicking, the "Option Settings" dialog box will pop up.
         break;
     case DoubleClickAction::TASK_MANAGER:
-        ShellExecuteW(NULL, _T("open"), (theApp.m_system_dir + L"\\Taskmgr.exe").c_str(), NULL, NULL, SW_NORMAL);       //打开任务管理器
+        ShellExecuteW(NULL, _T("open"), (theApp.m_system_dir + L"\\Taskmgr.exe").c_str(), NULL, NULL, SW_NORMAL);       //Open task manager
         break;
     case DoubleClickAction::SEPCIFIC_APP:
-        ShellExecuteW(NULL, _T("open"), (theApp.m_main_wnd_data.double_click_exe).c_str(), NULL, NULL, SW_NORMAL);  //打开指定程序，默认任务管理器
+        ShellExecuteW(NULL, _T("open"), (theApp.m_main_wnd_data.double_click_exe).c_str(), NULL, NULL, SW_NORMAL);  //Open the specified program, the default task manager
         break;
     case DoubleClickAction::CHANGE_SKIN:
-        OnChangeSkin();             //双击后弹出“更换皮肤”对话框
+        OnChangeSkin();             //After double-clicking, the "Change Skin" dialog box pops up.
         break;
     default:
         break;
@@ -2714,7 +2714,7 @@ void CTrafficMonitorDlg::OnOptions()
 }
 
 
-//通过任务栏窗口的右键菜单打开“选项”对话框
+//Open the "Options" dialog box via the right-click menu of the taskbar window
 void CTrafficMonitorDlg::OnOptions2()
 {
     CWnd* pParent = this;
@@ -2733,7 +2733,7 @@ afx_msg LRESULT CTrafficMonitorDlg::OnExitmenuloop(WPARAM wParam, LPARAM lParam)
 
 void CTrafficMonitorDlg::OnChangeNotifyIcon()
 {
-    // TODO: 在此添加命令处理程序代码
+    // TODO: Add command handler code here
     CIconSelectDlg dlg(theApp.m_cfg_data.m_notify_icon_selected);
     dlg.SetAutoAdaptNotifyIcon(theApp.m_cfg_data.m_notify_icon_auto_adapt);
     if (dlg.DoModal() == IDOK)
@@ -2755,7 +2755,7 @@ void CTrafficMonitorDlg::OnChangeNotifyIcon()
 
 void CTrafficMonitorDlg::OnAlowOutOfBorder()
 {
-    // TODO: 在此添加命令处理程序代码
+    // TODO: Add command handler code here
     theApp.m_main_wnd_data.m_alow_out_of_border = !theApp.m_main_wnd_data.m_alow_out_of_border;
     CheckWindowPos();
 }
@@ -2763,24 +2763,24 @@ void CTrafficMonitorDlg::OnAlowOutOfBorder()
 
 void CTrafficMonitorDlg::OnCheckUpdate()
 {
-    // TODO: 在此添加命令处理程序代码
+    // TODO: Add command handler code here
     theApp.CheckUpdateInThread(true);
 }
 
 
 afx_msg LRESULT CTrafficMonitorDlg::OnTaskbarMenuPopedUp(WPARAM wParam, LPARAM lParam)
 {
-    //设置“选择连接”子菜单项中各单选项的选择状态
+    //Set the selection status of each option in the "Select Connection" submenu item
     SetConnectionMenuState(theApp.m_taskbar_menu.GetSubMenu(0)->GetSubMenu(0));
     SetConnectionMenuState(theApp.m_taskbar_menu_plugin.GetSubMenu(0)->GetSubMenu(0));
     return 0;
 }
 
 
-//任务栏窗口切换显示网速时的处理
+//Handling when the taskbar window switches to display network speed
 void CTrafficMonitorDlg::OnShowNetSpeed()
 {
-    // TODO: 在此添加命令处理程序代码
+    // TODO: Add command handler code here
     if (IsTaskbarWndValid())
     {
         bool show_net_speed = (theApp.m_taskbar_data.display_item.Contains(TDI_UP) || theApp.m_taskbar_data.display_item.Contains(TDI_DOWN));
@@ -2806,10 +2806,10 @@ BOOL CTrafficMonitorDlg::OnQueryEndSession()
     if (!CDialog::OnQueryEndSession())
         return FALSE;
 
-    // TODO:  在此添加专用的查询结束会话代码
+    // TODO: Add dedicated query end session code here
     theApp.SaveConfig();
     theApp.SaveGlobalConfig();
-    SaveHistoryTrafficFull();  // 系统关机时使用完整保存，确保所有数据都保存
+    SaveHistoryTrafficFull();  // Use a full save when the system is shut down to ensure all data is saved
     BackupHistoryTrafficFile();
 
     if (theApp.m_debug_log)
@@ -2824,8 +2824,8 @@ BOOL CTrafficMonitorDlg::OnQueryEndSession()
 void CTrafficMonitorDlg::OnPaint()
 {
     CPaintDC dc(this); // device context for painting
-                       // TODO: 在此处添加消息处理程序代码
-                       // 不为绘图消息调用 CDialog::OnPaint()
+                       // TODO: add message handler code here
+                       // CDialog::OnPaint() is not called for drawing messages
     m_skin.DrawInfo(&dc, theApp.m_cfg_data.m_show_more_info);
 }
 
@@ -2837,32 +2837,32 @@ afx_msg LRESULT CTrafficMonitorDlg::OnDpichanged(WPARAM wParam, LPARAM lParam)
     dpi = LOWORD(wParam);
     pThis = this;
 
-    //由于当悬浮拖动到不同DPI的显示器上时，会短时间内触发多次DPI更改消息，因此这里在收到消息后延迟一段时间后再处理
+    //Since multiple DPI change messages will be triggered in a short period of time when hovering and dragging to displays with different DPIs, the message is delayed for a period of time before processing.
     KillTimer(DPI_CHANGE_TIMER);
     SetTimer(DPI_CHANGE_TIMER, 500, [](HWND, UINT, UINT_PTR, DWORD) {
-        //根据主窗口的位置获取DPI
+        //Get the DPI based on the position of the main window
         CRect rect;
         pThis->GetWindowRect(rect);
         UINT dpi_x, dpi_y;
-        if (theApp.DPIFromRect(rect, &dpi_x, &dpi_y))   //获取成功，则使用根据主窗口位置得到的dpi
+        if (theApp.DPIFromRect(rect, &dpi_x, &dpi_y))   //If the acquisition is successful, the dpi obtained based on the position of the main window will be used.
             dpi = dpi_x;
         TRACE("Dpi changed: %d\n", dpi);
 
         theApp.SetDPI(dpi);
-        //当系统版本小于Windows 8.1时使用原来的行为
+        //Use the original behavior when the system version is smaller than Windows 8.1
         if (pThis->IsTaskbarWndValid() && !theApp.m_win_version.IsWindows8Point1OrLater())
         {
-            //为任务栏窗口重新指定DPI
+            //Reassign DPI to taskbar windows
             pThis->m_tBarDlg->SetDPI(dpi);
-            //根据新的DPI重新设置任务栏窗口字体
+            //Reset the taskbar window font according to the new DPI
             pThis->m_tBarDlg->SetTextFont();
         }
 
-        pThis->LoadSkinLayout();   //根据当前选择的皮肤获取布局数据
-        pThis->SetItemPosition();  //初始化窗口位置
+        pThis->LoadSkinLayout();   //Get layout data based on the currently selected skin
+        pThis->SetItemPosition();  //Initialize window position
         pThis->LoadBackGroundImage();
-        pThis->SetTextFont();      //重新加载字体
-        pThis->Invalidate(FALSE);  //重绘界面
+        pThis->SetTextFont();      //Reload font
+        pThis->Invalidate(FALSE);  //Redraw interface
 
         pThis->KillTimer(DPI_CHANGE_TIMER);
     });
@@ -2874,7 +2874,7 @@ afx_msg LRESULT CTrafficMonitorDlg::OnDpichanged(WPARAM wParam, LPARAM lParam)
 afx_msg LRESULT CTrafficMonitorDlg::OnTaskbarWndClosed(WPARAM wParam, LPARAM lParam)
 {
     theApp.m_cfg_data.m_show_task_bar_wnd = false;
-    //关闭任务栏窗口后，如果没有显示通知区图标，且没有显示主窗口或设置了鼠标穿透，则将通知区图标显示出来
+    //After closing the taskbar window, if the notification area icon is not displayed and the main window is not displayed or mouse penetration is set, the notification area icon will be displayed.
     if (!theApp.m_general_data.show_notify_icon && theApp.IsForceShowNotifyIcon())
     {
         AddNotifyIcon();
@@ -2887,16 +2887,16 @@ afx_msg LRESULT CTrafficMonitorDlg::OnTaskbarWndClosed(WPARAM wParam, LPARAM lPa
 
 afx_msg LRESULT CTrafficMonitorDlg::OnMonitorInfoUpdated(WPARAM wParam, LPARAM lParam)
 {
-    Invalidate(FALSE);      //刷新窗口信息
+    Invalidate(FALSE);      //Refresh window information
 
-    //更新鼠标提示
+    //Update mouse tips
     if (theApp.m_main_wnd_data.show_tool_tip && m_tool_tips.GetSafeHwnd() != NULL)
     {
         CString tip_info;
         tip_info = GetMouseTipsInfo();
         m_tool_tips.UpdateTipText(tip_info, this);
     }
-    //更新任务栏窗口鼠标提示
+    //Update taskbar window mouse tips
     if (IsTaskbarWndValid())
         m_tBarDlg->UpdateToolTips();
     return 0;
@@ -2913,7 +2913,7 @@ LRESULT CTrafficMonitorDlg::OnDisplaychange(WPARAM wParam, LPARAM lParam)
 
 void CTrafficMonitorDlg::OnExitSizeMove()
 {
-    // TODO: 在此添加消息处理程序代码和/或调用默认值
+    // TODO: Add message handler code and/or call defaults here
     CheckWindowPos();
 
     CDialog::OnExitSizeMove();
@@ -2922,7 +2922,7 @@ void CTrafficMonitorDlg::OnExitSizeMove()
 
 void CTrafficMonitorDlg::OnPluginManage()
 {
-    // TODO: 在此添加命令处理程序代码
+    // TODO: Add command handler code here
     CPluginManagerDlg dlg;
     dlg.DoModal();
 }
@@ -2937,7 +2937,7 @@ LRESULT CTrafficMonitorDlg::OnReopenTaksbarWnd(WPARAM wParam, LPARAM lParam)
 
 void CTrafficMonitorDlg::OnOpenTaskManager()
 {
-    ShellExecuteW(NULL, _T("open"), (theApp.m_system_dir + L"\\Taskmgr.exe").c_str(), NULL, NULL, SW_NORMAL);       //打开任务管理器
+    ShellExecuteW(NULL, _T("open"), (theApp.m_system_dir + L"\\Taskmgr.exe").c_str(), NULL, NULL, SW_NORMAL);       //Open task manager
 }
 
 
@@ -2954,7 +2954,7 @@ afx_msg LRESULT CTrafficMonitorDlg::OnSettingsApplied(WPARAM wParam, LPARAM lPar
 
 void CTrafficMonitorDlg::OnDisplaySettings()
 {
-    // TODO: 在此添加命令处理程序代码
+    // TODO: Add command handler code here
     CSetItemOrderDlg dlg;
     dlg.SetItemOrder(theApp.m_taskbar_data.item_order.GetItemOrderConst());
     dlg.SetDisplayItem(theApp.m_taskbar_data.display_item);
@@ -2974,7 +2974,7 @@ void CTrafficMonitorDlg::OnDisplaySettings()
 
 void CTrafficMonitorDlg::OnLButtonUp(UINT nFlags, CPoint point)
 {
-    // TODO: 在此添加消息处理程序代码和/或调用默认值
+    // TODO: Add message handler code and/or call defaults here
     //CheckClickedItem(point);
     //if (m_clicked_item.IsPlugin() && m_clicked_item.PluginItem() != nullptr)
     //{
@@ -3007,11 +3007,11 @@ void CTrafficMonitorDlg::OnPluginOptions()
 {
     if (m_clicked_item.IsPlugin())
     {
-        //找到对应的插件
+        //Find the corresponding plug-in
         ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.PluginItem());
         if (plugin != nullptr)
         {
-            //显示插件的选项设置
+            //Show plugin option settings
             auto rtn = plugin->ShowOptionsDialog(GetSafeHwnd());
             if (rtn == ITMPlugin::OR_OPTION_NOT_PROVIDED)
                 MessageBox(CCommon::LoadText(IDS_PLUGIN_NO_OPTIONS_INFO), nullptr, MB_ICONINFORMATION | MB_OK);
@@ -3024,7 +3024,7 @@ void CTrafficMonitorDlg::OnPluginDetail()
 {
     if (m_clicked_item.IsPlugin())
     {
-        //找到对应的插件
+        //Find the corresponding plug-in
         ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.PluginItem());
         if (plugin != nullptr)
         {
@@ -3038,16 +3038,16 @@ void CTrafficMonitorDlg::OnPluginDetail()
 
 void CTrafficMonitorDlg::OnPluginOptionsTaksbar()
 {
-    //判断任务栏窗口中点击的项目是否是插件项目
+    //Determine whether the clicked item in the taskbar window is a plug-in item
     if (IsTaskbarWndValid() && m_tBarDlg->GetClickedItem().IsPlugin())
     {
-        //找到对应的插件
+        //Find the corresponding plug-in
         ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_tBarDlg->GetClickedItem().PluginItem());
         if (plugin != nullptr)
         {
-            //显示插件的选项设置
+            //Show plugin option settings
             auto rtn = plugin->ShowOptionsDialog(m_tBarDlg->GetSafeHwnd());
-            if (rtn == ITMPlugin::OR_OPTION_CHANGED)    //选项设置有更改，重新打开任务栏窗口
+            if (rtn == ITMPlugin::OR_OPTION_CHANGED)    //The option settings have been changed, reopen the taskbar window
             {
                 //CloseTaskBarWnd();
                 //OpenTaskBarWnd();
@@ -3064,7 +3064,7 @@ void CTrafficMonitorDlg::OnPluginDetailTaksbar()
 {
     if (IsTaskbarWndValid() && m_tBarDlg->GetClickedItem().IsPlugin())
     {
-        //找到对应的插件
+        //Find the corresponding plug-in
         ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_tBarDlg->GetClickedItem().PluginItem());
         if (plugin != nullptr)
         {
@@ -3078,10 +3078,10 @@ void CTrafficMonitorDlg::OnPluginDetailTaksbar()
 
 UINT CTrafficMonitorDlg::OnPowerBroadcast(UINT nPowerEvent, LPARAM nEventData)
 {
-    // 系统从休眠恢复
+    // System resumes from hibernation
     if (nPowerEvent == PBT_APMRESUMESUSPEND)
     {
-        //延迟一段时间后重新初始化网络连接
+        //Reinitialize the network connection after a delay
         KillTimer(INIT_CONNECT_TIMER);
         static CTrafficMonitorDlg* pThis = this;
         static int check_times = 0;
@@ -3089,18 +3089,18 @@ UINT CTrafficMonitorDlg::OnPowerBroadcast(UINT nPowerEvent, LPARAM nEventData)
             pThis->IniConnection();
             check_times++;
 
-            //写入日志
+            //write log
             CString info = CCommon::LoadTextFormat(IDS_RESTORE_FROM_SLEEP_LOG, {pThis->m_restart_cnt });
             CCommon::WriteLog(info, theApp.m_log_path.c_str());
 
-            //如果连接为空，定时器继续运行，每隔一段时间重新初始化连接
+            //If the connection is empty, the timer continues to run and the connection is reinitialized at regular intervals.
             if (pThis->m_connections.size() == 0)
             {
-                //超过20次，结束定时器
+                //More than 20 times, end timer
                 if (check_times >= 20)
                     pThis->KillTimer(INIT_CONNECT_TIMER);
             }
-            //成功获取到连接，结束定时器
+            //Successfully obtain the connection and end the timer
             else
             {
                 pThis->KillTimer(INIT_CONNECT_TIMER);
@@ -3114,9 +3114,9 @@ UINT CTrafficMonitorDlg::OnPowerBroadcast(UINT nPowerEvent, LPARAM nEventData)
 
 void CTrafficMonitorDlg::OnColorizationColorChanged(DWORD dwColorizationColor, BOOL bOpacity)
 {
-    // 此功能要求 Windows Vista 或更高版本。
-    // _WIN32_WINNT 符号必须 >= 0x0600。
-    // TODO: 在此添加消息处理程序代码和/或调用默认值
+    // This feature requires Windows Vista or later.
+    // _WIN32_WINNT symbol must be >= 0x0600.
+    // TODO: Add message handler code and/or call defaults here
 
     static DWORD last_color;
     if (last_color != dwColorizationColor)

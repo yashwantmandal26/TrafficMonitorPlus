@@ -377,7 +377,7 @@ bool is_auto_start_task_active_for_this_user(std::wstring* path)
             // Task exists, get its value.
             VARIANT_BOOL is_enabled;
             hr = pExistingRegisteredTask->get_Enabled(&is_enabled);
-            //判断已存在的任务计划命令的exe文件路径是否为当前exe的路径
+            //Determine whether the exe file path of the existing task schedule command is the path of the current exe
             BSTR xml_buff{};
             pExistingRegisteredTask->get_Xml(&xml_buff);
             CSimpleXML xml;

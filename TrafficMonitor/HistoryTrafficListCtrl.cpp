@@ -39,23 +39,23 @@ void CHistoryTrafficListCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 		*pResult = CDRF_DODEFAULT;
 		LPNMLVCUSTOMDRAW lplvdr = reinterpret_cast<LPNMLVCUSTOMDRAW>(pNMHDR);
 		NMCUSTOMDRAW& nmcd = lplvdr->nmcd;
-		switch (lplvdr->nmcd.dwDrawStage)	//判断状态   
+		switch (lplvdr->nmcd.dwDrawStage)	//Judgment status   
 		{
 		case CDDS_PREPAINT:
 			*pResult = CDRF_NOTIFYITEMDRAW;
 			break;
-		case CDDS_ITEMPREPAINT:			//如果为画ITEM之前就要进行颜色的改变
+		case CDDS_ITEMPREPAINT:			//If you want to change the color before painting ITEM
 			if (nmcd.dwItemSpec >= 0 && nmcd.dwItemSpec < m_item_rage_data.size())
 			{
 				double range = m_item_rage_data[nmcd.dwItemSpec].data_value;
-				CDC* pDC = CDC::FromHandle(nmcd.hdc);		//获取绘图DC
+				CDC* pDC = CDC::FromHandle(nmcd.hdc); //Get drawing DC
 				CRect item_rect, draw_rect;
-				GetSubItemRect(nmcd.dwItemSpec,m_draw_item_range_row, LVIR_BOUNDS, item_rect);	//获取绘图单元格的矩形区域
-				CDrawCommon::SetDrawRect(pDC, item_rect);		//设置绘图区域为当前列
-                //使用双缓冲绘图
+				GetSubItemRect(nmcd.dwItemSpec,m_draw_item_range_row, LVIR_BOUNDS, item_rect); //Get the rectangular area of the drawing cell
+				CDrawCommon::SetDrawRect(pDC, item_rect); //Set the drawing area to the current column
+                //Drawing using double buffering
                 {
                     CDrawDoubleBuffer draw_double_buffer(pDC, item_rect);
-                    //填充背景
+                    //fill background
                     draw_rect = item_rect;
                     draw_rect.MoveToXY(0, 0);
                     draw_double_buffer.GetMemDC()->FillSolidRect(draw_rect, GetSysColor(COLOR_WINDOW));
@@ -65,12 +65,12 @@ void CHistoryTrafficListCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
                         draw_rect.bottom -= m_margin;
                     }
                     int width;
-                    if (m_use_log_scale)	//使用对数比例（y=ln(x+1)）
+                    if (m_use_log_scale) //Use logarithmic scale (y=ln(x+1))
                     {
                         range = std::log(range + 1);
                         width = static_cast<int>(range*draw_rect.Width() / std::log(1000 + 1));
                     }
-                    else		//使用线性比例（y=x）
+                    else //Use linear scale (y=x)
                     {
                         width = static_cast<int>(range*draw_rect.Width() / 1000);
                     }
@@ -78,7 +78,7 @@ void CHistoryTrafficListCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
                     draw_double_buffer.GetMemDC()->FillSolidRect(draw_rect, m_item_rage_data[nmcd.dwItemSpec].color);
                 }
 
-				//当前列绘制完成后将绘图区域设置为左边的区域，防止当前列的区域被覆盖
+				//After the current column is drawn, set the drawing area to the left area to prevent the current column area from being overwritten.
 				CRect rect1{ item_rect };
 				rect1.left = 0;
 				rect1.right = item_rect.left;

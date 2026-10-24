@@ -20,27 +20,27 @@ static void LanguageInfoFromIni(LanguageInfo& language_info, const CIniHelper& i
     language_info.translator_url = ini.GetString(L"general", L"TRANSLATOR_URL", L"");
 }
 
-// 回调函数，用于枚举资源语言
+// Callback function for enumerating resource languages
 static BOOL CALLBACK EnumResLangProc(HMODULE hModule, LPCTSTR lpType, LPCTSTR lpName, WORD wIDLanguage, LONG_PTR lParam)
 {
     std::vector<LanguageInfo>* pLanguages = reinterpret_cast<std::vector<LanguageInfo>*>(lParam);
 
-    // 获取资源句柄
+    // Get resource handle
     HRSRC hRes = FindResourceEx(hModule, lpType, lpName, wIDLanguage);
     if (hRes != NULL)
     {
-        // 加载资源
+        // Load resources
         HGLOBAL hGlobal = LoadResource(hModule, hRes);
         if (hGlobal != NULL)
         {
-            // 锁定资源并获取数据指针
+            // Lock the resource and get the data pointer
             LPVOID pResourceData = LockResource(hGlobal);
             if (pResourceData != NULL)
             {
-                // 获取资源大小
+                // Get resource size
                 DWORD resSize = SizeofResource(hModule, hRes);
 
-                // 将资源内容转换为字符串
+                // Convert resource content to string
                 std::string strData((const char*)pResourceData, resSize);
                 std::wstring resData = CCommon::StrToUnicode(strData.c_str(), true).c_str();
 
@@ -54,32 +54,32 @@ static BOOL CALLBACK EnumResLangProc(HMODULE hModule, LPCTSTR lpType, LPCTSTR lp
         }
     }
 
-    return TRUE; // 继续枚举
+    return TRUE; // Continue enumeration
 }
 
 
 void CStrTable::Init()
 {
-    // 获取 IDR_LANGUAGE 资源的所有语言版本
+    // Get all language versions of the IDR_LANGUAGE resource
     EnumResourceLanguages(NULL, _T("TEXT"), MAKEINTRESOURCE(IDR_LANGUAGE), EnumResLangProc, reinterpret_cast<LONG_PTR>(&m_language_list));
-    //按bcp47排序
+    //Sort by bcp47
     std::sort(m_language_list.begin(), m_language_list.end(), [](const LanguageInfo& a, const LanguageInfo& b) {
         return a.bcp_47 < b.bcp_47;
     });
 
-    //先读取默认字符串资源，如果当前语言中没有对应字符串，则会使用默认的字符串资源
+    //First read the default string resource. If there is no corresponding string in the current language, the default string resource will be used.
     CIniHelper ini_default(IDR_LANGUAGE_DEFAULT);
     ReadStringtableFronIni(ini_default);
 
-    //读取字符串资源
+    //Read string resources
     CIniHelper ini(IDR_LANGUAGE);
     ReadStringtableFronIni(ini);
     LanguageInfoFromIni(m_language_info, ini);
 
-    //获取当前系统默认语言
+    //Get the current system default language
     DWORD cur_system_language_id = GetUserDefaultUILanguage();
 
-    //从外部language文件夹获取语言文件
+    //Get language files from external language folder
     vector<wstring> files;
     std::wstring language_dir;
 #ifdef _DEBUG
@@ -94,11 +94,11 @@ void CStrTable::Init()
         CIniHelper ini_file(file_path, true);
         LanguageInfo language_info;
         LanguageInfoFromIni(language_info, ini_file);
-        language_info.language_id = LocaleNameToLCID(language_info.bcp_47.c_str(), 0);  //根据语言bcp-47代码获取语言id
-        //从外部语言文件读取到当前语言，先从外部语言文件加载
+        language_info.language_id = LocaleNameToLCID(language_info.bcp_47.c_str(), 0);  //Get language id based on language bcp-47 code
+        //Read from an external language file to the current language, first load from the external language file
         bool is_current_language = false;
         LanguageInfo settings_language = theApp.m_general_data.language;
-        //如果设置中的语言为空，即选择了“跟随系统”，则根据当前系统语言查找
+        //If the language in the settings is empty, that is, "Follow system" is selected, the search will be based on the current system language.
         if (settings_language.isEmpty())
         {
             if (cur_system_language_id == language_info.language_id)
@@ -117,7 +117,7 @@ void CStrTable::Init()
             ReadStringtableFronIni(ini_file);
         }
 
-        //如果语言不在m_language_list，添加到该列表
+        //If the language is not in m_language_list, add it to the list
         auto iter = std::find(m_language_list.begin(), m_language_list.end(), language_info);
         if (iter == m_language_list.end())
             m_language_list.push_back(language_info);
@@ -203,7 +203,7 @@ wstring CStrTable::LoadTextFormat(const wstring& key, const std::map<std::wstrin
         ASSERT(false);
         return std::wstring();
     }
-    wstring str{ iter->second };    // 复制以避免原始字符串修改
+    wstring str{ iter->second };    // Copy to avoid original string modification
     int index{ 1 };
     for (const auto& para : paras)
     {

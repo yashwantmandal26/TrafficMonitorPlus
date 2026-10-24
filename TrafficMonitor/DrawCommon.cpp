@@ -64,13 +64,13 @@ void CDrawCommon::DrawBitmap(CBitmap& bitmap, CPoint start_point, CSize size, St
 {
     CDC memDC;
 
-    //获取图像实际大小
+    //Get the actual size of the image
     BITMAP bm;
     GetObject(bitmap, sizeof(BITMAP), &bm);
 
     memDC.CreateCompatibleDC(m_pDC);
     memDC.SelectObject(&bitmap);
-    // 以下两行避免图片失真
+    // The following two lines avoid image distortion
     m_pDC->SetStretchBltMode(HALFTONE);
     m_pDC->SetBrushOrg(0, 0);
 
@@ -110,22 +110,22 @@ void CDrawCommon::BitmapStretch(CImage* pImage, CImage* ResultImage, CSize size)
 {
     if (pImage->IsDIBSection())
     {
-        // 取得 pImage 的 DC
-        CDC* pImageDC1 = CDC::FromHandle(pImage->GetDC()); // Image 因為有自己的 DC, 所以必須使用 FromHandle 取得對應的 DC
+        // Get the DC of pImage
+        CDC* pImageDC1 = CDC::FromHandle(pImage->GetDC()); // Because Image has its own DC, it must use FromHandle to obtain the corresponding DC.
 
         CBitmap* bitmap1 = pImageDC1->GetCurrentBitmap();
         BITMAP bmpInfo;
         bitmap1->GetBitmap(&bmpInfo);
 
-        // 建立新的 CImage
+        // Create a new CImage
         ResultImage->Create(size.cx, size.cy, bmpInfo.bmBitsPixel);
         CDC* ResultImageDC = CDC::FromHandle(ResultImage->GetDC());
 
-        // 當 Destination 比較小的時候, 會根據 Destination DC 上的 Stretch Blt mode 決定是否要保留被刪除點的資訊
-        ResultImageDC->SetStretchBltMode(HALFTONE);        // 使用最高品質的方式
-        ::SetBrushOrgEx(ResultImageDC->m_hDC, 0, 0, NULL); // 調整 Brush 的起點
+        // When the Destination is relatively small, it will be decided according to the Stretch Blt mode on the Destination DC whether to retain the information of the deleted point.
+        ResultImageDC->SetStretchBltMode(HALFTONE);        // Use the highest quality methods
+        ::SetBrushOrgEx(ResultImageDC->m_hDC, 0, 0, NULL); // Adjust the starting point of the Brush
 
-        // 把 pImage 畫到 ResultImage 上面
+        // Draw pImage onto ResultImage
         StretchBlt(*ResultImageDC, 0, 0, size.cx, size.cy, *pImageDC1, 0, 0, pImage->GetWidth(), pImage->GetHeight(), SRCCOPY);
         // pImage->Draw(*ResultImageDC,0,0,StretchWidth,StretchHeight,0,0,pImage->GetWidth(),pImage->GetHeight());
 
@@ -148,7 +148,7 @@ void CDrawCommon::DrawRectOutLine(CRect rect, COLORREF color, int width, bool do
 {
     if (radius > 0)
     {
-        //半径大于0时绘制圆角矩形，使用GDI+绘制
+        //Draw a rounded rectangle when the radius is greater than 0, use GDI+ to draw it
         m_gdi_plus_drawer.DrawRectOutLine(rect, color, width, dot_line, alpha, radius);
     }
     else
@@ -174,32 +174,32 @@ void CDrawCommon::GetRegionFromImage(CRgn& rgn, CBitmap& cBitmap, int threshold)
     CBitmap* pOldMemBmp = NULL;
     pOldMemBmp = memDC.SelectObject(&cBitmap);
 
-    //创建总的窗体区域，初始region为0
+    //Create the total form area, the initial region is 0
     rgn.CreateRectRgn(0, 0, 0, 0);
 
     BITMAP bit;
-    cBitmap.GetBitmap(&bit); //取得位图参数，这里要用到位图的长和宽
+    cBitmap.GetBitmap(&bit); //Get the bitmap parameters, here you need to use the length and width of the bitmap
     int y;
     for (y = 0; y < bit.bmHeight; y++)
     {
-        CRgn rgnTemp; //保存临时region
+        CRgn rgnTemp; //Save temporary region
         int iX = 0;
         do
         {
-            //跳过透明色找到下一个非透明色的点.
+            //Skip the transparent color and find the next non-transparent color point.
             while (iX < bit.bmWidth && GetColorBritness(memDC.GetPixel(iX, y)) <= threshold)
                 iX++;
-            int iLeftX = iX; //记住这个起始点
+            int iLeftX = iX; //Remember this starting point
 
-            //寻找下个透明色的点
+            //Find the next transparent point
             while (iX < bit.bmWidth && GetColorBritness(memDC.GetPixel(iX, y)) > threshold)
                 ++iX;
 
-            //创建一个包含起点与重点间高为1像素的临时“region”
+            //Create a temporary "region" containing a height of 1 pixel between the starting point and the focus
             rgnTemp.CreateRectRgn(iLeftX, y, iX, y + 1);
             rgn.CombineRgn(&rgn, &rgnTemp, RGN_OR);
 
-            //删除临时"region",否则下次创建时和出错
+            //Delete the temporary "region", otherwise an error will occur the next time it is created
             rgnTemp.DeleteObject();
         } while (iX < bit.bmWidth);
     }

@@ -1,26 +1,26 @@
 ﻿#pragma once
 #include "BaseDialog.h"
 
-// CAppAlreadyRuningDlg 对话框
+// CAppAlreadyRuningDlg dialog box
 
 class CAppAlreadyRuningDlg : public CBaseDialog
 {
     DECLARE_DYNAMIC(CAppAlreadyRuningDlg)
 
 public:
-    CAppAlreadyRuningDlg(HWND handel, CWnd* pParent = nullptr);   // 标准构造函数
+    CAppAlreadyRuningDlg(HWND handel, CWnd* pParent = nullptr);   // Standard constructor
     virtual ~CAppAlreadyRuningDlg();
 
-    // 对话框数据
+    // Dialog data
 #ifdef AFX_DESIGN_TIME
     enum { IDD = IDD_APP_ALREAD_RUNING_DIALOG };
 #endif
 
 private:
-    HWND m_handle{};        //正在运行的TrafficMonitor进程主窗口的句柄
+    HWND m_handle{};        //Handle to the main window of the running TrafficMonitor process
 
 protected:
-    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
     virtual CString GetDialogName() const override;
 
     DECLARE_MESSAGE_MAP()

@@ -1,4 +1,4 @@
-﻿// OptionsDlg.cpp: 实现文件
+﻿// OptionsDlg.cpp: Implementation file
 //
 
 #include "pch.h"
@@ -7,7 +7,7 @@
 #include "afxdialogex.h"
 
 
-// COptionsDlg 对话框
+// COptionsDlg dialog box
 
 IMPLEMENT_DYNAMIC(COptionsDlg, CDialog)
 
@@ -32,25 +32,25 @@ BEGIN_MESSAGE_MAP(COptionsDlg, CDialog)
 END_MESSAGE_MAP()
 
 
-// COptionsDlg 消息处理程序
+// COptionsDlg message handler
 
 
 BOOL COptionsDlg::OnInitDialog()
 {
     CDialog::OnInitDialog();
 
-    // TODO:  在此添加额外的初始化
-    //初始化控件状态
+    // TODO: Add additional initialization here
+    //Initialize control state
     CheckDlgButton(IDC_SHOW_SECOND_CHECK, m_data.show_second);
     //CheckDlgButton(IDC_SHOW_LABEL_CHECK, m_data.show_label_text);
 
     return TRUE;  // return TRUE unless you set the focus to a control
-                  // 异常: OCX 属性页应返回 FALSE
+                  // Exception: OCX property page should return FALSE
 }
 
 
 void COptionsDlg::OnBnClickedShowSecondCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.show_second = (IsDlgButtonChecked(IDC_SHOW_SECOND_CHECK) != 0);
 }

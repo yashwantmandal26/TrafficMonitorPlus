@@ -8,8 +8,8 @@ class CPdhCpuFreq : public CPdhQuery
 public:
     CPdhCpuFreq();
 
-    // 调用此函数获取CPU频率。
-    // 注意：第二次调用此函数开始才能获取到值，两次调用的时间不应过短，最好大于200毫秒
+    // Call this function to get the CPU frequency.
+    // Note: The value can only be obtained after calling this function for the second time. The time between the two calls should not be too short, preferably greater than 200 milliseconds.
     bool GetCpuFreq(float& freq);
 
 private:

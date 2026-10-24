@@ -71,7 +71,7 @@ void CImage2DEffect::RecreateUnmodifiableResource(Microsoft::WRL::ComPtr<ID3D10D
     float* vertex_position;
     float* vertex_texture;
 
-    // 左上角
+    // upper left corner
     vertex_position = vertexes.GetLeftTopVertex().position;
     vertex_position[0] = -1.f; // x
     vertex_position[1] = 1.f;  // y
@@ -80,7 +80,7 @@ void CImage2DEffect::RecreateUnmodifiableResource(Microsoft::WRL::ComPtr<ID3D10D
     vertex_texture[0] = 0.f; // u
     vertex_texture[1] = 0.f; // v
 
-    // 右上角
+    // upper right corner
     vertex_position = vertexes.GetRightTopVertex().position;
     vertex_position[0] = 1.f;
     vertex_position[1] = 1.f;
@@ -89,7 +89,7 @@ void CImage2DEffect::RecreateUnmodifiableResource(Microsoft::WRL::ComPtr<ID3D10D
     vertex_texture[0] = 1.f;
     vertex_texture[1] = 0.f;
 
-    // 右下角
+    // lower right corner
     vertex_position = vertexes.GetRightBottomVertex().position;
     vertex_position[0] = 1.f;
     vertex_position[1] = -1.f;
@@ -98,7 +98,7 @@ void CImage2DEffect::RecreateUnmodifiableResource(Microsoft::WRL::ComPtr<ID3D10D
     vertex_texture[0] = 1.f;
     vertex_texture[1] = 1.f;
 
-    // 左下角
+    // lower left corner
     vertex_position = vertexes.GetLeftBottomVertex().position;
     vertex_position[0] = -1.f;
     vertex_position[1] = -1.f;

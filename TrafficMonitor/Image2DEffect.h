@@ -10,15 +10,15 @@ namespace D3DQuadrangle
     const CShader& GetVsShader();
 
     /**
-     * @brief 由三角形012和三角形132组成的四边形，顶点序号见VERTEX_INDEX_LIST
+     * @brief A quadrilateral composed of triangle 012 and triangle 132. See VERTEX_INDEX_LIST for vertex number.
      *
-     * @tparam Vertex 顶点类型
+     * @tparam Vertex vertex type
      */
     template <class Vertex>
     struct QuadrangleVertexs
     {
         /**
-         * @brief 由三角形012和三角形123组成的四边形，下面是顶点排列顺序： \n
+         * @brief A quadrilateral composed of triangle 012 and triangle 123. The following is the order of the vertices: \n
          * 1·--------------·2 \n
          *  |              |  \n
          *  |              |  \n
@@ -64,7 +64,7 @@ struct Image2DVertex
 };
 
 /**
- * @brief 默认vertex shader的输入输出定义 \n
+ * @brief Default vertex shader input and output definition \n
  struct VsInput{                          \n
    float4 position : POSITION;            \n
    float2 texcoord : TEXCOORD;            \n
@@ -84,7 +84,7 @@ private:
     Microsoft::WRL::ComPtr<ID3DBlob> m_p_ps_byte_code{};
     Microsoft::WRL::ComPtr<ID3D10Texture2D> m_p_input{};
     Microsoft::WRL::ComPtr<ID3D10Texture2D> m_p_output{};
-    //内部使用
+    //Internal use
     Microsoft::WRL::ComPtr<ID3D10InputLayout> m_p_input_layout{};
     Microsoft::WRL::ComPtr<ID3D10Buffer> m_p_vertex_buffer{};
     Microsoft::WRL::ComPtr<ID3D10Buffer> m_p_index_buffer{};

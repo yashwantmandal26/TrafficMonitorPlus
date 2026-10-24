@@ -1,4 +1,4 @@
-﻿// CLinkStatic.cpp: 实现文件
+﻿// CLinkStatic.cpp: implementation file
 
 #include "stdafx.h"
 #include "TrafficMonitor.h"
@@ -46,7 +46,7 @@ END_MESSAGE_MAP()
 
 
 
-// CLinkStatic 消息处理程序
+// CLinkStatic message handler
 
 bool CLinkStatic::IsLinkValid() const
 {
@@ -55,7 +55,7 @@ bool CLinkStatic::IsLinkValid() const
 
 void CLinkStatic::OnMouseMove(UINT nFlags, CPoint point)
 {
-	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	// TODO: Add message handler code and/or call defaults here
 	TRACKMOUSEEVENT tme;
 	tme.cbSize = sizeof(tme);
 	tme.hwndTrack = m_hWnd;
@@ -67,11 +67,11 @@ void CLinkStatic::OnMouseMove(UINT nFlags, CPoint point)
 
 void CLinkStatic::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	// TODO: Add message handler code and/or call defaults here
 	if (m_link_is_url)
 	{
 		if (!m_strURL.IsEmpty())
-			ShellExecute(NULL, _T("open"), m_strURL, NULL, NULL, SW_SHOW);	//打开超链接
+			ShellExecute(NULL, _T("open"), m_strURL, NULL, NULL, SW_SHOW);	//Open hyperlink
 	}
 	else
 	{
@@ -84,7 +84,7 @@ void CLinkStatic::OnLButtonUp(UINT nFlags, CPoint point)
 
 void CLinkStatic::OnMouseHover(UINT nFlags, CPoint point)
 {
-	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	// TODO: Add message handler code and/or call defaults here
 	if (!m_bHot)
 	{
 		m_bHot = true;
@@ -99,7 +99,7 @@ void CLinkStatic::OnMouseHover(UINT nFlags, CPoint point)
 
 void CLinkStatic::OnMouseLeave()
 {
-	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	// TODO: Add message handler code and/or call defaults here
 	m_bHot = false;
 	Invalidate();
 }
@@ -107,7 +107,7 @@ void CLinkStatic::OnMouseLeave()
 
 BOOL CLinkStatic::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 {
-	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	// TODO: Add message handler code and/or call defaults here
 	if (IsLinkValid() && m_bHot)
 	{
 		::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(32649)));
@@ -122,9 +122,9 @@ BOOL CLinkStatic::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 void CLinkStatic::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
-					   // TODO: 在此处添加消息处理程序代码
-					   // 不为绘图消息调用 CStatic::OnPaint()
-	//准备工作
+					   // TODO: add message handler code here
+					   // CStatic::OnPaint() is not called for drawing messages
+	//Preparation
     if (m_hover_font.GetSafeHandle() == NULL)
     {
         LOGFONT lf;
@@ -148,9 +148,9 @@ void CLinkStatic::OnPaint()
 	dc.SetBkMode(TRANSPARENT);
 	CRect rect;
 	this->GetClientRect(&rect);
-	//画背景
+	//Paint background
 	dc.FillSolidRect(rect, m_back_color);
-	///输出文字
+	///output text
     CString text;
     GetWindowText(text);
 	if (text.GetLength()>0)
@@ -162,7 +162,7 @@ void CLinkStatic::OnPaint()
 
 void CLinkStatic::PreSubclassWindow()
 {
-	// TODO: 在此添加专用代码和/或调用基类
+	// TODO: Add specialized code here and/or call the base class
 	DWORD dwStyle = GetStyle();
 	::SetWindowLong(GetSafeHwnd(), GWL_STYLE, dwStyle | SS_NOTIFY);
 

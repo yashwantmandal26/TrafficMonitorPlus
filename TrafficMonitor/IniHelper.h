@@ -1,17 +1,17 @@
-﻿//ini读写类
-//使用时将ini文件路径通过构造函数参数传递
-//在向ini文件写入数据时，需要在最后调用Save()函数以将更改保存到文件
-//默认以UTF8_BOM编码保存，如果要以ANSI保存，请调用SetSaveAsUTF8(false);
+﻿//ini reading and writing class
+//Pass the ini file path through the constructor parameter when using
+//When writing data to an ini file, the Save() function needs to be called at the end to save the changes to the file
+//By default, it is saved in UTF8_BOM encoding. If you want to save in ANSI, please call SetSaveAsUTF8(false);
 #pragma once
 
 class CIniHelper
 {
 public:
-	// 从磁盘加载ini文件
-	// file_path：文件路径
-	// force_utf8：如果为true，则强制以UTF8编码解析，否则，仅当含有UTF8 BOM时才以UTF8编码解析
+	// Load ini file from disk
+	// file_path: file path
+	// force_utf8: If true, it will be forced to be parsed in UTF8 encoding. Otherwise, it will be parsed in UTF8 encoding only when it contains a UTF8 BOM.
 	CIniHelper(const wstring& file_path, bool force_utf8 = false);
-    // 从资源文件加载ini (只能读取)
+    // Load ini from resource file (read only)
     CIniHelper(UINT id, bool is_utf8 = true);
     CIniHelper();
 	~CIniHelper();
@@ -27,27 +27,27 @@ public:
 	int GetInt(const wchar_t * AppName, const wchar_t * KeyName, int default_value) const;
 	void WriteBool(const wchar_t * AppName, const wchar_t * KeyName, bool value);
 	bool GetBool(const wchar_t * AppName, const wchar_t * KeyName, bool default_value) const;
-	void WriteIntArray(const wchar_t * AppName, const wchar_t * KeyName, const int* values, int size);		//写入一个int数组，元素个数为size
-	void GetIntArray(const wchar_t * AppName, const wchar_t * KeyName, int* values, int size, int default_value = 0) const;		//读取一个int数组，储存到values，元素个数为size
+	void WriteIntArray(const wchar_t * AppName, const wchar_t * KeyName, const int* values, int size);		//Write an int array with the number of elements size
+	void GetIntArray(const wchar_t * AppName, const wchar_t * KeyName, int* values, int size, int default_value = 0) const;		//Read an int array and store it in values. The number of elements is size.
 	void WriteBoolArray(const wchar_t * AppName, const wchar_t * KeyName, const bool* values, int size);
 	void GetBoolArray(const wchar_t * AppName, const wchar_t * KeyName, bool* values, int size, bool default_value = false) const;
-    void WriteStringList(const wchar_t* AppName, const wchar_t* KeyName, const vector<wstring>& values);      //写入一个字符串列表，由于保存到ini文件中时字符串前后会加上引号，所以字符串中不能包含引号
+    void WriteStringList(const wchar_t* AppName, const wchar_t* KeyName, const vector<wstring>& values);      //Write a list of strings. Since quotation marks will be added before and after the string when saving to the ini file, the string cannot contain quotation marks.
     void GetStringList(const wchar_t* AppName, const wchar_t* KeyName, vector<wstring>& values, const vector<wstring>& default_value) const;
 
-    // 获取带有指定前缀的所有AppName（不含前缀）
+    // Get all AppNames with the specified prefix (without prefix)
     vector<wstring> GetAllAppName(const wstring& prefix) const;
-    // 获取一个AppName下所有键值对
+    // Get all key-value pairs under an AppName
     void GetAllKeyValues(const wstring& AppName, std::map<wstring, wstring>& map) const;
 
-	//移除一个段
+	//remove a segment
 	bool RemoveSection(const wstring& AppName);
 
-	bool Save();		//将ini文件保存到文件，成功返回true
+	bool Save();		//Save ini file to file, return true successfully
 
 protected:
 	wstring m_file_path;
 	wstring m_ini_str;
-	bool m_save_as_utf8{ true };		//是否以及UTF8编码保存
+	bool m_save_as_utf8{ true };		//Whether and UTF8 encoding to save
 
     static void UnEscapeString(wstring& str);
     void _WriteString(const wchar_t* AppName, const wchar_t* KeyName, const wstring& str);

@@ -28,11 +28,11 @@ public:
     };
 };
 
-// 皆不保证多线程操作安全
+// Neither guarantees the safety of multi-threaded operations.
 /**
- * @brief CNullable<T>的默认删除器，注意重载operator()的参数为T*
+ * @brief The default deleter of CNullable<T>, please note that the parameter of overloaded operator() is T*
  *
- * @tparam T 要删除的类型
+ * @tparam T The type to delete
  */
 template <class T>
 struct NullableDefaultDeleter
@@ -43,10 +43,10 @@ struct NullableDefaultDeleter
     }
 };
 /**
- * @brief 可空对象，允许对象在无默认构造函数的情况下仍然可以执行默认构造，代价是必须在使用对象之前执行Construct方法
+ * @brief A nullable object allows an object to still perform default construction without a default constructor, at the cost of having to execute the Construct method before using the object.
  *
- * @tparam T 实际存储的对象
- * @tparam Deleter T的删除器
+ * @tparam T the actual stored object
+ * @tparam Deleter T's deleter
  */
 template <class T, class Deleter = NullableDefaultDeleter<T>>
 class CNullable
@@ -208,10 +208,10 @@ auto MakeNullableObject(Deleter deleter)
 }
 
 /**
- * @brief 可延迟构造的对象，用于预先分配内存，在有使用该对象的请求时立即构造此对象，对象必须可默认构造
+ * @brief A lazily constructible object used to pre-allocate memory and construct this object immediately when there is a request to use the object. The object must be default constructible
  *
- * @tparam T 要被应用这一特性的类型
- * @tparam Deleter T的删除器，默认为NullableDefaultDeleter<T>
+ * @tparam T The type to which this attribute should be applied
+ * @tparam Deleter T’s deleter, defaults to NullableDefaultDeleter<T>
  */
 template <class T, class Deleter = NullableDefaultDeleter<T>>
 class CLazyConstructable

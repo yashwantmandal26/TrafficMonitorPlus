@@ -1,5 +1,5 @@
 ﻿// CColorStatic
-//派生自CStatic，用于显示颜色的Static控件
+//Derived from CStatic, a Static control used to display colors
 #pragma once
 #define WM_STATIC_CLICKED (WM_USER + 1001)
 
@@ -11,17 +11,17 @@ public:
 	CColorStatic();
 	virtual ~CColorStatic();
 
-	void SetFillColor(COLORREF fill_color);		//设置要填充单一的背景色
-	void SetColorNum(int color_num);			//设置颜色的数量
+	void SetFillColor(COLORREF fill_color);		//Set a single background color to fill
+	void SetColorNum(int color_num);			//Set the number of colors
 	void SetFillColor(int index, COLORREF fill_color);
-	void SetLinkCursor(bool link_cursor = true);		//设置指向控件时光标变成超链接形状
+	void SetLinkCursor(bool link_cursor = true);		//Set the cursor to become a hyperlink shape when pointing to a control
     void EnableWindow(bool enable);
 
 protected:
 	//COLORREF m_fill_color{ RGB(255, 255,255) };
 	vector<COLORREF> m_colors;
-	bool m_hover{ false };		//当鼠标指向控件时为true
-	bool m_link_cursor{ false };	//是否启用超链接形状的光标
+	bool m_hover{ false };		//True when the mouse points to the control
+	bool m_link_cursor{ false };	//Whether to enable hyperlink-shaped cursor
 
 protected:
 	DECLARE_MESSAGE_MAP()

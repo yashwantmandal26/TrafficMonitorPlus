@@ -41,11 +41,11 @@ int CCPUUsage::GetCpuUsage(bool use_cpu_time)
     }
     else
     {
-        //如果通过pdh获取CPU利用率失败，采用GetSystemTimes获取
+        //If obtaining the CPU utilization through pdh fails, use GetSystemTimes to obtain it.
         if (!m_pdh_cup_usage_query.GetCPUUsage(cpu_usage))
         {
             cpu_usage = GetCpuUsageByGetSystemTimes();
-            //写入日志
+            //write log
             //static bool write_log = false;
             //if (!write_log)
             //{
@@ -76,7 +76,7 @@ int CCPUUsage::GetCpuUsageByGetSystemTimes()
     }
     else
     {
-        //（总的时间-空闲时间）/总的时间=占用cpu的时间就是使用率
+        //(Total time - idle time)/Total time = The time occupied by the CPU is the usage rate
         cpu_usage = static_cast<int>(abs((kernel + user - idle) * 100 / (kernel + user)));
     }
     m_preidleTime = idleTime;

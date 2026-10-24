@@ -1,8 +1,8 @@
 ﻿#pragma once
-// 这是一个带微调按钮的Edit控件，在CEdit右侧附加一个微调按钮，请预留空间
+// This is an Edit control with a spin button. A spin button is attached to the right side of CEdit. Please reserve space.
 // CSpinEdit
 
-//微调按钮点击消息。WPARAM: CSpinButtonCtrl的指针，LPARAM: LPNMUPDOWN
+//Spinner button click message. WPARAM: pointer to CSpinButtonCtrl, LPARAM: LPNMUPDOWN
 #define WM_SPIN_EDIT_POS_CHANGED (WM_USER + 1010)
 
 class CSpinEdit : public CEdit
@@ -13,13 +13,13 @@ public:
     CSpinEdit();
     virtual ~CSpinEdit();
 
-    void SetRange(short lower, short upper, short step = 1);        // 设置文本框中的数值范围
-    void SetValue(int value);                       //设置文本框中的数值
-    int GetValue();                                 //获取文本框中的数值
-    void SetMouseWheelEnable(bool enable);          //设置是否允许响应鼠标滚轮
+    void SetRange(short lower, short upper, short step = 1);        // Set the range of values in the text box
+    void SetValue(int value);                       //Set the value in the text box
+    int GetValue();                                 //Get the value in the text box
+    void SetMouseWheelEnable(bool enable);          //Set whether to allow response to the mouse wheel
 
 protected:
-    CSpinButtonCtrl m_spin;                         //微调按钮控件
+    CSpinButtonCtrl m_spin;                         //Spin button control
     int m_step{ 1 };
     int m_spin_width{};
     bool m_mouse_wheel_enable{ true };

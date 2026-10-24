@@ -1,5 +1,5 @@
 ﻿
-// TrafficMonitor.cpp : 定义应用程序的类行为。
+// TrafficMonitor.cpp: Defines the class behavior of the application.
 //
 
 #include "stdafx.h"
@@ -37,15 +37,15 @@ END_MESSAGE_MAP()
 CTrafficMonitorApp* CTrafficMonitorApp::self = NULL;
 
 
-// CTrafficMonitorApp 构造
+// CTrafficMonitorApp construct
 CTrafficMonitorApp::CTrafficMonitorApp()
 {
     self = this;
-    // 支持重新启动管理器
+    // Support restart manager
     //m_dwRestartManagerSupportFlags = AFX_RESTART_MANAGER_SUPPORT_RESTART;
 
-    // TODO: 在此处添加构造代码，
-    // 将所有重要的初始化放置在 InitInstance 中
+    // TODO: Add construction code here,
+    // Place all important initialization in InitInstance
     CRASHREPORT::StartCrashReport();
 #ifndef DISABLE_WINDOWS_WEB_EXPERIENCE_DETECTOR
     if (m_win_version.IsWindows11OrLater())
@@ -77,13 +77,13 @@ void CTrafficMonitorApp::LoadConfig()
 {
     CSettingsHelper ini;
 
-    //常规设置
+    //General settings
     m_general_data.check_update_when_start = ini.GetBool(_T("general"), _T("check_update_when_start"), true);
     //m_general_data.allow_skin_cover_font = ini.GetBool(_T("general"), _T("allow_skin_cover_font"), true);
     //m_general_data.allow_skin_cover_text = ini.GetBool(_T("general"), _T("allow_skin_cover_text"), true);
     m_general_data.show_all_interface = ini.GetBool(L"general", L"show_all_interface", false);
-    bool is_chinese_language{ m_str_table.IsSimplifiedChinese() };     //当前语言是否为简体中文
-    m_general_data.update_source = ini.GetInt(L"general", L"update_source", 0);   //如果当前语言为简体，则默认更新源为Gitee，否则为GitHub
+    bool is_chinese_language{ m_str_table.IsSimplifiedChinese() };     //Whether the current language is Simplified Chinese
+    m_general_data.update_source = ini.GetInt(L"general", L"update_source", 0);   //If the current language is Simplified, the default update source is Gitee, otherwise it is GitHub
     m_general_data.cpu_usage_acquire_method = static_cast<GeneralSettingData::CpuUsageAcquireMethod>(ini.GetInt(L"general", L"cpu_usage_acquire_method", GeneralSettingData::CA_PDH));
     m_general_data.monitor_time_span = ini.GetInt(L"general", L"monitor_time_span", 1000);
     if (m_general_data.monitor_time_span < MONITOR_TIME_SPAN_MIN || m_general_data.monitor_time_span > MONITOR_TIME_SPAN_MAX)
@@ -95,14 +95,14 @@ void CTrafficMonitorApp::LoadConfig()
     ini.GetStringList(L"general", L"connections_hide", connections_hide, std::vector<std::wstring>{});
     m_general_data.connections_hide.FromVector(connections_hide);
 
-    //Windows10颜色模式设置
+    //Windows 10 color mode settings
     bool is_windows10_light_theme = CWindowsSettingHelper::IsWindows10LightTheme();
     if (is_windows10_light_theme)
         CCommon::SetColorMode(ColorMode::Light);
     else
         CCommon::SetColorMode(ColorMode::Default);
 
-    //主窗口设置
+    //Main window settings
     m_cfg_data.m_transparency = ini.GetInt(_T("config"), _T("transparency"), 80);
     m_main_wnd_data.m_always_on_top = ini.GetBool(_T("config"), _T("always_on_top"), true);
     m_main_wnd_data.m_lock_window_pos = ini.GetBool(_T("config"), _T("lock_window_pos"), false);
@@ -117,7 +117,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_cfg_data.m_hide_main_window = ini.GetBool(_T("config"), _T("hide_main_window"), false);
     m_cfg_data.m_connection_name = CCommon::UnicodeToStr(ini.GetString(L"connection", L"connection_name", L"").c_str());
     m_cfg_data.m_skin_name = ini.GetString(_T("config"), _T("skin_selected"), _T(""));
-    if (m_cfg_data.m_skin_name.substr(0, 8) == L".\\skins\\")       //如果读取到的皮肤名称前面有".\\skins\\"，则把它删除。（用于和前一个版本保持兼容性）
+    if (m_cfg_data.m_skin_name.substr(0, 8) == L".\\skins\\")       //If the skin name read has ".\\skins\\" in front of it, delete it. (To maintain compatibility with the previous version)
         m_cfg_data.m_skin_name = m_cfg_data.m_skin_name.substr(7);
     CSkinManager::SkinNameNormalize(m_cfg_data.m_skin_name);
 
@@ -125,14 +125,14 @@ void CTrafficMonitorApp::LoadConfig()
     m_cfg_data.skin_name_dark_mode = ini.GetString(L"skins", L"skin_name_dark_mode", L"");
     m_cfg_data.skin_name_light_mode = ini.GetString(L"skins", L"skin_name_light_mode", L"");
 
-    m_cfg_data.m_notify_icon_selected = ini.GetInt(_T("config"), _T("notify_icon_selected"), (m_win_version.IsWindows7() || m_win_version.IsWindows8Or8point1() ? 2 : m_cfg_data.m_dft_notify_icon));       //Win7/8/8.1默认使用蓝色通知区图标，因为隐藏通知区图标后白色图标会看不清，其他系统默认使用白色图标
+    m_cfg_data.m_notify_icon_selected = ini.GetInt(_T("config"), _T("notify_icon_selected"), (m_win_version.IsWindows7() || m_win_version.IsWindows8Or8point1() ? 2 : m_cfg_data.m_dft_notify_icon));       //Win7/8/8.1 uses blue notification area icons by default, because the white icons will not be visible clearly after hiding the notification area icons. Other systems use white icons by default.
     m_cfg_data.m_notify_icon_auto_adapt = ini.GetBool(_T("config"), _T("notify_icon_auto_adapt"), true);
     if (m_cfg_data.m_notify_icon_auto_adapt)
         AutoSelectNotifyIcon();
     m_main_wnd_data.swap_up_down = ini.GetBool(_T("config"), _T("swap_up_down"), false);
     m_main_wnd_data.hide_main_wnd_when_fullscreen = ini.GetBool(_T("config"), _T("hide_main_wnd_when_fullscreen"), true);
 
-    //由于主窗口的文本颜色、字体、显示文本设置不再从配置文件读取，这些设置保存在每个皮肤的单独设置中，因此这里只将它们初始化为固定的值
+    //Since the main window's text color, font, and display text settings are no longer read from the configuration file, these settings are saved in separate settings for each skin, so they are only initialized to fixed values here.
     m_main_wnd_data.text_colors[TDI_UP] = RGB(255, 255, 255);
     m_main_wnd_data.specify_each_item_color = false;
     m_main_wnd_data.font.name = m_str_table.GetLanguageInfo().default_font_name.c_str();
@@ -169,10 +169,10 @@ void CTrafficMonitorApp::LoadConfig()
     m_general_data.mainboard_temp_tip.enable = ini.GetBool(L"notify_tip", L"mainboard_temperature_tip_enable", false);
     m_general_data.mainboard_temp_tip.tip_value = ini.GetInt(L"notify_tip", L"mainboard_temperature_tip_value", 80);
 
-    //任务栏窗口设置
+    //Taskbar window settings
     m_taskbar_data.back_color = ini.GetInt(_T("task_bar"), _T("task_bar_back_color"), m_taskbar_data.dft_back_color);
     m_taskbar_data.transparent_color = ini.GetInt(_T("task_bar"), _T("transparent_color"), m_taskbar_data.dft_transparent_color);
-    if (m_taskbar_data.IsTaskbarTransparent()) //如果任务栏背景透明，则需要将颜色转换一下
+    if (m_taskbar_data.IsTaskbarTransparent()) //If the taskbar background is transparent, you need to convert the color
     {
         CCommon::TransparentColorConvert(m_taskbar_data.back_color);
         CCommon::TransparentColorConvert(m_taskbar_data.transparent_color);
@@ -186,7 +186,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_taskbar_data.show_taskbar_wnd_in_secondary_display = ini.GetBool(L"task_bar", L"show_taskbar_wnd_in_secondary_display", false);
     m_taskbar_data.secondary_display_index = ini.GetInt(L"task_bar", L"secondary_display_index", 0);
 
-    //不含温度监控的版本，不显示温度监控相关项目
+    //The version without temperature monitoring does not display temperature monitoring related items.
 #ifdef WITHOUT_TEMPERATURE
     m_taskbar_data.display_item.Remove(TDI_CPU_TEMP);
     m_taskbar_data.display_item.Remove(TDI_GPU_TEMP);
@@ -194,7 +194,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_taskbar_data.display_item.Remove(TDI_MAIN_BOARD_TEMP);
 #endif
 
-    //如果选项设置中关闭了某个硬件监控，则不显示对应的温度监控相关项目
+    //If a certain hardware monitoring is turned off in the option settings, the corresponding temperature monitoring related items will not be displayed.
     if (!m_general_data.IsHardwareEnable(HI_CPU))
         m_taskbar_data.display_item.Remove(TDI_CPU_TEMP);
     if (!m_general_data.IsHardwareEnable(HI_GPU))
@@ -210,7 +210,7 @@ void CTrafficMonitorApp::LoadConfig()
 
     //m_taskbar_data.swap_up_down = ini.GetBool(_T("task_bar"), _T("task_bar_swap_up_down"), false);
 
-    if (m_taskbar_data.back_color == 0 && !m_taskbar_data.text_colors.empty() && m_taskbar_data.text_colors.begin()->second.label == 0)     //万一读取到的背景色和文本颜色都为0（黑色），则将文本色和背景色设置成默认颜色
+    if (m_taskbar_data.back_color == 0 && !m_taskbar_data.text_colors.empty() && m_taskbar_data.text_colors.begin()->second.label == 0)     //If the read background color and text color are both 0 (black), set the text color and background color to the default color
     {
         m_taskbar_data.back_color = m_taskbar_data.dft_back_color;
         m_taskbar_data.text_colors.begin()->second.label = m_taskbar_data.dft_text_colors;
@@ -221,7 +221,7 @@ void CTrafficMonitorApp::LoadConfig()
     default_font.size = 9;
     ini.LoadFontData(_T("task_bar"), m_taskbar_data.font, default_font);
 
-    //载入显示文本设置
+    //Load display text settings
     ini.LoadDisplayStr(L"task_bar", m_taskbar_data.disp_str, false);
     ini.LoadPluginDisplayStr(L"plugin_display_str_taskbar_window", m_taskbar_data.disp_str, false);
 
@@ -254,7 +254,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_taskbar_data.taskbar_left_space_win11 = ini.GetInt(L"task_bar", L"taskbar_left_space_win11", 160);
     m_taskbar_data.taskbar_right_space_win11 = ini.GetInt(L"task_bar", L"taskbar_right_space_win11", 280);
 
-    if (m_win_version.IsWindows10OrLater())     //只有Win10才支持自动适应系统深色/浅色主题
+    if (m_win_version.IsWindows10OrLater())     //Only Win10 supports automatically adapting to the system dark/light theme
         m_taskbar_data.auto_adapt_light_theme = ini.GetBool(L"task_bar", L"auto_adapt_light_theme", false);
     else
         m_taskbar_data.auto_adapt_light_theme = false;
@@ -282,7 +282,7 @@ void CTrafficMonitorApp::LoadConfig()
         m_taskbar_data.disable_d2d = true;
     m_taskbar_data.enable_colorful_emoji = ini.GetBool(L"task_bar", L"enable_colorful_emoji", true);
 
-    //其他设置
+    //Other settings
     //m_cfg_data.m_show_internet_ip = ini.GetBool(L"connection_details", L"show_internet_ip", false);
     m_cfg_data.m_use_log_scale = ini.GetBool(_T("histroy_traffic"), _T("use_log_scale"), true);
     m_cfg_data.m_sunday_first = ini.GetBool(_T("histroy_traffic"), _T("sunday_first"), true);
@@ -291,7 +291,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_notify_interval = ini.GetInt(_T("other"), _T("notify_interval"), 60);
     m_exit_when_start_by_restart_manager = ini.GetBool(_T("other"), _T("exit_when_start_by_restart_manager"), true);
     m_debug_log = ini.GetBool(_T("other"), _T("debug_log"), false);
-    //由于Win7系统中设置任务栏窗口透明色会导致任务栏窗口不可见，因此默认在Win7中禁用透明色的设定
+    //Since setting the transparent color of the taskbar window in Win7 system will cause the taskbar window to be invisible, the transparent color setting is disabled in Win7 by default.
     m_taksbar_transparent_color_enable = ini.GetBool(L"other", L"taksbar_transparent_color_enable", !m_win_version.IsWindows7());
     m_last_light_mode = ini.GetBool(L"other", L"last_light_mode", CWindowsSettingHelper::IsWindows10LightTheme());
     m_show_mouse_panetrate_tip = ini.GetBool(L"other", L"show_mouse_panetrate_tip", true);
@@ -302,7 +302,7 @@ void CTrafficMonitorApp::SaveConfig()
 {
     CSettingsHelper ini;
 
-    //常规设置
+    //General settings
     ini.WriteBool(_T("general"), _T("check_update_when_start"), m_general_data.check_update_when_start);
     //ini.WriteBool(_T("general"), _T("allow_skin_cover_font"), m_general_data.allow_skin_cover_font);
     //ini.WriteBool(_T("general"), _T("allow_skin_cover_text"), m_general_data.allow_skin_cover_text);
@@ -316,7 +316,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteInt(L"general", L"hardware_monitor_item", m_general_data.hardware_monitor_item);
     ini.WriteStringList(L"general", L"connections_hide", m_general_data.connections_hide.ToVector());
 
-    //主窗口设置
+    //Main window settings
     ini.WriteInt(L"config", L"transparency", m_cfg_data.m_transparency);
     ini.WriteBool(L"config", L"always_on_top", m_main_wnd_data.m_always_on_top);
     ini.WriteBool(L"config", L"lock_window_pos", m_main_wnd_data.m_lock_window_pos);
@@ -376,7 +376,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteBool(L"notify_tip", L"mainboard_temperature_tip_enable", m_general_data.mainboard_temp_tip.enable);
     ini.WriteInt(L"notify_tip", L"mainboard_temperature_tip_value", m_general_data.mainboard_temp_tip.tip_value);
 
-    //任务栏窗口设置
+    //Taskbar window settings
     ini.WriteInt(L"task_bar", L"task_bar_back_color", m_taskbar_data.back_color);
     ini.WriteInt(L"task_bar", L"transparent_color", m_taskbar_data.transparent_color);
     ini.WriteInt(L"task_bar", L"status_bar_color", m_taskbar_data.status_bar_color);
@@ -435,7 +435,7 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteBool(L"task_bar", L"disable_d2d", m_taskbar_data.disable_d2d);
     ini.WriteBool(L"task_bar", L"enable_colorful_emoji", m_taskbar_data.enable_colorful_emoji);
 
-    //其他设置
+    //Other settings
     //ini.WriteBool(L"connection_details", L"show_internet_ip", m_cfg_data.m_show_internet_ip);
     ini.WriteBool(L"histroy_traffic", L"use_log_scale", m_cfg_data.m_use_log_scale);
     ini.WriteBool(L"histroy_traffic", L"sunday_first", m_cfg_data.m_sunday_first);
@@ -454,7 +454,7 @@ void CTrafficMonitorApp::SaveConfig()
 
     ini.WriteString(L"app", L"version", VERSION);
 
-    //检查是否保存成功
+    //Check if saving is successful
     if (!ini.Save())
     {
         if (m_cannot_save_config_warning)
@@ -478,7 +478,7 @@ void CTrafficMonitorApp::LoadGlobalConfig()
 {
     bool portable_mode_default{ false };
     wstring global_cfg_path{ m_module_dir + L"global_cfg.ini" };
-    if (!CCommon::FileExist(global_cfg_path.c_str()))       //如果global_cfg.ini不存在，则根据AppData/Roaming/TrafficMonitor目录下是否存在config.ini来判断配置文件的保存位置
+    if (!CCommon::FileExist(global_cfg_path.c_str()))       //If global_cfg.ini does not exist, determine the storage location of the configuration file based on whether config.ini exists in the AppData/Roaming/TrafficMonitor directory.
     {
         portable_mode_default = !CCommon::FileExist((m_appdata_dir + L"config.ini").c_str());
     }
@@ -486,15 +486,15 @@ void CTrafficMonitorApp::LoadGlobalConfig()
     CIniHelper ini{ global_cfg_path };
     m_general_data.portable_mode = ini.GetBool(L"config", L"portable_mode", portable_mode_default);
 
-    //执行一次保存操作，以检查当前目录是否有写入权限
+    //Perform a save operation to check whether the current directory has write permissions
     m_module_dir_writable = ini.Save();
 
-    if (m_module_dir.find(CCommon::GetTemplateDir()) != wstring::npos)      //如果当前路径是在Temp目录下，则强制将数据保存到Appdata
+    if (m_module_dir.find(CCommon::GetTemplateDir()) != wstring::npos)      //If the current path is in the Temp directory, force the data to be saved to Appdata
     {
         m_module_dir_writable = false;
     }
 
-    if (!m_module_dir_writable)              //如果当前目录没有写入权限，则设置配置保存到AppData目录
+    if (!m_module_dir_writable)              //If the current directory does not have write permission, the setting configuration is saved to the AppData directory.
     {
         m_general_data.portable_mode = false;
     }
@@ -505,7 +505,7 @@ void CTrafficMonitorApp::SaveGlobalConfig()
     CIniHelper ini{ m_module_dir + L"global_cfg.ini" };
     ini.WriteBool(L"config", L"portable_mode", m_general_data.portable_mode);
 
-    //检查是否保存成功
+    //Check if saving is successful
     if (!ini.Save())
     {
         //if (m_cannot_save_global_config_warning)
@@ -542,16 +542,16 @@ void CTrafficMonitorApp::DPIFromWindow(CWnd* pWnd)
 
 void CTrafficMonitorApp::CheckUpdate(bool message)
 {
-    if (m_checking_update)      //如果还在检查更新，则直接返回
+    if (m_checking_update)      //If you are still checking for updates, return directly
         return;
     CFlagLocker update_locker(m_checking_update);
     CWaitCursor wait_cursor;
 
-    wstring version;        //程序版本
-    wstring link;           //下载链接
-    wstring contents_zh_cn; //更新内容（简体中文）
-    wstring contents_en;    //更新内容（English）
-    wstring contents_zh_tw; //更新内容（繁体中文）
+    wstring version;        //Program version
+    wstring link;           //Download link
+    wstring contents_zh_cn; //Update content (Simplified Chinese)
+    wstring contents_en;    //Update content（English）
+    wstring contents_zh_tw; //Update content (Traditional Chinese)
     CUpdateHelper update_helper;
     update_helper.SetUpdateSource(static_cast<CUpdateHelper::UpdateSource>(m_general_data.update_source));
     if (!update_helper.CheckForUpdate())
@@ -583,10 +583,10 @@ void CTrafficMonitorApp::CheckUpdate(bool message)
         }
         return;
     }
-    if (version > VERSION)      //如果服务器上的版本大于本地版本
+    if (version > VERSION)      //If the version on the server is greater than the local version
     {
         CString info;
-        //根据语言设置选择对应语言版本的更新内容
+        //Select the updated content of the corresponding language version according to the language settings
         wstring language_tag = m_str_table.GetLanguageInfo().bcp_47;
         wstring contents_lan;
         if (language_tag == L"zh-CN")
@@ -602,7 +602,7 @@ void CTrafficMonitorApp::CheckUpdate(bool message)
 
         if (AfxMessageBox(info, MB_YESNO | MB_ICONQUESTION) == IDYES)
         {
-            ShellExecute(NULL, _T("open"), link.c_str(), NULL, NULL, SW_SHOW);      //转到下载链接
+            ShellExecute(NULL, _T("open"), link.c_str(), NULL, NULL, SW_SHOW);      //Go to download link
         }
     }
     else
@@ -619,11 +619,11 @@ void CTrafficMonitorApp::CheckUpdateInThread(bool message)
 
 UINT CTrafficMonitorApp::CheckUpdateThreadFunc(LPVOID lpParam)
 {
-    CCommon::SetThreadLanguage(theApp.m_general_data.language.language_id);     //设置线程语言
-#ifndef _DEBUG      //DEBUG下不在启动时检查更新
-    theApp.CheckUpdate(lpParam);        //检查更新
+    CCommon::SetThreadLanguage(theApp.m_general_data.language.language_id);     //Set thread language
+#ifndef _DEBUG      //DEBUG does not check for updates at startup
+    theApp.CheckUpdate(lpParam);        //Check for updates
 #endif
-    //检测插件更新
+    //Detect plugin updates
     if (!theApp.m_plugins.GetPlugins().empty())
     {
         theApp.m_plugin_update.CheckForUpdate();
@@ -640,7 +640,7 @@ UINT CTrafficMonitorApp::InitOpenHardwareMonitorLibThreadFunc(LPVOID lpParam)
     {
         AfxMessageBox(OpenHardwareMonitorApi::GetErrorMessage().c_str(), MB_ICONERROR | MB_OK);
     }
-    //设置硬件监控的启用状态
+    //Set the enabled status of hardware monitoring
     theApp.UpdateOpenHardwareMonitorEnableState();
 #endif
     return 0;
@@ -650,12 +650,12 @@ bool  CTrafficMonitorApp::SetAutoRun(bool auto_run, bool task_scheduler)
 {
     if (task_scheduler)
     {
-        //使用任务计划的方式设置开机自启动
+        //Use task scheduling to set up auto-start at boot
         return SetAutoRunByTaskScheduler(auto_run);
     }
     else
     {
-        //使用添加注册表项的方式实现开机自启动
+        //Use the method of adding registry entries to achieve automatic startup at boot
         return SetAutoRunByRegistry(auto_run);
     }
 }
@@ -667,37 +667,37 @@ bool CTrafficMonitorApp::GetAutoRun(wstring* auto_run_path, bool task_scheduler)
 
     if (task_scheduler)
     {
-        //使用任务计划的方式实现开机自启动
+        //Use task scheduling to achieve automatic startup at boot
         return is_auto_start_task_active_for_this_user(auto_run_path);
     }
     else
     {
-        //使用添加注册表项的方式实现开机自启动
+        //Use the method of adding registry entries to achieve automatic startup at boot
         CRegKey key;
         if (key.Open(HKEY_CURRENT_USER, _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run")) != ERROR_SUCCESS)
         {
-            //打开注册表“Software\\Microsoft\\Windows\\CurrentVersion\\Run”失败，则返回false
+            //If opening the registry "Software\\Microsoft\\Windows\\CurrentVersion\\Run" fails, false will be returned.
             return false;
         }
         wchar_t buff[256];
         ULONG size{ 256 };
-        if (key.QueryStringValue(APP_NAME, buff, &size) == ERROR_SUCCESS)       //如果找到了“TrafficMonitor”键
+        if (key.QueryStringValue(APP_NAME, buff, &size) == ERROR_SUCCESS)       //If the "TrafficMonitor" key is found
         {
             if (auto_run_path != nullptr)
             {
-                //保存路径
+                //save path
                 *auto_run_path = buff;
-                //去掉前后的引号
+                //Remove the quotes around
                 if (auto_run_path->front() == L'\"')
                     *auto_run_path = auto_run_path->substr(1);
                 if (auto_run_path->back() = L'\"')
                     auto_run_path->pop_back();
             }
-            return (m_module_path_reg == buff); //如果“TrafficMonitor”的值是当前程序的路径，就返回true，否则返回false
+            return (m_module_path_reg == buff); //If the value of "TrafficMonitor" is the path of the current program, it returns true, otherwise it returns false.
         }
         else
         {
-            return false;       //没有找到“TrafficMonitor”键，返回false
+            return false;       //"TrafficMonitor" key not found, returns false
         }
     }
 }
@@ -705,15 +705,15 @@ bool CTrafficMonitorApp::GetAutoRun(wstring* auto_run_path, bool task_scheduler)
 bool CTrafficMonitorApp::SetAutoRunByRegistry(bool auto_run)
 {
     CRegKey key;
-    //打开注册表项
+    //Open registry key
     if (key.Open(HKEY_CURRENT_USER, _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run")) != ERROR_SUCCESS)
     {
         AfxMessageBox(CCommon::LoadText(IDS_AUTORUN_FAILED_NO_KEY), MB_OK | MB_ICONWARNING);
         return false;
     }
-    if (auto_run)       //写入注册表项
+    if (auto_run)       //Write registry key
     {
-        //通过注册表设置开机自启动项时删除计划任务中的自启动项
+        //Delete the auto-start item in the scheduled task when setting the auto-start item at startup through the registry
         SetAutoRunByTaskScheduler(false);
 
         if (key.SetStringValue(APP_NAME, m_module_path_reg.c_str()) != ERROR_SUCCESS)
@@ -722,9 +722,9 @@ bool CTrafficMonitorApp::SetAutoRunByRegistry(bool auto_run)
             return false;
         }
     }
-    else        //删除注册表项
+    else        //Delete registry key
     {
-        //删除前先检查注册表项是否存在，如果不存在，则直接返回
+        //Before deleting, check whether the registry key exists. If it does not exist, return directly.
         wchar_t buff[256];
         ULONG size{ 256 };
         if (key.QueryStringValue(APP_NAME, buff, &size) != ERROR_SUCCESS)
@@ -740,10 +740,10 @@ bool CTrafficMonitorApp::SetAutoRunByRegistry(bool auto_run)
 
 bool CTrafficMonitorApp::SetAutoRunByTaskScheduler(bool auto_run)
 {
-    bool succeed = delete_auto_start_task_for_this_user();     //先删除开机自启动
+    bool succeed = delete_auto_start_task_for_this_user();     //Delete auto-start at boot first
     if (auto_run)
     {
-        //通过计划任务设置开机自启动项时删除注册表中的自启动项
+        //Delete the auto-start items in the registry when setting the auto-start items at startup through scheduled tasks
         SetAutoRunByRegistry(false);
 
         succeed = create_auto_start_task_for_this_user(true);
@@ -794,13 +794,13 @@ CString CTrafficMonitorApp::GetSystemInfoString()
 
 void CTrafficMonitorApp::InitMenuResourse()
 {
-    //载入菜单
+    //loading menu
     CCommon::LoadMenuResource(m_main_menu, IDR_MENU1);
     CCommon::LoadMenuResource(m_main_menu_plugin, IDR_MENU1);
     CCommon::LoadMenuResource(m_taskbar_menu, IDR_TASK_BAR_MENU);
     CCommon::LoadMenuResource(m_taskbar_menu_plugin, IDR_TASK_BAR_MENU);
 
-    //为插件菜单添加额外项目
+    //Add extra items to plugin menu
     m_main_menu_plugin_sub_menu.CreatePopupMenu();
     m_main_menu_plugin_sub_menu.AppendMenu(MF_STRING | MF_ENABLED, ID_PLUGIN_OPTIONS, CCommon::LoadText(IDS_PLUGIN_OPTIONS, _T("...")));
     m_main_menu_plugin_sub_menu.AppendMenu(MF_STRING | MF_ENABLED, ID_PLUGIN_DETAIL, CCommon::LoadText(IDS_PLUGIN_INFO, _T("...")));
@@ -819,7 +819,7 @@ void CTrafficMonitorApp::InitMenuResourse()
     taskbar_menu_plugin->AppendMenu(MF_SEPARATOR);
     taskbar_menu_plugin->AppendMenu(MF_POPUP | MF_STRING, (UINT)m_taskbar_menu_plugin_sub_menu.m_hMenu, _T("<plugin name>"));
 
-    //为菜单项添加图标
+    //Add icons to menu items
     auto addIconsForMainWindowMenu = [&](const CMenu& menu)
     {
         CMenuIcon::AddIconToMenuItem(menu.GetSubMenu(0)->GetSafeHmenu(), 0, TRUE, GetMenuIcon(IDI_CONNECTION));
@@ -849,11 +849,11 @@ void CTrafficMonitorApp::InitMenuResourse()
         CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_APP_ABOUT, FALSE, GetMenuIcon(IDR_MAINFRAME));
         CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_APP_EXIT, FALSE, GetMenuIcon(IDI_EXIT));
     };
-    //主窗口右键菜单
+    //Main window right-click menu
     addIconsForMainWindowMenu(m_main_menu);
     addIconsForMainWindowMenu(m_main_menu_plugin);
 
-    //任务栏窗口右键菜单
+    //Taskbar window right-click menu
     auto addIconsForTaksbarWindowMenu = [&](const CMenu& menu)
     {
         CMenuIcon::AddIconToMenuItem(menu.GetSubMenu(0)->GetSafeHmenu(), 0, TRUE, GetMenuIcon(IDI_CONNECTION));
@@ -901,14 +901,14 @@ void CTrafficMonitorApp::AutoSelectNotifyIcon()
     if (m_win_version.GetMajorVersion() >= 10)
     {
         bool light_mode = CWindowsSettingHelper::IsWindows10LightTheme();
-        if (light_mode)     //浅色模式下，如果图标是白色，则改成黑色
+        if (light_mode)     //In light mode, if the icon is white, change it to black
         {
             if (m_cfg_data.m_notify_icon_selected == 0)
                 m_cfg_data.m_notify_icon_selected = 4;
             if (m_cfg_data.m_notify_icon_selected == 1)
                 m_cfg_data.m_notify_icon_selected = 5;
         }
-        else     //深色模式下，如果图标是黑色，则改成白色
+        else     //In dark mode, if the icon is black, change it to white
         {
             if (m_cfg_data.m_notify_icon_selected == 4)
                 m_cfg_data.m_notify_icon_selected = 0;
@@ -918,28 +918,28 @@ void CTrafficMonitorApp::AutoSelectNotifyIcon()
     }
 }
 
-// 唯一的一个 CTrafficMonitorApp 对象
+// The only CTrafficMonitorApp object
 
 CTrafficMonitorApp theApp;
 
 
-// CTrafficMonitorApp 初始化
+// CTrafficMonitorApp initialization
 
 BOOL CTrafficMonitorApp::InitInstance()
 {
-    //替换掉对话框程序的默认类名
+    //Replace the default class name of the dialog box program
     WNDCLASS wc;
-    ::GetClassInfo(AfxGetInstanceHandle(), _T("#32770"), &wc);       //MFC默认的所有对话框的类名为#32770
-    wc.lpszClassName = APP_CLASS_NAME;      //将对话框的类名修改为新类名
+    ::GetClassInfo(AfxGetInstanceHandle(), _T("#32770"), &wc);       //The default class names of all dialog boxes in MFC are #32770
+    wc.lpszClassName = APP_CLASS_NAME;      //Change the class name of the dialog box to the new class name
     AfxRegisterClass(&wc);
 
-    //设置配置文件的路径
+    //Set the path to the configuration file
     wchar_t path[MAX_PATH];
     GetModuleFileNameW(NULL, path, MAX_PATH);
     m_module_path = path;
     if (m_module_path.find(L' ') != wstring::npos)
     {
-        //如果路径中有空格，则在程序路径前后添加双引号
+        //If there are spaces in the path, add double quotes before and after the program path
         m_module_path_reg = L'\"';
         m_module_path_reg += m_module_path;
         m_module_path_reg += L'\"';
@@ -964,17 +964,17 @@ BOOL CTrafficMonitorApp::InitInstance()
         m_config_dir = m_appdata_dir;
     m_skin_path = m_module_dir + L"skins\\";
 #endif
-    //AppData里面的程序配置文件路径
+    //Program configuration file path in AppData
     m_config_path = m_config_dir + L"config.ini";
     m_history_traffic_path = m_config_dir + L"history_traffic.dat";
     m_log_path = m_config_dir + L"error.log";
 
     //#ifndef _DEBUG
-    //  //原来的、程序所在目录下的配置文件的路径
+    //  //The path to the original configuration file in the directory where the program is located
     //  wstring config_path_old = m_module_dir + L"config.ini";
     //  wstring history_traffic_path_old = m_module_dir + L"history_traffic.dat";
     //  wstring log_path_old = m_module_dir + L"error.log";
-    //  //如果程序所在目录下含有配置文件，则将其移动到AppData对应的目录下面
+    //  //If the directory where the program is located contains a configuration file, move it to the directory corresponding to AppData.
     //  CCommon::MoveAFile(config_path_old.c_str(), m_config_path.c_str());
     //  CCommon::MoveAFile(history_traffic_path_old.c_str(), m_history_traffic_path.c_str());
     //  CCommon::MoveAFile(log_path_old.c_str(), m_log_path.c_str());
@@ -982,13 +982,13 @@ BOOL CTrafficMonitorApp::InitInstance()
 
     LoadLanguageConfig();
 
-    //初始化界面语言
+    //Initialize interface language
     CCommon::SetThreadLanguage(m_general_data.language.language_id);
 
-    //初始化字符串资源
+    //Initialize string resources
     m_str_table.Init();
 
-    //检查是否已有实例正在运行
+    //Check if there is already an instance running
     CIniHelper ini{ m_config_path };
     m_no_multistart_warning = ini.GetBool(_T("other"), _T("no_multistart_warning"), false);
     LPCTSTR mutex_name{};
@@ -1008,11 +1008,11 @@ BOOL CTrafficMonitorApp::InitInstance()
             //CCommon::WriteLog(buff, _T(".\\start.log"));
             if (!m_no_multistart_warning)
             {
-                //查找已存在TrafficMonitor进程的主窗口的句柄
+                //Find the handle of the main window of the existing TrafficMonitor process
                 HWND exist_handel = ::FindWindow(APP_CLASS_NAME, NULL);
                 if (exist_handel != NULL)
                 {
-                    //弹出“TrafficMonitor已在运行”对话框
+                    //The "TrafficMonitor is already running" dialog box pops up
                     CAppAlreadyRuningDlg dlg(exist_handel);
                     dlg.DoModal();
                 }
@@ -1025,31 +1025,31 @@ BOOL CTrafficMonitorApp::InitInstance()
         }
     }
 
-    //初始化GDI+
+    //Initialize GDI+
     Gdiplus::GdiplusStartupInput gdiplusStartupInput;
     GdiplusStartup(&m_gdiplusToken, &gdiplusStartupInput, NULL);
 
-    //初始时使用屏幕DPI
+    //Use screen DPI initially
     DPIFromWindow(nullptr);
 
-    //载入插件
+    //Load plugin
     LoadPluginDisabledSettings();
     m_plugins.LoadPlugins();
 
-    //从ini文件载入设置
+    //Load settings from ini file
     LoadConfig();
 
     m_taskbar_default_style.LoadConfig();
 
     //SaveConfig();
 
-    // 如果一个运行在 Windows XP 上的应用程序清单指定要
-    // 使用 ComCtl32.dll 版本 6 或更高版本来启用可视化方式，
-    //则需要 InitCommonControlsEx()。  否则，将无法创建窗口。
+    // If an application running on Windows XP has a manifest that specifies
+    // Use ComCtl32.dll version 6 or higher to enable visual mode,
+    //InitCommonControlsEx() is required.  Otherwise, the window will not be created.
     INITCOMMONCONTROLSEX InitCtrls;
     InitCtrls.dwSize = sizeof(InitCtrls);
-    // 将它设置为包括所有要在应用程序中使用的
-    // 公共控件类。
+    // Set it to include all the
+    // Public control class.
     InitCtrls.dwICC = ICC_WIN95_CLASSES;
     InitCommonControlsEx(&InitCtrls);
 
@@ -1058,35 +1058,35 @@ BOOL CTrafficMonitorApp::InitInstance()
 
     AfxEnableControlContainer();
 
-    // 创建 shell 管理器，以防对话框包含
-    // 任何 shell 树视图控件或 shell 列表视图控件。
+    // Create a shell manager in case the dialog box contains
+    // Any shell tree view control or shell list view control.
     CShellManager* pShellManager = new CShellManager;
 
-    // 激活“Windows Native”视觉管理器，以便在 MFC 控件中启用主题
+    // Activate the "Windows Native" visual manager to enable themes in MFC controls
     CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows));
 
-    // 标准初始化
-    // 如果未使用这些功能并希望减小
-    // 最终可执行文件的大小，则应移除下列
-    // 不需要的特定初始化例程
-    // 更改用于存储设置的注册表项
-    // TODO: 应适当修改该字符串，
-    // 例如修改为公司或组织名
-    //SetRegistryKey(_T("TrafficMonitor Application"));        //暂不使用注册表保存数据
+    // Standard initialization
+    // If you are not using these features and wish to reduce
+    // final executable size, you should remove the following
+    // No specific initialization routine required
+    // Change the registry key used to store settings
+    // TODO: The string should be modified appropriately.
+    // For example, change it to a company or organization name
+    //SetRegistryKey(_T("TrafficMonitor Application")); //Do not use the registry to save data yet
 
-    //启动时检查更新
+    //Check for updates on startup
     if (m_general_data.check_update_when_start)
     {
         CheckUpdateInThread(false);
     }
 
 #ifndef WITHOUT_TEMPERATURE
-    //检测是否安装.net framework 4.5
+    //Check whether .net framework 4.5 is installed
     if (!CWindowsSettingHelper::IsDotNetFramework4Point5Installed())
     {
         if (theApp.m_show_dot_net_notinstalled_tip)
         {
-            if (AfxMessageBox(CCommon::LoadText(IDS_DOTNET_NOT_INSTALLED_TIP), MB_OKCANCEL | MB_ICONWARNING) == IDCANCEL)       //点击“取消”不再提示
+            if (AfxMessageBox(CCommon::LoadText(IDS_DOTNET_NOT_INSTALLED_TIP), MB_OKCANCEL | MB_ICONWARNING) == IDCANCEL)       //Click "Cancel" to stop prompting
             {
                 theApp.m_show_dot_net_notinstalled_tip = false;
                 SaveConfig();
@@ -1095,17 +1095,17 @@ BOOL CTrafficMonitorApp::InitInstance()
     }
     else
     {
-        //如果没有开启任何一项的硬件监控，则不初始化OpenHardwareMonitor
+        //If no hardware monitoring is enabled, OpenHardwareMonitor will not be initialized.
         if (theApp.m_general_data.IsHardwareEnable(HI_CPU) || theApp.m_general_data.IsHardwareEnable(HI_GPU)
             || theApp.m_general_data.IsHardwareEnable(HI_HDD) || theApp.m_general_data.IsHardwareEnable(HI_MBD))
         {
-            //启动初始化OpenHardwareMonitor的线程。由于OpenHardwareMonitor初始化需要一定的时间，为了防止启动时程序卡顿，将其放到后台线程中处理
+            //Start the thread that initializes OpenHardwareMonitor. Since the initialization of OpenHardwareMonitor takes a certain amount of time, in order to prevent the program from getting stuck during startup, it is processed in a background thread.
             InitOpenHardwareLibInThread();
         }
     }
 #endif
 
-    //执行测试代码
+    //Execute test code
 #ifdef _DEBUG
     CTest::Test();
 #endif
@@ -1117,13 +1117,13 @@ BOOL CTrafficMonitorApp::InitInstance()
     INT_PTR nResponse = dlg.DoModal();
     if (nResponse == IDOK)
     {
-        // TODO: 在此放置处理何时用
-        //  “确定”来关闭对话框的代码
+        // TODO: Put processing here when to use it
+        //  Code to close the dialog box with "OK"
     }
     else if (nResponse == IDCANCEL)
     {
-        // TODO: 在此放置处理何时用
-        //  “取消”来关闭对话框的代码
+        // TODO: Put processing here when to use it
+        //  "Cancel" code to close the dialog box
     }
     else if (nResponse == -1)
     {
@@ -1131,7 +1131,7 @@ BOOL CTrafficMonitorApp::InitInstance()
         TRACE(traceAppMsg, 0, "Warning: If using MFC controls in dialogs, cannot #define _AFX_NO_MFC_CONTROLS_IN_DIALOGS.\n");
     }
 
-    // 删除上面创建的 shell 管理器。
+    // Delete the shell manager created above.
     if (pShellManager != NULL)
     {
         delete pShellManager;
@@ -1141,8 +1141,8 @@ BOOL CTrafficMonitorApp::InitInstance()
     ControlBarCleanUp();
 #endif
 
-    // 由于对话框已关闭，所以将返回 FALSE 以便退出应用程序，
-    //  而不是启动应用程序的消息泵。
+    // Since the dialog box has been closed, FALSE will be returned to exit the application.
+    //  Instead of starting the application's message pump.
     return FALSE;
 }
 
@@ -1170,12 +1170,12 @@ void CTrafficMonitorApp::UpdateOpenHardwareMonitorEnableState()
 
 //void CTrafficMonitorApp::UpdateTaskbarWndMenu()
 //{
-//    //获取“显示设置”子菜单
+//    //Get the "Display Settings" submenu
 //    CMenu* pMenu = m_taskbar_menu.GetSubMenu(0)->GetSubMenu(5);
 //    ASSERT(pMenu != nullptr);
 //    if (pMenu != nullptr)
 //    {
-//        //将ID_SHOW_MEMORY_USAGE后面的所有菜单项删除
+//        //Delete all menu items after ID_SHOW_MEMORY_USAGE
 //        if (pMenu->GetMenuItemCount() > 4)
 //        {
 //            int start_pos = CCommon::GetMenuItemPosition(pMenu, ID_SHOW_MEMORY_USAGE) + 1;
@@ -1185,7 +1185,7 @@ void CTrafficMonitorApp::UpdateOpenHardwareMonitorEnableState()
 //            }
 //        }
 //
-//        //添加温度相关菜单项
+//        //Add temperature related menu items
 //#ifndef WITHOUT_TEMPERATURE
 //        if (m_general_data.IsHardwareEnable(HI_GPU))
 //            pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_GPU, CCommon::LoadText(IDS_GPU_USAGE));
@@ -1203,7 +1203,7 @@ void CTrafficMonitorApp::UpdateOpenHardwareMonitorEnableState()
 //
 //        pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_SHOW_TOTAL_SPEED, CCommon::LoadText(IDS_TOTAL_NET_SPEED));
 //
-//        //添加插件菜单项
+//        //Add plugin menu item
 //        if (!m_plugins.GetPluginItems().empty())
 //            pMenu->AppendMenu(MF_SEPARATOR);
 //        int plugin_index = 0;
@@ -1218,7 +1218,7 @@ void CTrafficMonitorApp::UpdateOpenHardwareMonitorEnableState()
 bool CTrafficMonitorApp::IsForceShowNotifyIcon()
 {
     return ((!m_cfg_data.m_show_task_bar_wnd /*|| m_win_version.IsWindows11OrLater()*/)
-        && (m_cfg_data.m_hide_main_window || m_main_wnd_data.m_mouse_penetrate));    //如果没有显示任务栏窗口，且隐藏了主窗口或设置了鼠标穿透，则禁用“显示通知区图标”菜单项
+        && (m_cfg_data.m_hide_main_window || m_main_wnd_data.m_mouse_penetrate));    //If the taskbar window is not displayed and the main window is hidden or mouse penetration is set, disable the "Show notification area icon" menu item
 }
 
 std::wstring CTrafficMonitorApp::GetPlauginTooltipInfo() const
@@ -1283,17 +1283,17 @@ void CTrafficMonitorApp::UpdatePluginMenu(CMenu* pMenu, ITMPlugin* plugin, int p
 {
     if (pMenu != nullptr)
     {
-        //删除菜单已经存在的插件命令
+        //Delete the existing plug-in command in the menu
         while (pMenu->GetMenuItemCount() > plugin_cmd_start_index)
         {
             if (!pMenu->DeleteMenu(pMenu->GetMenuItemCount() - 1, MF_BYPOSITION))
                 break;
         }
-        //添加插件命令
+        //Add plugin command
         if (plugin != nullptr && plugin->GetAPIVersion() >= 5)
         {
             int plugin_cmd_count = plugin->GetCommandCount();
-            //添加分隔符
+            //Add separator
             if (plugin_cmd_count > 0)
                 pMenu->AppendMenu(MF_SEPARATOR);
             for (int i = 0; i < plugin_cmd_count; i++)
@@ -1302,7 +1302,7 @@ void CTrafficMonitorApp::UpdatePluginMenu(CMenu* pMenu, ITMPlugin* plugin, int p
                 if (cmd_name != nullptr)
                 {
                     pMenu->AppendMenu(MF_STRING | MF_ENABLED, ID_PLUGIN_COMMAND_START + i, cmd_name);
-                    //添加命令图标
+                    //Add command icon
                     HICON cmd_icon = (HICON)plugin->GetCommandIcon(i);
                     CMenuIcon::AddIconToMenuItem(pMenu->GetSafeHmenu(), ID_PLUGIN_COMMAND_START + i, FALSE, cmd_icon);
                 }
@@ -1313,7 +1313,7 @@ void CTrafficMonitorApp::UpdatePluginMenu(CMenu* pMenu, ITMPlugin* plugin, int p
 
 void CTrafficMonitorApp::CheckWindows11Taskbar()
 {
-    // 在“Shell_TrayWnd”的子窗口找到类名为“Windows.UI.Composition.DesktopWindowContentBridge”的窗口则认为是Windows11的任务栏
+    // If you find a window with the class name "Windows.UI.Composition.DesktopWindowContentBridge" in the sub-window of "Shell_TrayWnd", it is considered to be the Windows 11 taskbar.
     if (m_win_version.IsWindows11OrLater())
     {
         HWND hTaskbar = ::FindWindow(L"Shell_TrayWnd", NULL);
@@ -1344,7 +1344,7 @@ void CTrafficMonitorApp::SetThemeColor(COLORREF color)
 
 void CTrafficMonitorApp::OnHelp()
 {
-    // TODO: 在此添加命令处理程序代码
+    // TODO: Add command handler code here
     CString help_url;
     if (m_str_table.IsSimplifiedChinese())
         help_url = _T("https://github.com/zhongyang219/TrafficMonitor/wiki");
@@ -1356,7 +1356,7 @@ void CTrafficMonitorApp::OnHelp()
 
 void CTrafficMonitorApp::OnFrequentyAskedQuestions()
 {
-    // TODO: 在此添加命令处理程序代码
+    // TODO: Add command handler code here
     CString url_domain;
     if (static_cast<CUpdateHelper::UpdateSource>(m_general_data.update_source) == CUpdateHelper::UpdateSource::GiteeSource)
         url_domain = _T("gitee.com");
@@ -1375,7 +1375,7 @@ void CTrafficMonitorApp::OnFrequentyAskedQuestions()
 
 void CTrafficMonitorApp::OnUpdateLog()
 {
-    // TODO: 在此添加命令处理程序代码
+    // TODO: Add command handler code here
     CString url_domain;
     if (static_cast<CUpdateHelper::UpdateSource>(m_general_data.update_source) == CUpdateHelper::UpdateSource::GiteeSource)
         url_domain = _T("gitee.com");
@@ -1397,7 +1397,7 @@ void CTrafficMonitorApp::OnUpdateLog()
 
 int CTrafficMonitorApp::ExitInstance()
 {
-    // 释放GDI+
+    // Release GDI+
     Gdiplus::GdiplusShutdown(m_gdiplusToken);
 
     return CWinApp::ExitInstance();

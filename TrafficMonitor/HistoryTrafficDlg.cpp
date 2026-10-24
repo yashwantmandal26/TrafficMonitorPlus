@@ -1,4 +1,4 @@
-﻿// HistoryTrafficDlg.cpp : 实现文件
+﻿// HistoryTrafficDlg.cpp: implementation file
 //
 
 #include "stdafx.h"
@@ -7,7 +7,7 @@
 #include "afxdialogex.h"
 
 
-// CHistoryTrafficDlg 对话框
+// CHistoryTrafficDlg dialog box
 
 IMPLEMENT_DYNAMIC(CHistoryTrafficDlg, CBaseDialog)
 
@@ -55,25 +55,25 @@ BEGIN_MESSAGE_MAP(CHistoryTrafficDlg, CBaseDialog)
 END_MESSAGE_MAP()
 
 
-// CHistoryTrafficDlg 消息处理程序
+// CHistoryTrafficDlg message handler
 
 
 BOOL CHistoryTrafficDlg::OnInitDialog()
 {
     CBaseDialog::OnInitDialog();
 
-    // TODO:  在此添加额外的初始化
-    SetIcon(theApp.GetMenuIcon(IDI_STATISTICS), FALSE);		// 设置小图标
+    // TODO: Add additional initialization here
+    SetIcon(theApp.GetMenuIcon(IDI_STATISTICS), FALSE);		// Set small icon
 
-    //插入标签
+    //Insert tag
     m_tab.InsertItem(0, CCommon::LoadText(IDS_LIST_VIEW));
     m_tab.InsertItem(1, CCommon::LoadText(IDS_CALENDAR_VIEW));
-    //创建子对话框
+    //Create subdialog
     m_tab1_dlg.Create(IDD_HISTORY_TRAFFIC_LIST_DIALOG, &m_tab);
     m_tab2_dlg.Create(IDD_HISTORY_TRAFFIC_CALENDAR_DIALOG, &m_tab);
-    //调整子对话框的大小和位置
+    //Adjust the size and position of subdialog boxes
     SetTabWndSize();
-    //设置默认选中的标签
+    //Set the default selected tags
     switch (m_tab_selected)
     {
     case 0:
@@ -86,14 +86,14 @@ BOOL CHistoryTrafficDlg::OnInitDialog()
     m_tab.SetCurFocus(m_tab_selected);
 
     return TRUE;  // return TRUE unless you set the focus to a control
-                  // 异常: OCX 属性页应返回 FALSE
+                  // Exception: OCX property page should return FALSE
 }
 
 
 
 BOOL CHistoryTrafficDlg::PreTranslateMessage(MSG* pMsg)
 {
-    // TODO: 在此添加专用代码和/或调用基类
+    // TODO: Add specialized code here and/or call the base class
     //if (GetKeyState(VK_CONTROL) & 0x80)
     //{
     //	if (pMsg->wParam == 'D')
@@ -112,7 +112,7 @@ BOOL CHistoryTrafficDlg::PreTranslateMessage(MSG* pMsg)
 
 void CHistoryTrafficDlg::OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_tab_selected = m_tab.GetCurSel();
     switch (m_tab_selected)
     {
@@ -135,7 +135,7 @@ void CHistoryTrafficDlg::OnSize(UINT nType, int cx, int cy)
 {
     CBaseDialog::OnSize(nType, cx, cy);
 
-    // TODO: 在此处添加消息处理程序代码
+    // TODO: add message handler code here
     if (nType != SIZE_MINIMIZED && m_tab1_dlg.GetSafeHwnd() != NULL && m_tab2_dlg.GetSafeHwnd() != NULL)
     {
         SetTabWndSize();

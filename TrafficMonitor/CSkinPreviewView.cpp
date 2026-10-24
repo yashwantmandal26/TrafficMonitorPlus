@@ -1,4 +1,4 @@
-﻿// CSkinPreviewView.cpp: 实现文件
+﻿// CSkinPreviewView.cpp: implementation file
 //
 
 #include "stdafx.h"
@@ -24,14 +24,14 @@ BEGIN_MESSAGE_MAP(CSkinPreviewView, CScrollView)
 END_MESSAGE_MAP()
 
 
-// CSkinPreviewView 绘图
+// CSkinPreviewView drawing
 
 void CSkinPreviewView::OnInitialUpdate()
 {
 	CScrollView::OnInitialUpdate();
 
 	CSize sizeTotal;
-	// TODO:  计算此视图的合计大小
+	// TODO: Calculate the total size of this view
 	m_size.cx = 0;
 	m_size.cy = 0;
 	SetScrollSizes(MM_TEXT, m_size);
@@ -48,45 +48,45 @@ void CSkinPreviewView::OnDraw(CDC* pDC)
     view_rect.right = (std::max)(view_rect.Width(), static_cast<int>(m_size.cx));
     view_rect.bottom = (std::max)(view_rect.Height(), static_cast<int>(m_size.cy));
 
-    //如果皮肤是png格式，绘制10x10的棋盘背景
+    //If the skin is in png format, draw a 10x10 chessboard background
     if (m_skin_data->IsPNG())
     {
         int grid_size = theApp.DPI(10);
 
-        // 检查画布大小
-        int rows = view_rect.Height() / grid_size + 1;  // 行数
-        int cols = view_rect.Width() / grid_size + 1;  // 列数
+        // Check canvas size
+        int rows = view_rect.Height() / grid_size + 1;  // Number of lines
+        int cols = view_rect.Width() / grid_size + 1;  // Number of columns
 
-        // 遍历每个网格
+        // Traverse each grid
         for (int row = 0; row < rows; ++row)
         {
             for (int col = 0; col < cols; ++col)
             {
-                // 计算当前网格的矩形区域
+                // Calculate the rectangular area of the current grid
                 CRect rect(col * grid_size, row * grid_size,
                     (col + 1) * grid_size, (row + 1) * grid_size);
 
-                // 判断当前网格颜色（交替填充）
+                // Determine the current grid color (alternating fill)
                 COLORREF color = ((row + col) % 2 == 0) ? RGB(204, 204, 204) : RGB(254, 254, 254);
 
-                // 填充矩形
+                // filled rectangle
                 drawer.FillRect(rect, color);
             }
         }
     }
-    //绘制纯色背景
+    //Draw a solid color background
     else
     {
         drawer.FillRect(view_rect, GetSysColor(COLOR_WINDOW));
     }
 
-    //绘制预览图
+    //Draw preview
     CRect draw_rect(CPoint(0, 0), m_size);
     m_skin_data->DrawPreview(pDC, draw_rect);
 }
 
 
-// CSkinPreviewView 诊断
+// CSkinPreviewView Diagnostics
 
 //#ifdef _DEBUG
 //void CSkinPreviewView::AssertValid() const
@@ -112,4 +112,4 @@ void CSkinPreviewView::SetSize(int width, int hight)
 	SetScrollSizes(MM_TEXT, m_size);
 }
 
-// CSkinPreviewView 消息处理程序
+// CSkinPreviewView message handler

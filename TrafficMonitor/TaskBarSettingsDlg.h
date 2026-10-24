@@ -6,33 +6,33 @@
 #include "TaskbarColorDlg.h"
 #include "ComboBox2.h"
 
-// CTaskBarSettingsDlg 对话框
+// CTaskBarSettingsDlg dialog box
 
 class CTaskBarSettingsDlg : public CTabDlg
 {
     DECLARE_DYNAMIC(CTaskBarSettingsDlg)
 
 public:
-    CTaskBarSettingsDlg(CWnd* pParent = NULL);   // 标准构造函数
+    CTaskBarSettingsDlg(CWnd* pParent = NULL);   // Standard constructor
     virtual ~CTaskBarSettingsDlg();
 
     bool IsStyleModified();
 
-    //如果开启了自动适应Windows10深色/浅色模式功能时，将当前配置保存到对应预设
+    //If the automatic adaptation to Windows 10 dark/light mode function is turned on, save the current configuration to the corresponding preset
     void SaveColorSettingToDefaultStyle();
 
-    //选项设置数据
+    //option setting data
     TaskBarSettingData m_data;
 
-	CWinVersionHelper m_win_version;        //当前Windows的版本
+	CWinVersionHelper m_win_version;        //Current version of Windows
 
-    // 对话框数据
+    // Dialog data
 #ifdef AFX_DESIGN_TIME
     enum { IDD = IDD_TASKBAR_SETTINGS_DIALOG };
 #endif
 
 protected:
-    //控件变量
+    //control variable
     CColorStatic m_text_color_static;
     CColorStatic m_back_color_static;
     CColorStatic m_trans_color_static;
@@ -61,17 +61,17 @@ protected:
     void DrawStaticColor();
     void IniUnitCombo();
 
-    void ApplyDefaultStyle(int index);      //应用一个预设方案
+    void ApplyDefaultStyle(int index);      //Apply a default scheme
 
 public:
-    void ModifyDefaultStyle(int index);     //将当前颜色设置保存到一个预设方案
+    void ModifyDefaultStyle(int index);     //Save current color settings to a preset
 
 protected:
     void EnableControl();
     virtual void SetControlMouseWheelEnable(bool enable) override;
     virtual bool InitializeControls() override;
 
-    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
     DECLARE_MESSAGE_MAP()
 public:

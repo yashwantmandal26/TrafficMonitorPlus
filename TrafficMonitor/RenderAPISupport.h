@@ -64,9 +64,9 @@ template <class T>
 using get_member_t = typename resolve_member_function<T>::member_type;
 
 /**
- * @brief CRTP 基类
+ * @brief CRTP base class
  *
- * @tparam Device 是子类
+ * @tparam Device Is a subclass
  */
 template <class Device>
 class CTrackableDevice
@@ -138,7 +138,7 @@ template <class Resource>
 class CResourceTracker
 {
     /**
-     * @brief 将CDeviceResource<Device>变换为CDeviceResourceBase<Device>*
+     * @brief Convert CDeviceResource<Device> to CDeviceResourceBase<Device>*
      *
      */
     using ResourcePointer =

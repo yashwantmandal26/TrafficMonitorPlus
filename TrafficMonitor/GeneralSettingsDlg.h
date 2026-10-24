@@ -15,10 +15,10 @@ public:
 
     static void CheckTaskbarDisplayItem();
 
-    //选项设置数据
+    //option setting data
     GeneralSettingData m_data;
 
-    // 对话框数据
+    // Dialog data
 #ifdef AFX_DESIGN_TIME
     enum { IDD = IDD_GENERAL_SETTINGS_DIALOG };
 #endif
@@ -30,14 +30,14 @@ public:
     //bool IsTaskbarItemModified() const { return m_taskbar_item_modified; }
 
 protected:
-    bool m_auto_run_modified{ false };      //如果更改了开机自动运行的设置，则会置为true
+    bool m_auto_run_modified{ false };      //If the settings for automatic operation at startup are changed, it will be set to true
     bool m_show_all_interface_modified{ false };
     int m_monitor_time_span_ori{};
     int m_update_source_ori{};
     //bool m_taskbar_item_modified{ false };
     wstring m_auto_run_path;
 
-    //控件变量
+    //control variable
     CSpinEdit m_traffic_tip_edit;
     CComboBox2 m_traffic_tip_combo;
     CSpinEdit m_memory_tip_edit;
@@ -55,18 +55,18 @@ protected:
 
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
-    //设置控件的启用和禁用
+    //Set the enabling and disabling of controls
     void SetControlEnable();
 
     virtual void SetControlMouseWheelEnable(bool enable) override;
     virtual void OnSettingsApplied() override;
     virtual bool InitializeControls() override;
 
-    //显示开启硬件监控时的提示，如果用户选择了“是”则返回true，否则返回false
-    //“以后不再显示该对话框”的标记保存在注册表“\HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\DontShowMeThisDialogAgain”
+    //Displays the prompt when hardware monitoring is turned on. If the user selects "Yes", it returns true, otherwise it returns false.
+    //The "Don't show this dialog again" flag is saved in the registry "\HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\DontShowMeThisDialogAgain"
     bool ShowHardwareMonitorWarning();
 
-    //添加或更新开机自动运行的鼠标提示
+    //Add or update mouse prompts that run automatically at startup
     void AddOrUpdateAutoRunTooltip(bool add);
 
     DECLARE_MESSAGE_MAP()

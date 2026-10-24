@@ -2,7 +2,7 @@
 #include "IDrawCommon.h"
 #include <gdiplus.h>
 
-//使用GDI+的绘图类
+//Drawing classes using GDI+
 class CDrawCommonEx : public IDrawCommon
 {
 public:
@@ -14,10 +14,10 @@ public:
     void SetFont(CFont* pFont);
     Gdiplus::Graphics* GetGraphics() { return m_pGraphics; }
 
-    //绘制一个GDI+图像
+    //Draw a GDI+ image
     void DrawImage(Gdiplus::Image* pImage, CPoint start_point, CSize size, StretchMode stretch_mode);
 
-    // 通过 IDrawCommon 继承
+    // Inherited through IDrawCommon
     void SetBackColor(COLORREF back_color, BYTE alpha) override;
     void DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF color, Alignment align, bool draw_back_ground, bool multi_line, BYTE alpha) override;
     void SetDrawRect(CRect rect) override;

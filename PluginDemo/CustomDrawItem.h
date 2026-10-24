@@ -3,7 +3,7 @@
 
 class CCustomDrawItem : public IPluginItem
 {
-    // 通过 IPluginItem 继承
+    // Inherited through IPluginItem
     virtual const wchar_t* GetItemName() const override;
     virtual const wchar_t* GetItemId() const override;
     virtual const wchar_t* GetItemLableText() const override;

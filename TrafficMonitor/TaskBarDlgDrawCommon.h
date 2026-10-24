@@ -114,11 +114,11 @@ namespace DrawCommonHelper
         static void HandleErrorCountIncrement();
         static void IncreaseErrorCountManually();
         /**
-         * @brief 使用自定义处理函数在LogHResultException(m_ref_ex)语句后接受m_ref_ex进行处理
+         * @brief Use a custom processing function to accept m_ref_ex for processing after the LogHResultException(m_ref_ex) statement
          *
-         * @tparam Func 形如bool (CHResultException&)的可调用类型
-         * @param handler 自定义处理函数，接受CHResultException&，返回true代表不增加D2D渲染的错误计数，返回false代表含义则相反。
-         例如，在发现需要重新初始化设备后，请求重新初始化设备并返回true
+         * @tparam Func is a callable type in the form of bool (CHResultException&)
+         * @param handler Custom processing function, accepting CHResultException&, returning true means not increasing the error count of D2D rendering, returning false means the opposite.
+         For example, after discovering that the device needs to be reinitialized, request to reinitialize the device and return true
          */
         template <class Func>
         void operator()(Func handler)
@@ -188,8 +188,8 @@ bool IsBitwiseEquality(T& lhs, T& rhs) noexcept
 #define TRAFFICMONITOR_ONE_IN_255_FLOOR TRAFFICMONITOR_STR(TRAFFICMONITOR_ONE_IN_255_NUM_FLOOR)
 
 /**
- * @brief 每次循环都会在最开始时调用Resize()。
- * 此类在调用Resize前是部分初始化状态，此时调用其中的成员会发生未定义行为
+ * @brief Each loop will call Resize() at the beginning.
+ * This class is in a partially initialized state before calling Resize. Calling its members at this time will cause undefined behavior.
  *
  */
 class CTaskBarDlgDrawCommonWindowSupport
@@ -265,10 +265,10 @@ public:
     void ResizeGdiInteropPart();
     void SetFont(HFONT h_font);
     /**
-     * @brief 从内存复制图片到显存中并作为D2D和GDI互操作时使用的临时缓存，并默认格式为BGRA
+     * @brief Copy the image from memory to video memory and use it as a temporary cache for interoperability between D2D and GDI. The default format is BGRA
      *
-     * @param p_data 内存图片的地址
-     * @param size 内存图片的大小
+     * @param p_data The address of the memory image
+     * @param size The size of the memory image
      */
     void SetGdiInteropTexture(void* p_data, D2D1_SIZE_U size);
     auto GetTextFormat() noexcept
@@ -289,9 +289,9 @@ public:
 };
 
 /**
- * @brief 此类具有和CTaskBarDlgDrawCommonWindowSupport相似的逻辑，
- 必须先SetWorkingDevice，再进行Resize才可以视为完全初始化的状态。
- 在没有Resize前，都视为未初始化的状态，此时不应该调用其它成员函数。
+ * @brief This class has similar logic to CTaskBarDlgDrawCommonWindowSupport.
+ It must be SetWorkingDevice first and then Resize before it can be considered as fully initialized.
+ Before Resize, it is considered to be in an uninitialized state, and other member functions should not be called at this time.
  *
  */
 class CD2D1DeviceContextWindowSupport
@@ -365,10 +365,10 @@ public:
         void OnDeviceRecreate(CD3D10Device1Type p_new_d3d10_device1) noexcept override;
         bool HandleDeviceRecreationIfNecessary();
         /**
-         * @brief 执行此函数前，必须调用CD2D1DeviceContextHelper::Reset()释放持有交换链的ID2D1Bitmap1和ID2D1DeviceContext
+         * @brief Before executing this function, you must call CD2D1DeviceContextHelper::Reset() to release the ID2D1Bitmap1 and ID2D1DeviceContext holding the swap chain.
          *
-         * @param size 新的交换链大小
-         * @return Microsoft::WRL::ComPtr<IDXGISurface> 使用Resize后交换链创建的IDXGISurface
+         * @param size new swap chain size
+         * @return Microsoft::WRL::ComPtr<IDXGISurface> IDXGISurface created by the swap chain after using Resize
          */
         auto Resize(const D2D1_SIZE_U size)
             -> Microsoft::WRL::ComPtr<IDXGISurface>;
@@ -467,12 +467,12 @@ public:
     auto Resize(const D2D1_SIZE_U size)
         -> Microsoft::WRL::ComPtr<ID2D1DeviceContext>;
     /**
-     * @brief 当m_render_type = DrawCommonHelper::RenderType::D2D1_WITH_DCOMPOSITION时才会执行
+     * @brief Will be executed when m_render_type = DrawCommonHelper::RenderType::D2D1_WITH_DCOMPOSITION
      *
      */
     void PresentWhenUseDComposition();
     /**
-     * @brief 当m_render_type = DrawCommonHelper::RenderType::D2D1时才返回非空值
+     * @brief Only returns a non-null value when m_render_type = DrawCommonHelper::RenderType::D2D1
      *
      * @return Microsoft::WRL::ComPtr<IDXGISurface1>
      */
@@ -682,14 +682,14 @@ namespace TaskBarDlgUser32DrawTextHook
 #define TRAFFICMONITOR_CD2D1BITMAPCACHE_LOCK_GC_INTERVAL(sp_data) \
     std::lock_guard<std::mutex> gc_lock_guard(sp_data->m_gc_mutex)
 
-// ResourceBitmapCreator 主模板（只需声明）
+// ResourceBitmapCreator main template (just declare)
 template <typename ResType>
 struct ResourceBitmapCreator;
 
-// 特化声明
+// specialization declaration
 template <>
 struct ResourceBitmapCreator<HBITMAP> {
-    // 从HBITMAP创建ID2D1Bitmap对象
+    // Create ID2D1Bitmap object from HBITMAP
     static Microsoft::WRL::ComPtr<ID2D1Bitmap> Create(Microsoft::WRL::ComPtr<ID2D1RenderTarget> pRT, HBITMAP hbitmap)
     {
         Microsoft::WRL::ComPtr<IWICBitmap> p_wic_bitmap;
@@ -707,14 +707,14 @@ struct ResourceBitmapCreator<HBITMAP> {
 
 template <>
 struct ResourceBitmapCreator<HICON> {
-    // 从HICON创建ID2D1Bitmap对象
+    // Create ID2D1Bitmap object from HICON
     static Microsoft::WRL::ComPtr<ID2D1Bitmap> Create(Microsoft::WRL::ComPtr<ID2D1RenderTarget> pRT, HICON hIcon)
     {
         Microsoft::WRL::ComPtr<IWICBitmap> p_wic_bitmap;
         ThrowIfFailed<CWICException>(
             CWICFactory::GetWIC()->CreateBitmapFromHICON(hIcon, &p_wic_bitmap),
             TRAFFICMONITOR_ERROR_STR("Call IWICImagingFactory::CreateBitmapFromHICON failed."));
-        // 格式转换
+        // format conversion
         Microsoft::WRL::ComPtr<IWICFormatConverter> pConverter;
         HRESULT hr = CWICFactory::GetWIC()->CreateFormatConverter(&pConverter);
         ThrowIfFailed<CD2D1Exception>(hr, TRAFFICMONITOR_ERROR_STR("Call ID2D1RenderTarget::CreateFormatConverter failed."));
@@ -758,12 +758,12 @@ private:
         std::unordered_map<ResType, Cache> m_cache_map;
         std::chrono::seconds m_cache_expire_interval{std::chrono::seconds(10)};
         /**
-         * @brief 检查缓存是否过期 ！！此函数不加锁！！
+         * @brief Check if cache is expired! ! This function does not lock! !
          *
-         * @param cache 输入的缓存
-         * @param now 输入的时间，默认为std::chrono::steady_clock::now()
-         * @return true 缓存已过期
-         * @return false 缓存未过期
+         * @param cache input cache
+         * @param now The input time, the default is std::chrono::steady_clock::now()
+         * @return true cache has expired
+         * @return false cache has not expired
          */
         bool IsCacheExpire(const Cache& cache, std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now()) {
             return (now - cache.m_init_timestamp) > m_cache_expire_interval;
@@ -806,7 +806,7 @@ public:
         m_gc_thread.detach();
     }
 
-    // 尚不支持复制或移动
+    // Copying or moving is not supported yet
     CD2D1ResCacheBase(const CD2D1ResCacheBase&) = delete;
     CD2D1ResCacheBase& operator=(const CD2D1ResCacheBase&) = delete;
 
@@ -816,7 +816,7 @@ public:
     }
 
     void AddResource(ResType res, CacheInitializer initializer = nullptr) {
-        //此函数在 GetCachedBitmap 中被调用，调用时已持有 m_sp_data->m_mutex 锁，因此此处不再重复加锁，避免死锁
+        //This function is called in GetCachedBitmap. The m_sp_data->m_mutex lock is already held when calling, so the lock is not repeated here to avoid deadlock.
         if (IsResourceExist(res))
         {
             return;
@@ -880,12 +880,12 @@ public:
             }
             catch (CWICException& ex)
             {
-                // 一般是HBITMAP失效导致的问题，直接忽略
+                // Generally, the problem is caused by the failure of HBITMAP, so just ignore it.
                 (void)ex;
             }
             catch (CD2D1Exception& ex)
             {
-                // 只会保存最后一次异常
+                // Only the last exception will be saved
                 nullable_d2d1exception.Construct(std::move(ex));
             }
         }
@@ -907,11 +907,11 @@ public:
 
 private:
     /**
-     * @brief 检查BITMAP是否已经缓存 ！！此函数不加锁！！
+     * @brief Check if the BITMAP has been cached! ! This function does not lock! !
      *
-     * @param hbitmap 输入的HBITMAP
-     * @return true BITMAP已经被缓存
-     * @return false BITMAP尚未缓存
+     * @param hbitmap input HBITMAP
+     * @return true BITMAP has been cached
+     * @return false BITMAP has not been cached yet
      */
     bool IsResourceExist(ResType res) const {
         auto existing_it = m_sp_data->m_cache_map.find(res);
@@ -938,7 +938,7 @@ private:
 class CD2D1BitmapCache : public CD2D1ResCacheBase<HBITMAP> {
 public:
     using Base = CD2D1ResCacheBase<HBITMAP>;
-    using Base::Base;  // 继承构造函数
+    using Base::Base;  // Inherit constructor
 
     Microsoft::WRL::ComPtr<ID2D1Bitmap> GetCachedBitmap(HBITMAP hbitmap) {
         return GetResource(hbitmap);
@@ -1001,20 +1001,20 @@ public:
 
     void SetBackColor(COLORREF back_color, BYTE alpha = 255) override;
     void SetFont(CFont* pfont) override;
-    // 在指定的矩形区域内绘制文本
+    // Draw text within a specified rectangular area
     void DrawWindowText(CRect rect, LPCTSTR lpszString, COLORREF color, Alignment align = Alignment::LEFT, bool draw_back_ground = false, bool multi_line = false, BYTE alpha = 255) override;
-    // 设置绘图剪辑区域
+    // Set drawing clipping area
     void SetDrawRect(CRect rect) override;
-    // 用纯色填充矩形
+    // Fill the rectangle with a solid color
     void FillRect(CRect rect, COLORREF color, BYTE alpha = 255) override;
-    // 绘制矩形边框。如果dot_line为true，则为虚线
+    // Draw a rectangular border. Dotted line if dot_line is true
     void DrawRectOutLine(CRect rect, COLORREF color, int width = 1, bool dot_line = false, BYTE alpha = 255, int radius = 0) override;
-    // 使用当前画笔画线
+    // Draw lines using current brush
     void DrawLine(CPoint start_point, CPoint end_point, COLORREF color, BYTE alpha = 255) override;
     void SetTextColor(const COLORREF color, BYTE alpha = 255) override;
-    // 绘制一个位图
-    // （注意：当stretch_mode设置为StretchMode::FILL（填充）时，会设置绘图剪辑区域，如果之后需要绘制其他图形，
-    // 需要重新设置绘图剪辑区域，否则图片外的区域会无法绘制）
+    // draw a bitmap
+    // (Note: When stretch_mode is set to StretchMode::FILL (fill), the drawing clipping area will be set. If you need to draw other graphics later,
+    // The drawing clipping area needs to be reset, otherwise the area outside the picture will not be drawn)
     void DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSize size, StretchMode stretch_mode = StretchMode::STRETCH, BYTE alpha = 255) override;
     void DrawIcon(HICON hIcon, CPoint start_point, CSize size) override;
     virtual CDC* GetDC() override;
@@ -1056,8 +1056,8 @@ public:
 };
 
 /**
- * @brief 仅在RenderType = DrawCommonHelper::RenderType::D2D1时可用，
- 此时输入的IDXGISurface1是兼容GDI的
+ * @brief is only available when RenderType = DrawCommonHelper::RenderType::D2D1,
+ The IDXGISurface1 input at this time is compatible with GDI
  *
  */
 class CTaskBarDlgDrawBuffer final : public IDrawBuffer

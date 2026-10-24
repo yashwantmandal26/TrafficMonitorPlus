@@ -2,14 +2,14 @@
 #include "TaskbarHelper.h"
 #include <algorithm>
 
-// 存储显示器信息
+// Store display information
 struct MonitorInfo
 {
     HMONITOR hMonitor;
     CRect rect;
 };
 
-// 存储任务栏信息
+// Store taskbar information
 struct TaskbarInfo
 {
     HWND hwnd;
@@ -19,7 +19,7 @@ struct TaskbarInfo
 std::vector<MonitorInfo> monitors;
 std::vector<TaskbarInfo> taskbars;
 
-// 枚举显示器的回调函数
+// Callback function for enumeration displays
 static BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData)
 {
     MonitorInfo info;
@@ -32,13 +32,13 @@ static BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT l
     return TRUE;
 }
 
-// 枚举窗口的回调函数
+// Enumeration window callback function
 static BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam)
 {
     TCHAR className[256];
     GetClassName(hwnd, className, 256);
 
-    // 检查是否是副显示器的任务栏
+    // Check if it is the taskbar of the secondary monitor
     if (_tcscmp(className, _T("Shell_SecondaryTrayWnd")) == 0)
     {
         TaskbarInfo info;
@@ -50,24 +50,24 @@ static BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam)
     return TRUE;
 }
 
-// 比较函数：按显示器的左上角坐标排序
+// Comparison function: Sort by the coordinates of the upper left corner of the display
 static bool CompareTaskbarByMonitorOrder(const TaskbarInfo& a, const TaskbarInfo& b)
 {
-    // 遍历所有显示器
+    // Traverse all displays
     for (const auto& monitor : monitors)
     {
-        // 检查任务栏 a 是否在当前显示器内
+        // Check whether taskbar a is within the current monitor
         bool aInMonitor = (a.rect.left >= monitor.rect.left && a.rect.top >= monitor.rect.top);
-        // 检查任务栏 b 是否在当前显示器内
+        // Check whether taskbar b is within the current monitor
         bool bInMonitor = (b.rect.left >= monitor.rect.left && b.rect.top >= monitor.rect.top);
 
-        // 如果 a 在当前显示器内而 b 不在，则 a 应该在 b 前面
+        // If a is in the current display but b is not, then a should be in front of b
         if (aInMonitor && !bInMonitor)
             return true;
-        // 如果 b 在当前显示器内而 a 不在，则 b 应该在 a 前面
+        // If b is in the current display and a is not, then b should be in front of a
         if (bInMonitor && !aInMonitor)
             return false;
-        // 如果 a 和 b 都在当前显示器内，则按任务栏的位置排序
+        // If a and b are both within the current monitor, sort by taskbar position
         if (aInMonitor && bInMonitor)
         {
             if (a.rect.left != b.rect.left)
@@ -75,7 +75,7 @@ static bool CompareTaskbarByMonitorOrder(const TaskbarInfo& a, const TaskbarInfo
             return a.rect.top < b.rect.top;
         }
     }
-    // 默认情况下，a 和 b 相等
+    // By default, a and b are equal
     return false;
 }
 
@@ -85,16 +85,16 @@ void CTaskbarHelper::GetAllSecondaryDisplayTaskbar(std::vector<HWND>& secondary_
     taskbars.clear();
     secondary_taskbars.clear();
 
-    // 获取所有显示器信息
+    // Get all monitor information
     EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, 0);
 
-    // 获取所有任务栏句柄
+    // Get all taskbar handles
     EnumWindows(EnumWindowsProc, 0);
 
-    // 按显示器顺序对任务栏排序
+    // Sort taskbar in monitor order
     std::sort(taskbars.begin(), taskbars.end(), CompareTaskbarByMonitorOrder);
 
-    //保存任务栏句柄
+    //Save taskbar handle
     for (const auto& taskbar : taskbars)
     {
         secondary_taskbars.push_back(taskbar.hwnd);

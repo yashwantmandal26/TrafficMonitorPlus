@@ -12,19 +12,19 @@ public:
     void LoadFontData(const wchar_t* AppName, FontInfo& font, const FontInfo& default_font) const;
 
     /**
-     * @brief  读取主窗口颜色设置
-     * @param AppName[in] ini文件的段
-     * @param KeyName[in] ini文件的key
-     * @param text_colors[out] 保存读取到的颜色
-     * @param default_color[in] 默认颜色
+     * @brief Read the main window color settings
+     * @param AppName[in] section of ini file
+     * @param KeyName[in] key of ini file
+     * @param text_colors[out] Save the read colors
+     * @param default_color[in] default color
      */
     void LoadMainWndColors(const wchar_t* AppName, const wchar_t* KeyName, const std::set<CommonDisplayItem>& all_items, std::map<CommonDisplayItem, COLORREF>& text_colors, COLORREF default_color);
     
     /**
-     * @brief  保存主窗口颜色设置
-     * @param AppName ini文件的段
-     * @param KeyName ini文件的key
-     * @param text_colors 要保存的颜色
+     * @brief saves the main window color settings
+     * @param AppName segment of ini file
+     * @param KeyName ini file key
+     * @param text_colors The color to save
      */
     void SaveMainWndColors(const wchar_t* AppName, const wchar_t* KeyName, const std::map<CommonDisplayItem, COLORREF>& text_colors);
 

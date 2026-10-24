@@ -71,10 +71,10 @@ BOOL CAboutDlg::OnInitDialog()
 {
     CBaseDialog::OnInitDialog();
 
-    // TODO:  在此添加额外的初始化
+    // TODO: Add additional initialization here
     SetRememberDlgSize(false);
 
-    m_mail.SetURL(_T("mailto:zhongyang219@hotmail.com"));   //设置超链接
+    m_mail.SetURL(_T("mailto:zhongyang219@hotmail.com"));   //Set up hyperlink
     //m_check_update.SetURL(_T("http://pan.baidu.com/s/1c1LkPQ4"));
     m_github.SetURL(_T("https://github.com/zhongyang219/TrafficMonitor"));
     m_gitee.SetURL(_T("https://gitee.com/zhongyang219/TrafficMonitor"));
@@ -95,7 +95,7 @@ BOOL CAboutDlg::OnInitDialog()
     m_gitee.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
     m_license.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
 
-    //设置版本信息
+    //Set version information
     CString version_info;
     GetDlgItemText(IDC_STATIC_VERSION, version_info);
     CString str_lite;
@@ -120,7 +120,7 @@ BOOL CAboutDlg::OnInitDialog()
 
     SetDlgItemText(IDC_STATIC_VERSION, version_info);
 
-    //设置最后编译日期
+    //Set last compile date
     CString temp_str;
     GetDlgItemText(IDC_STATIC_COPYRIGHT, temp_str);
     CString str_compile_time = CCommon::GetLastCompileTime();
@@ -137,21 +137,21 @@ BOOL CAboutDlg::OnInitDialog()
     m_tool_tip.AddTool(&m_musicplayer2_link, CCommon::LoadText(IDS_MUSICPLAYER2_DESCRIPTION) + _T("\r\n") + m_musicplayer2_link.GetURL());
     m_tool_tip.AddTool(&m_simplenotepad_link, CCommon::LoadText(IDS_SIMPLENOTEPAD_DESCRIPTION) + _T("\r\n") + m_simplenotepad_link.GetURL());
 
-    m_tool_tip.SetDelayTime(300);   //设置延迟
+    m_tool_tip.SetDelayTime(300);   //Set delay
     m_tool_tip.SetMaxTipWidth(800);
 
-    //设置翻译者信息
+    //Set translator information
     const auto& language_info{ theApp.m_str_table.GetLanguageInfo() };
     wstring language_tag{ language_info.bcp_47 };
-    if (language_info.translator.empty())           //没有翻译者时不显示翻译者信息
+    if (language_info.translator.empty())           //Translator information is not displayed when there is no translator
     {
         m_translator_static.ShowWindow(SW_HIDE);
     }
     m_translator_static.SetWindowTextW(theApp.m_str_table.LoadTextFormat(L"TXT_ABOUT_TRANSLATOR", { language_info.display_name, language_info.translator }).c_str());
     std::wstring translator_url{ language_info.translator_url };
-    if (!translator_url.empty())     //显示翻译者的信息
+    if (!translator_url.empty())     //Show translator information
     {
-        //如果url中包含“@”但是前面没有“mailto:”，则在前面加上“mailto:”
+        //If the URL contains "@" but is not preceded by "mailto:", add "mailto:" in front of it.
         if (translator_url.find(L'@') != std::wstring::npos && (translator_url.size() < 7 || translator_url.substr(0, 7) != L"mailto:"))
             translator_url = L"mailto:" + translator_url;
         m_translator_static.SetURL(translator_url.c_str());
@@ -162,16 +162,16 @@ BOOL CAboutDlg::OnInitDialog()
     }
     m_translator_static.SetBackgroundColor(GetSysColor(COLOR_WINDOW));
 
-    //加载图片
+    //Load images
     m_about_pic.LoadBitmap(IDB_ABOUT_BACKGROUND_HD);
 
     return TRUE;  // return TRUE unless you set the focus to a control
-                  // 异常: OCX 属性页应返回 FALSE
+                  // Exception: OCX property page should return FALSE
 }
 
 BOOL CAboutDlg::PreTranslateMessage(MSG* pMsg)
 {
-    // TODO: 在此添加专用代码和/或调用基类
+    // TODO: Add specialized code here and/or call the base class
     if (pMsg->message == WM_MOUSEMOVE)
         m_tool_tip.RelayEvent(pMsg);
 
@@ -213,8 +213,8 @@ afx_msg LRESULT CAboutDlg::OnLinkClicked(WPARAM wParam, LPARAM lParam)
 void CAboutDlg::OnPaint()
 {
     CPaintDC dc(this); // device context for painting
-                       // TODO: 在此处添加消息处理程序代码
-                       // 不为绘图消息调用 CBaseDialog::OnPaint()
+                       // TODO: add message handler code here
+                       // CBaseDialog::OnPaint() is not called for drawing messages
     CDrawCommon draw;
     draw.Create(&dc, this);
     CRect rc_pic = CalculatePicRect();
@@ -225,25 +225,25 @@ void CAboutDlg::OnPaint()
 
 BOOL CAboutDlg::OnEraseBkgnd(CDC* pDC)
 {
-    // TODO: 在此添加消息处理程序代码和/或调用默认值
+    // TODO: Add message handler code and/or call defaults here
     CRect draw_rect;
     GetClientRect(draw_rect);
     pDC->FillSolidRect(draw_rect, GetSysColor(COLOR_WINDOW));
 
-    //绘制白色背景
-    int white_height;       //白色区域的高度
+    //Draw white background
+    int white_height;       //height of white area
     CRect rc_copyright{};
     ::GetWindowRect(GetDlgItem(IDOK)->GetSafeHwnd(), rc_copyright);
     ScreenToClient(rc_copyright);
     white_height = rc_copyright.top - theApp.DPI(6);
 
-    //绘制“确定”按钮上方的分割线
+    //Draw a dividing line above the OK button
     CRect rc_line{ draw_rect };
     rc_line.top = white_height;
     rc_line.bottom = white_height + theApp.DPI(1);
     pDC->FillSolidRect(rc_line, RGB(210, 210, 210));
 
-    //绘制灰色背景
+    //Draw gray background
     CRect rc_gray{ rc_line };
     rc_gray.top = rc_line.bottom;
     rc_gray.bottom = draw_rect.bottom;
@@ -258,8 +258,8 @@ HBRUSH CAboutDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
     HBRUSH hbr = CBaseDialog::OnCtlColor(pDC, pWnd, nCtlColor);
 
-    // TODO:  在此更改 DC 的任何特性
-    //去掉static控件的灰色灰色背景
+    // TODO: Change any properties of the DC here
+    //Remove the gray background of the static control
     UINT ctrl_id = pWnd->GetDlgCtrlID();
     if (ctrl_id == IDC_STATIC_VERSION || ctrl_id == IDC_STATIC_COPYRIGHT || ctrl_id == IDC_STATIC)
     {
@@ -270,6 +270,6 @@ HBRUSH CAboutDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
         return hBackBrush;
     }
 
-    // TODO:  如果默认的不是所需画笔，则返回另一个画笔
+    // TODO: If the default is not the desired brush, return another brush
     return hbr;
 }

@@ -2,28 +2,28 @@
 #include "BaseDialog.h"
 #include "ListCtrlEx.h"
 
-// CPluginInfoDlg 对话框
+// CPluginInfoDlg dialog box
 
 class CPluginInfoDlg : public CBaseDialog
 {
 	DECLARE_DYNAMIC(CPluginInfoDlg)
 
 public:
-	CPluginInfoDlg(int plugin_index, CWnd* pParent = nullptr);   // 标准构造函数
+	CPluginInfoDlg(int plugin_index, CWnd* pParent = nullptr);   // Standard constructor
 	virtual ~CPluginInfoDlg();
 
-// 对话框数据
+// Dialog data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_NETWORK_INFO_DIALOG };
 #endif
 
 private:
-    int m_cur_index;        //初始显示的插件索引
+    int m_cur_index;        //Initial displayed plugin index
     CListCtrlEx m_info_list;
     CMenu m_menu;
     CString m_selected_string;
 
-    //列表中的列
+    //columns in list
     enum RowIndex
     {
         RI_FILE_NAME,
@@ -42,11 +42,11 @@ private:
     };
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
     void ShowInfo();
-    static CString GetRowName(int row_index);   //获取行的名称
+    static CString GetRowName(int row_index);   //Get the name of the row
 
-    // 通过 CBaseDialog 继承
+    // Inherited through CBaseDialog
     virtual CString GetDialogName() const override;
 
 	DECLARE_MESSAGE_MAP()

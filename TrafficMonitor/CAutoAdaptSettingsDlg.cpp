@@ -1,4 +1,4 @@
-﻿// CAutoAdaptSettingsDlg.cpp: 实现文件
+﻿// CAutoAdaptSettingsDlg.cpp: implementation file
 //
 
 #include "stdafx.h"
@@ -7,7 +7,7 @@
 #include "afxdialogex.h"
 
 
-// CAutoAdaptSettingsDlg 对话框
+// CAutoAdaptSettingsDlg dialog box
 
 IMPLEMENT_DYNAMIC(CAutoAdaptSettingsDlg, CBaseDialog)
 
@@ -83,14 +83,14 @@ BEGIN_MESSAGE_MAP(CAutoAdaptSettingsDlg, CBaseDialog)
 END_MESSAGE_MAP()
 
 
-// CAutoAdaptSettingsDlg 消息处理程序
+// CAutoAdaptSettingsDlg message handler
 
 
 BOOL CAutoAdaptSettingsDlg::OnInitDialog()
 {
 	CBaseDialog::OnInitDialog();
 
-	// TODO:  在此添加额外的初始化
+	// TODO: Add additional initialization here
 	InitComboBox(m_dark_mode_default_style_combo, m_data.dark_default_style);
 	InitComboBox(m_light_mode_default_style_combo, m_data.light_default_style);
     CheckDlgButton(IDC_AUTO_SAVE_TO_PRESET_CHECK, m_data.auto_save_taskbar_color_settings_to_preset);
@@ -100,15 +100,15 @@ BOOL CAutoAdaptSettingsDlg::OnInitDialog()
     m_toolTip.AddTool(GetDlgItem(IDC_AUTO_SAVE_TO_PRESET_CHECK), CCommon::LoadText(IDS_AUTO_SAVE_TO_PRESET_TIP));
 
 	return TRUE;  // return TRUE unless you set the focus to a control
-				  // 异常: OCX 属性页应返回 FALSE
+				  // Exception: OCX property page should return FALSE
 }
 
 
 void CAutoAdaptSettingsDlg::OnOK()
 {
-	// TODO: 在此添加专用代码和/或调用基类
+	// TODO: Add specialized code here and/or call the base class
 
-	//获取控件中的设置
+	//Get the settings in the control
 	m_data.dark_default_style = GetComboBoxSel(m_dark_mode_default_style_combo);
 	m_data.light_default_style = GetComboBoxSel(m_light_mode_default_style_combo);
     m_data.auto_save_taskbar_color_settings_to_preset = (IsDlgButtonChecked(IDC_AUTO_SAVE_TO_PRESET_CHECK) != 0);
@@ -119,7 +119,7 @@ void CAutoAdaptSettingsDlg::OnOK()
 
 BOOL CAutoAdaptSettingsDlg::PreTranslateMessage(MSG* pMsg)
 {
-    // TODO: 在此添加专用代码和/或调用基类
+    // TODO: Add specialized code here and/or call the base class
     if (pMsg->message == WM_MOUSEMOVE)
         m_toolTip.RelayEvent(pMsg);
 

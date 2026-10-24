@@ -2,7 +2,7 @@
 #include "GpuUsage.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-// CPdhGPUUsage 实现
+// CPdhGPUUsage implementation
 ///////////////////////////////////////////////////////////////////////////////////////////
 CPdhGPUUsage::CPdhGPUUsage()
 : CPdhQuery(_T("\\GPU Engine(*)\\Utilization Percentage"))
@@ -22,7 +22,7 @@ bool CPdhGPUUsage::GetGpuUsage(int& usage)
         {
             if (!valueItems.empty())
             {
-                //获取所有类型的利用率
+                //Get all types of utilization
                 std::map<std::wstring, double> gpu_usage_map;
                 for (const auto& item : valueItems)
                 {
@@ -32,7 +32,7 @@ bool CPdhGPUUsage::GetGpuUsage(int& usage)
                         item_name = item.name.substr(index + 1);
                     gpu_usage_map[item_name] += item.value;
                 }
-                //查找所有类型中最大的值作为总利用率（同Windows任务管理器的处理）
+                //Find the largest value among all types as the total utilization (same processing as Windows Task Manager)
                 double max_value = 0;
                 for (const auto& item : gpu_usage_map)
                 {
@@ -40,8 +40,8 @@ bool CPdhGPUUsage::GetGpuUsage(int& usage)
                         max_value = item.second;
                 }
 
-                usage = static_cast<int>(max_value + 0.5);  // 四舍五入
-                usage = min(max(usage, 0), 100);        // 限制在0-100范围
+                usage = static_cast<int>(max_value + 0.5);  // Rounding
+                usage = min(max(usage, 0), 100);        // Limit to range 0-100
                 return true;
             }
         }

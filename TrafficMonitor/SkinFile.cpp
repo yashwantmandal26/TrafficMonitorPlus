@@ -67,12 +67,12 @@ CSkinFile::Layout CSkinFile::LayoutFromXmlNode(tinyxml2::XMLElement* ele)
 void CSkinFile::DrawSkinText(IDrawCommon& drawer, DrawStr draw_str, CRect rect, COLORREF color, Alignment align)
 {
     int text_width = drawer.GetTextWidth(draw_str.GetStr());
-    //标签和数值两端对齐
-    if (align == Alignment::SIDE && text_width < rect.Width())      //只有文本宽度小于矩形的宽度时才使用两端对齐
+    //Align labels and values
+    if (align == Alignment::SIDE && text_width < rect.Width())      //Justify only if the text width is smaller than the width of the rectangle
     {
-        //绘制标签
+        //draw labels
         drawer.DrawWindowText(rect, draw_str.label, color, IDrawCommon::Alignment::LEFT);
-        //绘制数值
+        //Plot values
         drawer.DrawWindowText(rect, draw_str.value, color, IDrawCommon::Alignment::RIGHT);
     }
     else
@@ -113,7 +113,7 @@ bool CSkinFile::Load(const wstring& skin_name)
     if (m_font.m_hObject)
         m_font.DeleteObject();
 
-    //创建字体对象
+    //Create font object
     if (!m_skin_info.font_info.name.IsEmpty() && m_skin_info.font_info.size > 0)
     {
         m_skin_info.font_info.Create(m_font, theApp.GetDpi());
@@ -128,9 +128,9 @@ bool CSkinFile::Load(const wstring& skin_name)
 
     wstring path_dir = file_path_helper.GetDir();
 
-    //载入png背景图
+    //Load png background image
     m_is_png = true;
-    //先尝试加载png格式，失败则加载bmp格式
+    //First try to load png format, if failed, load bmp format.
     SAFE_DELETE(m_background_png_s);
     m_background_png_s = new Gdiplus::Image((path_dir + BACKGROUND_IMAGE_S_PNG).c_str());
     if (m_background_png_s->GetLastStatus() != Gdiplus::Ok)
@@ -144,7 +144,7 @@ bool CSkinFile::Load(const wstring& skin_name)
         m_is_png = false;
     }
 
-    //png背景图加载失败，使用bmp背景图
+    //Failed to load png background image, use bmp background image
     if (!m_is_png)
     {
         m_background_s.Destroy();
@@ -160,19 +160,19 @@ bool CSkinFile::LoadFromXml(const wstring& file_path)
     m_skin_info = SkinInfo();
     m_layout_info = LayoutInfo();
     m_preview_info = PreviewInfo();
-    std::map<std::string, std::wstring> display_text_map;  //显示项目的文本和xml节点的映射关系。key是xml节点，value是显示文本
+    std::map<std::string, std::wstring> display_text_map;  //Display the mapping relationship between the text of the project and the xml node. key is xml node, value is display text
 
     tinyxml2::XMLDocument doc;
     if (CTinyXml2Helper::LoadXmlFile(doc, file_path.c_str()))
     {
         CTinyXml2Helper::IterateChildNode(doc.FirstChildElement(), [&](tinyxml2::XMLElement* child) {
             string ele_name = CTinyXml2Helper::ElementName(child);
-            //读取皮肤信息
+            //Read skin information
             if (ele_name == "skin")
             {
                 CTinyXml2Helper::IterateChildNode(child, [&](tinyxml2::XMLElement* skin_item) {
                     string skin_item_name = CTinyXml2Helper::ElementName(skin_item);
-                    //文本颜色
+                    //text color
                     if (skin_item_name == "text_color")
                     {
                         string str_text_color = CTinyXml2Helper::ElementText(skin_item);
@@ -190,17 +190,17 @@ bool CSkinFile::LoadFromXml(const wstring& file_path)
                             m_skin_info.text_color.resize(theApp.m_plugins.AllDisplayItemsWithPlugins().size(), default_color);
                         }
                     }
-                    //指定每个项目的颜色
+                    //Specify color for each item
                     else if (skin_item_name == "specify_each_item_color")
                     {
                         m_skin_info.specify_each_item_color = CTinyXml2Helper::StringToBool(CTinyXml2Helper::ElementText(skin_item));
                     }
-                    //皮肤作者
+                    //skin author
                     else if (skin_item_name == "skin_author")
                     {
                         m_skin_info.skin_author = CCommon::StrToUnicode(CTinyXml2Helper::ElementText(skin_item), true);
                     }
-                    //字体
+                    //font
                     else if (skin_item_name == "font")
                     {
                         m_skin_info.font_info.name = CCommon::StrToUnicode(CTinyXml2Helper::ElementAttribute(skin_item, "name"), true).c_str();
@@ -213,7 +213,7 @@ bool CSkinFile::LoadFromXml(const wstring& file_path)
                     }
                     else if (skin_item_name == "display_text")
                     {
-                        //这里先保存所有显示文本到display_text_map
+                        //Here first save all displayed text to display_text_map
                         CTinyXml2Helper::IterateChildNode(skin_item, [&](tinyxml2::XMLElement* display_text_item) {
                             string item_name = CTinyXml2Helper::ElementName(display_text_item);
                             wstring item_text = CCommon::StrToUnicode(CTinyXml2Helper::ElementText(display_text_item), true);
@@ -222,7 +222,7 @@ bool CSkinFile::LoadFromXml(const wstring& file_path)
                     }
                 });
             }
-            //布局信息
+            //layout information
             else if (ele_name == "layout")
             {
                 m_layout_info.text_height = theApp.DPI(atoi(CTinyXml2Helper::ElementAttribute(child, "text_height")));
@@ -235,7 +235,7 @@ bool CSkinFile::LoadFromXml(const wstring& file_path)
                         m_layout_info.layout_s = LayoutFromXmlNode(ele_layout);
                 });
             }
-            //预览图
+            //Preview
             else if (ele_name == "preview")
             {
                 m_preview_info.width = theApp.DPI(atoi(CTinyXml2Helper::ElementAttribute(child, "width")));
@@ -254,7 +254,7 @@ bool CSkinFile::LoadFromXml(const wstring& file_path)
                     }
                 });
             }
-            //插件名称映射
+            //Plugin name mapping
             else if (ele_name == "plugin_map")
             {
                 CTinyXml2Helper::IterateChildNode(child, [this](tinyxml2::XMLElement* plugin_item) {
@@ -267,16 +267,16 @@ bool CSkinFile::LoadFromXml(const wstring& file_path)
     }
     else
     {
-        //xml解析失败
+        //xml parsing failed
         return false;
     }
 
-    //载入显示文本
+    //Load display text
     for (const auto& display_text_item : display_text_map)
     {
         std::string node_name = display_text_item.first;
         std::wstring item_text = display_text_item.second;
-        //查找内建显示项目
+        //Find built-in display items
         for (auto display_item : AllDisplayItems)
         {
             if (node_name == CSkinFile::GetDisplayItemXmlNodeName(display_item))
@@ -285,7 +285,7 @@ bool CSkinFile::LoadFromXml(const wstring& file_path)
                 break;
             }
         }
-        //查找插件项目
+        //Find plugin projects
         for (const auto& item : m_plugin_map)
         {
             if (node_name == item.first && !item.second.empty())
@@ -306,9 +306,9 @@ void CSkinFile::LoadFromIni(const wstring& file_path)
     m_layout_info = LayoutInfo();
     m_preview_info = PreviewInfo();
 
-    //获取皮肤信息
+    //Get skin information
     CSettingsHelper ini(file_path);
-    //获取当前皮肤的文字颜色
+    //Get the text color of the current skin
     std::map<CommonDisplayItem, COLORREF> text_colors{};
     ini.LoadMainWndColors(_T("skin"), _T("text_color"), { TDI_UP, TDI_DOWN, TDI_CPU, TDI_MEMORY }, text_colors, 0);
     for (const auto& item : text_colors)
@@ -317,14 +317,14 @@ void CSkinFile::LoadFromIni(const wstring& file_path)
     }
 
     m_skin_info.specify_each_item_color = ini.GetBool(_T("skin"), _T("specify_each_item_color"), false);
-    //获取当前皮肤的字体
+    //Get the font of the current skin
     FontInfo default_font{};
     default_font.name = theApp.m_str_table.GetLanguageInfo().default_font_name.c_str();
     default_font.size = 10;
     ini.LoadFontData(L"skin", m_skin_info.font_info, default_font);
-    //获取皮肤作者
+    //Get skin author
     m_skin_info.skin_author = ini.GetString(_T("skin"), _T("skin_author"), _T("unknow"));
-    //获取显示文本
+    //Get display text
     auto getDisplayTextFromIni = [&](DisplayItem display_item, const wchar_t* key_name) {
         std::wstring str;
         if (ini.GetString(L"skin", key_name, str))
@@ -334,11 +334,11 @@ void CSkinFile::LoadFromIni(const wstring& file_path)
     getDisplayTextFromIni(TDI_DOWN, L"down_string");
     getDisplayTextFromIni(TDI_CPU, L"cpu_string");
     getDisplayTextFromIni(TDI_MEMORY, L"memory_string");
-    //获取预览区大小
+    //Get preview area size
     m_preview_info.width = theApp.DPI(ini.GetInt(_T("layout"), _T("preview_width"), 238));
     m_preview_info.height = theApp.DPI(ini.GetInt(_T("layout"), _T("preview_height"), 105));
 
-    //从ini文件读取皮肤布局，并根据DPI进行缩放
+    //Read skin layout from ini file and scale it according to DPI
     m_layout_info.text_height = theApp.DPI(ini.GetInt(_T("layout"), _T("text_height"), 20));
     m_layout_info.no_label = ini.GetBool(_T("layout"), _T("no_text"), false);
 
@@ -401,10 +401,10 @@ void CSkinFile::SetAlpha(int alpha)
 
 void CSkinFile::SetSettingData(const SkinSettingData& setting_data)
 {
-    //如果字体有变化，则重新创建字体
+    //If the font changes, recreate the font
     if (m_setting_data.font != setting_data.font)
     {
-        if (m_font.m_hObject)   //如果m_font已经关联了一个字体资源对象，则释放它
+        if (m_font.m_hObject)   //If m_font is already associated with a font resource object, release it
             m_font.DeleteObject();
         setting_data.font.Create(m_font, theApp.GetDpi());
     }
@@ -415,19 +415,19 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
 {
     CDrawCommon draw;
     draw.Create(pDC, nullptr);
-    //设置字体
+    //Set font
     draw.SetFont(&m_font);
     if (m_is_error)
     {
-        //显示错误信息
+        //Show error message
         draw.DrawWindowText(rect, CCommon::LoadText(IDS_SKIN_FILE_ERROR_INFO), RGB(252, 128, 45));
     }
     else
     {
-        //绘制背景
+        //draw background
         CRect rect_s(CPoint(m_preview_info.s_pos.x, m_preview_info.s_pos.y), CSize(m_layout_info.layout_s.width, m_layout_info.layout_s.height));
         CRect rect_l(CPoint(m_preview_info.l_pos.x, m_preview_info.l_pos.y), CSize(m_layout_info.layout_l.width, m_layout_info.layout_l.height));
-        if (IsPNG())    //png背景使用GDI+绘制
+        if (IsPNG())    //The png background is drawn using GDI+
         {
             CDrawCommonEx gdiplus_drawer(pDC);
             gdiplus_drawer.DrawImage(m_background_png_s, rect_s.TopLeft(), rect_s.Size(), IDrawCommon::StretchMode::STRETCH);
@@ -447,7 +447,7 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
         std::set<CommonDisplayItem> all_skin_items;
         GetSkinDisplayItems(all_skin_items);
 
-        //获取每个项目显示的文本
+        //Get the text displayed for each item
         std::map<DisplayItem, DrawStr> map_str;
         for (auto iter = all_skin_items.begin(); iter != all_skin_items.end(); ++iter)
         {
@@ -465,7 +465,7 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
             map_str[iter->ItemType()] = draw_str;
         }
 
-        //获取文本颜色
+        //Get text color
         std::map<CommonDisplayItem, COLORREF> text_colors{};
         if (m_setting_data.specify_each_item_color)
         {
@@ -479,7 +479,7 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
             }
         }
 
-        //绘制预览图文本
+        //Draw preview text
         auto drawPreviewText = [&](const Layout& layout, const PreviewInfo::Pos& pos) {
             for (auto iter = map_str.begin(); iter != map_str.end(); ++iter)
             {
@@ -499,7 +499,7 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
                 }
             }
 
-            //绘制插件项目
+            //Draw plugin project
             for (const auto& plugin_item : theApp.m_plugins.GetPluginItems())
             {
                 LayoutItem layout_item = layout.GetItem(plugin_item);
@@ -511,7 +511,7 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
                         cl = iter->second;
                     else if (!text_colors.empty())
                         cl = text_colors.begin()->second;
-                    //矩形区域
+                    //Rectangular area
                     CPoint point;
                     point.SetPoint(layout_item.x, layout_item.y);
                     point.Offset(pos.x, pos.y);
@@ -535,7 +535,7 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
                     }
                     else
                     {
-                        //绘制文本
+                        //draw text
                         DrawStr draw_str;
                         if (m_skin_info.display_text.IsInvalid())
                             draw_str.label = plugin_item->GetItemLableText();
@@ -548,21 +548,21 @@ void CSkinFile::DrawPreview(CDC* pDC, CRect rect)
             }
         };
 
-        //绘制小预览图文本
+        //Draw small preview text
         drawPreviewText(m_layout_info.layout_s, m_preview_info.s_pos);
-        //绘制大预览图文本
+        //Draw large preview text
         drawPreviewText(m_layout_info.layout_l, m_preview_info.l_pos);
     }
 }
 
 void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info)
 {
-    //绘制背景图
+    //Draw background image
     Layout& layout{ show_more_info ? m_layout_info.layout_l : m_layout_info.layout_s };
 
     CRect rect(CPoint(0, 0), CSize(layout.width, layout.height));
 
-    //如果是PNG格式背景，使用UpdateLayeredWindow函数以支持透明背景，显示项目使用GDI+绘制
+    //If the background is in PNG format, use the UpdateLayeredWindow function to support transparent backgrounds, and display items using GDI+ to draw
     if (IsPNG())
     {
         HDC hdcMemory = CreateCompatibleDC(pDC->GetSafeHdc());
@@ -573,23 +573,23 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info)
         bf.BlendOp = AC_SRC_OVER;
         bf.BlendFlags = 0;
         bf.AlphaFormat = 1;
-        bf.SourceConstantAlpha = m_alpha; // 窗口透明度最大为255，最小为0
+        bf.SourceConstantAlpha = m_alpha; // The maximum window transparency is 255 and the minimum is 0
 
         HWND hWnd = theApp.m_pMainWnd->GetSafeHwnd();
-        //绘制背景
+        //draw background
         CDrawCommonEx gdiplus_drawer;
         gdiplus_drawer.Create(CDC::FromHandle(hdcMemory));
         Gdiplus::Image* background_image{ show_more_info ? m_background_png_l : m_background_png_s };
         gdiplus_drawer.DrawImage(background_image, CPoint(0, 0), rect.Size(), CDrawCommon::StretchMode::FILL);
         
-        //保存完全透明的像素点
+        //Save fully transparent pixels
         std::set<DrawCommonHelper::Point> alpha_points;
         DrawCommonHelper::GetBitmapAlphaPixel(hBitMap, alpha_points);
 
-        //绘制显示项目
+        //Draw display items
         DrawItemsInfo(gdiplus_drawer, layout, m_font);
 
-        //找出绘制显示项目前不透明，但是绘制后透明的点，并修正其alpha值
+        //Find the point where the display item is opaque before drawing, but becomes transparent after drawing, and correct its alpha value
         DrawCommonHelper::FixBitmapTextAlpha(hBitMap, m_alpha, alpha_points);
 
         SIZE sizeWindow = rect.Size();
@@ -600,7 +600,7 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info)
         DeleteObject(hBitMap);
         DeleteDC(hdcMemory);
     }
-    //bmp格式背景，使用gdi绘制背景和显示项目
+    //bmp format background, use gdi to draw the background and display items
     else
     {
         CDrawDoubleBuffer draw_double_buffer(pDC, rect);
@@ -617,7 +617,7 @@ void CSkinFile::DrawInfo(CDC* pDC, bool show_more_info)
 
 void CSkinFile::DrawItemsInfo(IDrawCommon& drawer, Layout& layout, CFont& font) const
 {
-    //获取每个项目显示的文本和数值文本
+    //Get the text and numeric text displayed for each item
     std::map<DisplayItem, DrawStr> map_str;
     for (const auto& display_item : AllDisplayItems)
     {
@@ -626,7 +626,7 @@ void CSkinFile::DrawItemsInfo(IDrawCommon& drawer, Layout& layout, CFont& font) 
         map_str[display_item].value = CommonDisplayItem(display_item).GetItemValueText(true);
     }
 
-    //获取文本颜色
+    //Get text color
     std::map<CommonDisplayItem, COLORREF> text_colors{};
     if (theApp.m_main_wnd_data.specify_each_item_color)
     {
@@ -640,35 +640,35 @@ void CSkinFile::DrawItemsInfo(IDrawCommon& drawer, Layout& layout, CFont& font) 
         }
     }
 
-    //绘制文本
+    //draw text
     drawer.SetFont(&font);
 
-    //绘制文本
+    //draw text
     int index{};
     for (auto iter = map_str.begin(); iter != map_str.end(); ++iter)
     {
         const auto& layout_item = layout.GetItem(iter->first);
         if (layout_item.show)
         {
-            //矩形区域
+            //Rectangular area
             CRect rect(CPoint(layout_item.x, layout_item.y), CSize(layout_item.width, m_layout_info.text_height));
 
-            //文本颜色
+            //text color
             COLORREF text_color = text_colors[iter->first];
 
-            //绘制文本
+            //draw text
             DrawSkinText(drawer, map_str[iter->first], rect, text_color, layout_item.align);
         }
         index++;
     }
 
-    //绘制插件项目
+    //Draw plugin project
     for (const auto& plugin_item : theApp.m_plugins.GetPluginItems())
     {
         const auto& layout_item = layout.GetItem(plugin_item);
         if (layout_item.show)
         {
-            //插件项目自绘
+            //Plug-in project self-drawing
             COLORREF cl{};
             auto iter = text_colors.find(plugin_item);
             if (iter != text_colors.end())
@@ -696,10 +696,10 @@ void CSkinFile::DrawItemsInfo(IDrawCommon& drawer, Layout& layout, CFont& font) 
             }
             else
             {
-                //矩形区域
+                //Rectangular area
                 CRect rect(CPoint(layout_item.x, layout_item.y), CSize(layout_item.width, m_layout_info.text_height));
 
-                //绘制文本
+                //draw text
                 DrawStr draw_str;
                 draw_str.label = theApp.m_main_wnd_data.disp_str.GetConst(plugin_item).c_str();
                 draw_str.value = plugin_item->GetItemValueText();

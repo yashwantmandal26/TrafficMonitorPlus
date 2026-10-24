@@ -1,4 +1,4 @@
-﻿// ComboBox2.cpp: 实现文件
+﻿// ComboBox2.cpp: implementation file
 //
 
 #include "stdafx.h"
@@ -29,18 +29,18 @@ END_MESSAGE_MAP()
 
 
 
-// CComboBox2 消息处理程序
+// CComboBox2 message handler
 
 
 
 
 BOOL CComboBox2::PreTranslateMessage(MSG* pMsg)
 {
-    // TODO: 在此添加专用代码和/或调用基类
-    //如果m_mouse_wheel_enable为false，则不响应鼠标滚轮消息
+    // TODO: Add specialized code here and/or call the base class
+    //If m_mouse_wheel_enable is false, mouse wheel messages will not be responded to
     if (pMsg->message == WM_MOUSEWHEEL && !m_mouse_wheel_enable)
     {
-        //将鼠标滚轮消息发送给父窗口
+        //Send mouse wheel message to parent window
         CWnd* pParent = GetParent();
         pParent->SendMessage(WM_MOUSEWHEEL, pMsg->wParam, pMsg->lParam);
         return true;

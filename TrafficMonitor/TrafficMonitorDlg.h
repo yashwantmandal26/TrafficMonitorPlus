@@ -1,5 +1,5 @@
 ﻿
-// TrafficMonitorDlg.h : 头文件
+// TrafficMonitorDlg.h: header file
 //
 
 #pragma once
@@ -26,18 +26,18 @@
 #include "PdhHardwareQuery/DiskUsage.h"
 #include "HistoryTrafficFile.h"
 
-// CTrafficMonitorDlg 对话框
+// CTrafficMonitorDlg dialog box
 class CTrafficMonitorDlg : public CDialog
 {
-    // 构造
+    // structure
 public:
-    CTrafficMonitorDlg(CWnd* pParent = NULL);   // 标准构造函数
+    CTrafficMonitorDlg(CWnd* pParent = NULL);   // Standard constructor
     ~CTrafficMonitorDlg();
     CTaskBarDlg* GetTaskbarWindow() const;
 
     static CTrafficMonitorDlg* Instance();
 
-    // 对话框数据
+    // Dialog data
 #ifdef AFX_DESIGN_TIME
     enum { IDD = IDD_TRAFFICMONITOR_DIALOG };
 #endif
@@ -48,23 +48,23 @@ public:
     bool IsGetDiskUsageByPdh() const { return m_get_disk_usage_by_pdh; }
 
 protected:
-    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 
-// 实现
+// realize
 protected:
     HICON m_hIcon;
-    NOTIFYICONDATA m_ntIcon;    //通知区域图标
-    CTaskBarDlg* m_tBarDlg{};     //任务栏窗口的指针
+    NOTIFYICONDATA m_ntIcon;    //notification area icon
+    CTaskBarDlg* m_tBarDlg{};     //Taskbar window pointer
 
-    vector<NetWorkConection> m_connections; //保存获取到的要显示到“选择网卡”菜单项中的所有网络连接
+    vector<NetWorkConection> m_connections; //Save all obtained network connections to be displayed in the "Select Network Card" menu item
     MIB_IFTABLE* m_pIfTable;
-    DWORD m_dwSize{};	//m_pIfTable的大小
-    int m_connection_selected{ 0 }; //要显示流量的连接的序号
-    unsigned __int64 m_in_bytes{};        //当前已接收的字节数
-    unsigned __int64 m_out_bytes{};   //当前已发送的字节数
-    unsigned __int64 m_last_in_bytes{}; //上次已接收的字节数
-    unsigned __int64 m_last_out_bytes{};    //上次已发送的字节数
+    DWORD m_dwSize{};	//The size of m_pIfTable
+    int m_connection_selected{ 0 }; //The sequence number of the connection to display traffic
+    unsigned __int64 m_in_bytes{};        //Current number of bytes received
+    unsigned __int64 m_out_bytes{};   //The current number of bytes sent
+    unsigned __int64 m_last_in_bytes{}; //Number of bytes last received
+    unsigned __int64 m_last_out_bytes{};    //Number of bytes last sent
 
     CCPUUsage m_cpu_usage_helper;
     CPdhCpuFreq m_cpu_freq_helper;
@@ -73,7 +73,7 @@ protected:
 
     bool m_get_disk_usage_by_pdh{};
 
-    bool m_first_start{ true };     //初始时为true，在定时器第一次启动后置为flase
+    bool m_first_start{ true };     //It is true initially and is set to false after the timer is started for the first time.
 
     // https://www.jianshu.com/p/9d4b68cdbd99
     struct Monitors
@@ -97,91 +97,91 @@ protected:
         }
     };
 
-    //CRect m_screen_rect;        //屏幕的范围（不包含任务栏）
-    vector<CRect> m_screen_rects;       //所有屏幕的范围（不包含任务栏）
-    vector<CRect> m_last_screen_rects;       //上一次所有屏幕的范围（不包含任务栏）
-    CSize m_screen_size;        //屏幕的大小（包含任务栏）
+    //CRect m_screen_rect; //The range of the screen (excluding the taskbar)
+    vector<CRect> m_screen_rects;       //Range of all screens (excluding taskbar)
+    vector<CRect> m_last_screen_rects;       //The range of all previous screens (not including the taskbar)
+    CSize m_screen_size;        //Screen size (including taskbar)
     CSkinFile m_skin;
-    CommonDisplayItem m_clicked_item;           //鼠标点击的项目
+    CommonDisplayItem m_clicked_item;           //Item clicked by mouse
 
-    int m_restart_cnt{ -1 };    //重新初始化次数
-    unsigned int m_timer_cnt{};     //定时器触发次数（自程序启动以来的秒数）
-    unsigned int m_taskbar_timer_cnt{0}; //适用于TaskBarDlg的定时器触发次数（自程序启动以来的秒数）
+    int m_restart_cnt{ -1 };    //Number of reinitializations
+    unsigned int m_timer_cnt{};     //The number of times the timer has fired (number of seconds since the program started)
+    unsigned int m_taskbar_timer_cnt{0}; //Number of timer fires for TaskBarDlg (number of seconds since program started)
     unsigned int m_monitor_time_cnt{};
-    int m_zero_speed_cnt{}; //如果检测不到网速，该变量就会自加
-    int m_insert_to_taskbar_cnt{};  //用来统计尝试嵌入任务栏的次数
-    int m_cannot_insert_to_task_bar_warning{ true };   //指示是否会在无法嵌入任务栏时弹出提示框
+    int m_zero_speed_cnt{}; //If the network speed cannot be detected, this variable will increase automatically.
+    int m_insert_to_taskbar_cnt{};  //Used to count the number of attempts to embed the taskbar
+    int m_cannot_insert_to_task_bar_warning{ true };   //Indicates whether a prompt box will pop up when the taskbar cannot be embedded.
 
-    static unsigned int m_WM_TASKBARCREATED;    //任务栏重启消息
+    static unsigned int m_WM_TASKBARCREATED;    //Taskbar restart message
 
-    int m_skin_selected{};      //选择的皮肤序号
+    int m_skin_selected{};      //Selected skin number
 
-    SYSTEMTIME m_start_time;    //程序启动时的时间
-    CHistoryTrafficFile m_history_traffic{ theApp.m_history_traffic_path }; //储存历史流量
+    SYSTEMTIME m_start_time;    //The time when the program started
+    CHistoryTrafficFile m_history_traffic{ theApp.m_history_traffic_path }; //Store historical traffic
 
     CToolTipCtrl m_tool_tips;
 
-    bool m_connection_change_flag{ false };     //如果执行过IniConnection()函数，该flag会置为true
-    bool m_is_foreground_fullscreen{ false };   //指示前台窗口是否正在全局显示
-    bool m_menu_popuped{ false };               //指示当前是否有菜单处于弹出状态
+    bool m_connection_change_flag{ false };     //If the IniConnection() function has been executed, this flag will be set to true
+    bool m_is_foreground_fullscreen{ false };   //Indicates whether the foreground window is being displayed globally
+    bool m_menu_popuped{ false };               //Indicates whether a menu is currently pop-up
 
     HDC m_desktop_dc;
 
-    string m_connection_name_preferd{ theApp.m_cfg_data.m_connection_name };          //保存用户手动选择的网络连接名称
+    string m_connection_name_preferd{ theApp.m_cfg_data.m_connection_name };          //Save the network connection name manually selected by the user
 
-    void DoMonitorAcquisition();    //获取一次监控信息
-    static UINT MonitorThreadCallback(LPVOID dwUser);   //获取监控信息的线程函数
-    bool m_monitor_data_required{ false };          //线程中需要获取监控数据标志，当需要获取监控数据时置为true，获取到一次监控数据时置为false
-    bool m_is_thread_exit{ false }; //线程退出标志
-    CEvent m_threadExitEvent;       //用于通知主线程工作线程已退出
+    void DoMonitorAcquisition();    //Get monitoring information once
+    static UINT MonitorThreadCallback(LPVOID dwUser);   //Thread function to obtain monitoring information
+    bool m_monitor_data_required{ false };          //The monitoring data flag needs to be obtained in the thread. When monitoring data needs to be obtained, it is set to true. When monitoring data is obtained once, it is set to false.
+    bool m_is_thread_exit{ false }; //Thread exit flag
+    CEvent m_threadExitEvent;       //Used to notify the main thread that the worker thread has exited
 public:
-    void ExitMonitorThread();       //停止监控线程
+    void ExitMonitorThread();       //Stop monitoring thread
 
 protected:
-    CString GetMouseTipsInfo();     //获取鼠标提示信息
-    void SetTransparency();         //根据m_transparency的值设置窗口透明度
+    CString GetMouseTipsInfo();     //Get mouse prompt information
+    void SetTransparency();         //Set window transparency according to the value of m_transparency
     void SetTransparency(int transparency);
 public:
-    void SetAlwaysOnTop();          //根据m_always_on_top的值设置窗口置顶
+    void SetAlwaysOnTop();          //Set the window to the top according to the value of m_always_on_top
 protected:
-    void SetMousePenetrate();       //根据m_mouse_penetrate的值设置是否鼠标穿透
-    POINT CalculateWindowMoveOffset(CRect rect, bool screen_changed);  //计算当窗口处于屏幕区域外时，移动到屏幕区域需要移动的位置
-    void CheckWindowPos(bool screen_changed = false);          //测试窗口的位置，如窗口的位置在屏幕外，则移动窗口使其全部都在屏幕内，并返回新位置
-    void GetScreenSize();           //获取屏幕的大小
+    void SetMousePenetrate();       //Set whether mouse penetration is based on the value of m_mouse_penetrate
+    POINT CalculateWindowMoveOffset(CRect rect, bool screen_changed);  //Calculate the position required to move the window to the screen area when it is outside the screen area
+    void CheckWindowPos(bool screen_changed = false);          //Test the position of the window. If the position of the window is outside the screen, move the window so that it is all within the screen and return to the new position.
+    void GetScreenSize();           //Get the size of the screen
 
     void AutoSelect();
     //void UpdateConnections();
-    //自动选择连接
-    void IniConnection();   //初始化连接
+    //Automatically select connection
+    void IniConnection();   //Initialize connection
 
-    MIB_IFROW GetConnectIfTable(int connection_index);    //获取当前选择的网络连接的MIB_IFROW对象。connection_index为m_connections中的索引
-    NetWorkConection GetConnection(int connection_index); //获取当前选择的网络连接的NetWorkConection对象。connection_index为m_connections中的索引
+    MIB_IFROW GetConnectIfTable(int connection_index);    //Gets the MIB_IFROW object of the currently selected network connection. connection_index is the index in m_connections
+    NetWorkConection GetConnection(int connection_index); //Gets the NetWorkConection object of the currently selected network connection. connection_index is the index in m_connections
 
-    void IniConnectionMenu(CMenu* pMenu);   //初始化“选择网络连接”菜单
-    void IniTaskBarConnectionMenu();        //初始化任务栏窗口的“选择网络连接”菜单
-    void SetConnectionMenuState(CMenu* pMenu);      //设置“选择网络连接”菜单中选中的项目
+    void IniConnectionMenu(CMenu* pMenu);   //Initialize the "Select a Network Connection" menu
+    void IniTaskBarConnectionMenu();        //Initialize the taskbar window's "Select a network connection" menu
+    void SetConnectionMenuState(CMenu* pMenu);      //Set the selected item in the "Select a network connection" menu
 
-    void CloseTaskBarWnd(); //关闭任务栏窗口
-    void OpenTaskBarWnd();  //打开任务栏窗口
+    void CloseTaskBarWnd(); //Close taskbar window
+    void OpenTaskBarWnd();  //Open taskbar window
 
-    void AddNotifyIcon();       //添加通知区图标
+    void AddNotifyIcon();       //Add notification area icon
     void DeleteNotifyIcon();
 public:
-    void ShowNotifyTip(const wchar_t* title, const wchar_t* message);       //显示通知区提示
+    void ShowNotifyTip(const wchar_t* title, const wchar_t* message);       //Show notification area prompt
 protected:
-    void UpdateNotifyIconTip();     //更新通知区图标的鼠标提示
+    void UpdateNotifyIconTip();     //Updated mouse tips for notification area icons
 
-    void SaveHistoryTraffic();        // 增量保存，只更新第一行和今天的记录
-    void SaveHistoryTrafficFull();    // 完整保存，用于程序退出时确保所有数据都保存
+    void SaveHistoryTraffic();        // Incremental save, only update the first row and today's record
+    void SaveHistoryTrafficFull();    // Complete save, used to ensure that all data is saved when the program exits
     void LoadHistoryTraffic();
     void BackupHistoryTrafficFile();
 
-    void _OnOptions(int tab, CWnd* pParent);   //打开“选项”对话框的处理，tab：打开时切换的标签
+    void _OnOptions(int tab, CWnd* pParent);   //Processing of opening the "Options" dialog box, tab: the tab to be switched when opening
 
     void ApplySettings(COptionsDlg& optionsDlg);
 
-    void SetItemPosition();     //设置显示的4个项目的位置
-    bool LoadSkinLayout();      //从当前皮肤获取布局数据
+    void SetItemPosition();     //Set the position of the 4 items displayed
+    bool LoadSkinLayout();      //Get layout data from current skin
 
     void LoadBackGroundImage();
     void SetTextFont();
@@ -192,18 +192,18 @@ protected:
 
     void TaskbarShowHideItem(DisplayItem type);
 
-    //判断一个点在哪个显示项目的区域内，并保存到m_clicked_item
+    //Determine which display item area a point is in and save it to m_clicked_item
     void CheckClickedItem(CPoint point);
 
-    //应用一个皮肤
+    //apply a skin
     void ApplySkin(int skin_index);
 
 public:
     //void ApplySettings();
-    bool IsTemperatureNeeded() const;       //判断是否需要显示温度信息
+    bool IsTemperatureNeeded() const;       //Determine whether temperature information needs to be displayed
 
 protected:
-    // 生成的消息映射函数
+    // Generated message mapping function
     virtual BOOL OnInitDialog();
     //  afx_msg void OnPaint();
     afx_msg HCURSOR OnQueryDragIcon();

@@ -43,11 +43,11 @@ void CHistoryTrafficFile::WriteTrafficRecord(ofstream& file, const HistoryTraffi
 
 void CHistoryTrafficFile::UpdateCache() const
 {
-	// 更新缓存：合并今天的记录和历史记录链表
+	// Update cache: merge today鈥檚 records and history list
 	m_traffics_cache.clear();
 	m_traffics_cache.push_front(m_today_traffic);
 	m_traffics_cache.insert(m_traffics_cache.end(), m_history_traffics.begin(), m_history_traffics.end());
-	m_cache_dirty = false; // 标记缓存已更新
+	m_cache_dirty = false; // Tag cache updated
 }
 
 void CHistoryTrafficFile::Save() const
@@ -60,15 +60,15 @@ void CHistoryTrafficFile::Save() const
 
 	char buff[64];
 	
-	// 第一行：总记录数（今天的记录 + 历史记录）
+	// First line: total number of records (today鈥檚 records + historical records)
 	size_t total_size = 1 + m_history_traffics.size();
 	sprintf_s(buff, "lines: \"%u\"", static_cast<unsigned int>(total_size));
 	file << buff << "\n";
 
-	// 第二行：今天的记录
+	// Second line: Today鈥檚 record
 	WriteTrafficRecord(file, m_today_traffic);
 
-	// 第三行及之后：历史记录链表
+	// The third line and after: history linked list
 	for (const auto& history_traffic : m_history_traffics)
 	{
 		WriteTrafficRecord(file, history_traffic);
@@ -79,7 +79,7 @@ void CHistoryTrafficFile::Save() const
 
 bool CHistoryTrafficFile::IsTodayRecord() const
 {
-	// 检查今天的记录日期是否正确
+	// Check if today's recorded date is correct
 	SYSTEMTIME current_time;
 	GetLocalTime(&current_time);
 	
@@ -90,24 +90,24 @@ bool CHistoryTrafficFile::IsTodayRecord() const
 
 void CHistoryTrafficFile::SaveTodayOnly() const
 {
-	// 增量保存：只更新第一行（lines计数）和第二行（今天的记录）
-	// 前提：今天的记录日期正确（程序自己维护，无需读取文件判断）
+	// Incremental save: only update the first row (lines count) and second row (today's record)
+	// Prerequisite: Today鈥檚 record date is correct (the program maintains it by itself, no need to read the file to judge)
 	
-	// 如果今天的记录日期不正确，说明日期刚改变，使用完整保存
+	// If today's record date is incorrect, it means the date has just changed, use full save
 	if (!IsTodayRecord())
 	{
 		Save();
 		return;
 	}
 
-	// 文件不存在时，使用完整保存（首次保存）
+	// When file does not exist, use full save (first save)
 	if (!CCommon::FileExist(m_file_path.c_str()))
 	{
 		Save();
 		return;
 	}
 
-	// 读取文件剩余行（第3行及之后），用于增量更新
+	// Read the remaining lines of the file (line 3 and after) for incremental updates
 	vector<string> remaining_lines;
 	ifstream in_file{ m_file_path };
 	if (in_file.is_open())
@@ -117,7 +117,7 @@ void CHistoryTrafficFile::SaveTodayOnly() const
 		while (std::getline(in_file, line))
 		{
 			line_num++;
-			if (line_num > 2) // 跳过前两行
+			if (line_num > 2) // skip first two lines
 			{
 				remaining_lines.push_back(line);
 			}
@@ -125,23 +125,23 @@ void CHistoryTrafficFile::SaveTodayOnly() const
 		in_file.close();
 	}
 
-	// 写入更新后的文件
+	// Write updated file
 	ofstream out_file{ m_file_path };
 	if (!out_file.is_open())
 	{
 		return;
 	}
 
-	// 第一行：lines计数（今天的记录 + 历史记录）
+	// First line: lines count (today鈥檚 record + history)
 	size_t total_size = 1 + m_history_traffics.size();
 	char buff[64];
 	sprintf_s(buff, "lines: \"%u\"", static_cast<unsigned int>(total_size));
 	out_file << buff << "\n";
 
-	// 第二行：今天的记录
+	// Second line: Today鈥檚 record
 	WriteTrafficRecord(out_file, m_today_traffic);
 
-	// 剩余行：从文件读取，直接写入（不格式化）
+	// Remaining lines: read from file, write directly (no formatting)
 	for (const auto& line : remaining_lines)
 	{
 		out_file << line << "\n";
@@ -152,18 +152,18 @@ void CHistoryTrafficFile::SaveTodayOnly() const
 
 void CHistoryTrafficFile::Load()
 {
-	m_today_traffic = HistoryTraffic{}; // 初始化今天的记录
-	m_history_traffics.clear(); // 清空历史记录链表
-	InvalidateCache(); // 标记缓存过期
+	m_today_traffic = HistoryTraffic{}; // Initialize today鈥檚 records
+	m_history_traffics.clear(); // Clear history list
+	InvalidateCache(); // Mark cache expired
 
 	ifstream file{ m_file_path };
 	string current_line, temp;
 	HistoryTraffic traffic;
-	bool is_first_data_line = true; // 标记是否是第一条数据行（今天的记录）
+	bool is_first_data_line = true; // Whether the mark is the first data row (today's record)
 	
 	if (CCommon::FileExist(m_file_path.c_str()))
 	{
-		// 跳过第一行（lines:）
+		// Skip the first line (lines:)
 		std::getline(file, current_line);
 		
 		while (!file.eof())
@@ -213,13 +213,13 @@ void CHistoryTrafficFile::Load()
 			{
 				if (is_first_data_line)
 				{
-					// 第一条数据行是今天的记录
+					// The first data row is today's record
 					m_today_traffic = traffic;
 					is_first_data_line = false;
 				}
 				else
 				{
-					// 其余是历史记录，插入到链表
+					// The rest is history, inserted into the linked list
 					m_history_traffics.push_back(traffic);
 				}
 			}
@@ -235,7 +235,7 @@ void CHistoryTrafficFile::LoadSize()
 	string current_line, temp;
 	if (CCommon::FileExist(m_file_path.c_str()))
 	{
-		std::getline(file, current_line); // 读取第一行
+		std::getline(file, current_line); // Read first line
 		size_t index = current_line.find("lines:");
 		if (index != wstring::npos)
 		{
@@ -251,14 +251,14 @@ void CHistoryTrafficFile::Merge(const CHistoryTrafficFile& history_traffic, bool
 {
 	HistoryTraffic today_traffic = CreateTodayTraffic();
 
-	// 合并今天的记录（只合并日期相同的）
-	// 注意：如果 ignore_same_data=true，说明是从备份恢复，应该取较大的值而不是累加，避免重复累加
+	// Merge today's records (only merge records with the same date)
+	// Note: If ignore_same_data=true, it means that you are restoring from backup. You should take a larger value instead of accumulation to avoid repeated accumulation.
 	if (HistoryTraffic::DateEqual(m_today_traffic, history_traffic.m_today_traffic))
 	{
 		if (ignore_same_data)
 		{
-			// 从备份恢复时，取较大的值（避免重复累加）
-			// 备份文件通常是程序退出时的完整数据，当前文件可能是程序启动后的不完整数据
+			// When restoring from backup, take a larger value (to avoid repeated accumulation)
+			// The backup file is usually the complete data when the program exits, and the current file may be the incomplete data after the program is started.
 			if (history_traffic.m_today_traffic.up_kBytes > m_today_traffic.up_kBytes)
 			{
 				m_today_traffic.up_kBytes = history_traffic.m_today_traffic.up_kBytes;
@@ -270,75 +270,75 @@ void CHistoryTrafficFile::Merge(const CHistoryTrafficFile& history_traffic, bool
 		}
 		else
 		{
-			// 正常合并时，累加数据
+			// During normal merging, the data is accumulated
 			m_today_traffic.up_kBytes += history_traffic.m_today_traffic.up_kBytes;
 			m_today_traffic.down_kBytes += history_traffic.m_today_traffic.down_kBytes;
 		}
 	}
 
-	// 合并历史记录链表
+	// Merge history linked list
 	for (const HistoryTraffic& traffic : history_traffic.m_history_traffics)
 	{
-		// 跳过"未来"的记录（系统时间可能被调整了）
+		// Skip "future" records (system time may have been adjusted)
 		if (HistoryTraffic::DateGreater(traffic, today_traffic))
 		{
-			continue; // 跳过"未来"的记录
+			continue; // Skip "future" records
 		}
 
 		if (ignore_same_data)
 		{
-			// 如果要忽略相同日期的项，使用线性查找（list不支持随机访问）
+			// If you want to ignore items with the same date, use linear search (list does not support random access)
 			auto it = std::find_if(m_history_traffics.begin(), m_history_traffics.end(),
 				[&traffic](const HistoryTraffic& existing) {
 					return HistoryTraffic::DateEqual(existing, traffic);
 				});
 			if (it != m_history_traffics.end())
 			{
-				continue; // 找到相同日期的记录，跳过
+				continue; // Find records with the same date, skip
 			}
 		}
 		m_history_traffics.push_back(traffic);
 	}
 	
 	MormalizeData();
-	InvalidateCache(); // 标记缓存过期
+	InvalidateCache(); // Mark cache expired
 }
 
 void CHistoryTrafficFile::OnDateChanged()
 {
-	// 日期改变时，将今天的记录移到历史记录链表的前面，然后创建新的今天的记录
+	// When the date changes, move today's record to the front of the history list, and then create a new today's record
 	
-	// 如果今天的记录有数据，将其移到历史记录链表
+	// If today's record has data, move it to the history linked list
 	if (m_today_traffic.kBytes() > 0)
 	{
 		m_history_traffics.push_front(m_today_traffic);
-		// 立即排序，确保数据一致性（按日期从大到小）
+		// Sort immediately to ensure data consistency (from large to small by date)
 		if (m_history_traffics.size() >= 2)
 		{
 			m_history_traffics.sort(HistoryTraffic::DateGreater);
 		}
 	}
 	
-	// 创建新的今天的记录
+	// Create a new record for today
 	m_today_traffic = CreateTodayTraffic();
 	
-	// 更新统计
+	// Update statistics
 	m_today_up_traffic = 0;
 	m_today_down_traffic = 0;
 	m_size = 1 + m_history_traffics.size();
-	InvalidateCache(); // 标记缓存过期
+	InvalidateCache(); // Mark cache expired
 }
 
 void CHistoryTrafficFile::MormalizeData()
 {
 	HistoryTraffic today_traffic = CreateTodayTraffic();
 
-	// 先对历史记录链表排序（按日期从大到小），以便后续查找和合并
+	// First sort the history linked list (from large to small by date) to facilitate subsequent search and merging
 	if (m_history_traffics.size() >= 2)
 	{
 		m_history_traffics.sort(HistoryTraffic::DateGreater);
 
-		// 合并相同日期的记录
+		// Merge records with the same date
 		auto it = m_history_traffics.begin();
 		while (it != m_history_traffics.end())
 		{
@@ -357,14 +357,14 @@ void CHistoryTrafficFile::MormalizeData()
 		}
 	}
 
-	// 清理日期晚于当前日期的历史记录（系统时间可能被调整了）
-	// 历史记录应该都是过去的日期，不应该有未来的日期
+	// Clean up history records with dates later than the current date (the system time may have been adjusted)
+	// Historical records should all be past dates and should not have future dates.
 	if (!m_history_traffics.empty())
 	{
 		auto it = m_history_traffics.begin();
 		while (it != m_history_traffics.end())
 		{
-			// 如果历史记录的日期晚于今天，说明是"未来"的记录，应该删除
+			// If the date of the historical record is later than today, it means that it is a "future" record and should be deleted.
 			if (HistoryTraffic::DateGreater(*it, today_traffic))
 			{
 				it = m_history_traffics.erase(it);
@@ -376,15 +376,15 @@ void CHistoryTrafficFile::MormalizeData()
 		}
 	}
 
-	// 如果 m_today_traffic 的日期也晚于当前日期，说明系统时间被调整了，应该重置
+	// If the date of m_today_traffic is later than the current date, it means that the system time has been adjusted and should be reset.
 	if (HistoryTraffic::DateGreater(m_today_traffic, today_traffic))
 	{
-		// 如果今天的记录有数据，应该将其移到历史记录（但日期晚于今天，会被上面的清理逻辑删除）
-		// 直接重置为今天的记录
+		// If today's record has data, it should be moved to the history record (but the date is later than today and will be deleted by the above cleaning logic)
+		// Reset directly to today's record
 		m_today_traffic = today_traffic;
 	}
 
-	// 在历史记录中查找今天的记录（可能历史记录中包含了今天的数据）
+	// Find today's record in the history (maybe the history contains today's data)
 	auto it = std::find_if(m_history_traffics.begin(), m_history_traffics.end(),
 		[&today_traffic](const HistoryTraffic& traffic) {
 			return HistoryTraffic::DateEqual(traffic, today_traffic);
@@ -392,44 +392,44 @@ void CHistoryTrafficFile::MormalizeData()
 
 	if (it != m_history_traffics.end())
 	{
-		// 历史记录中找到了今天的记录
+		// Today's record was found in history
 		if (HistoryTraffic::DateEqual(m_today_traffic, today_traffic))
 		{
-			// 如果 m_today_traffic 也是今天的，合并数据（避免数据丢失）
+			// If m_today_traffic is also from today, merge the data (to avoid data loss)
 			m_today_traffic.up_kBytes += it->up_kBytes;
 			m_today_traffic.down_kBytes += it->down_kBytes;
 		}
 		else
 		{
-			// 如果 m_today_traffic 不是今天的，用历史记录中的替换
+			// If m_today_traffic is not from today, replace it with the one from history
 			m_today_traffic = *it;
 		}
-		// 从历史记录中删除今天的记录（因为应该只在 m_today_traffic 中）
+		// Remove today's record from history (since it should only be in m_today_traffic)
 		m_history_traffics.erase(it);
 	}
 	else if (!HistoryTraffic::DateEqual(m_today_traffic, today_traffic))
 	{
-		// 历史记录中没有今天的记录，且 m_today_traffic 也不是今天的
-		// 如果 m_today_traffic 有数据，应该将其移到历史记录链表
+		// There is no record for today in the history, and m_today_traffic is not for today.
+		// If m_today_traffic has data, it should be moved to the history linked list
 		if (m_today_traffic.kBytes() > 0)
 		{
 			m_history_traffics.push_front(m_today_traffic);
-			// 重新排序（因为插入了新记录）
+			// Reorder (because new records were inserted)
 			if (m_history_traffics.size() >= 2)
 			{
 				m_history_traffics.sort(HistoryTraffic::DateGreater);
 			}
 		}
-		// 创建新的今天的记录
+		// Create a new record for today
 		m_today_traffic = today_traffic;
 	}
 
-	// 更新今天的流量统计
+	// Update traffic statistics for today
 	m_today_up_traffic = static_cast<__int64>(m_today_traffic.up_kBytes) * 1024;
 	m_today_down_traffic = static_cast<__int64>(m_today_traffic.down_kBytes) * 1024;
 	m_today_traffic.mixed = false;
 
-	// 更新总记录数
+	// Update total number of records
 	m_size = 1 + m_history_traffics.size();
-	InvalidateCache(); // 标记缓存过期
+	InvalidateCache(); // Mark cache expired
 }

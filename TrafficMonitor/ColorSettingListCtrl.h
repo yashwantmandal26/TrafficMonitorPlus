@@ -11,11 +11,11 @@ public:
 
     void SetItemColor(int row, int col, COLORREF color);
     COLORREF GetItemColor(int row, int col);
-	void SetDrawItemRangMargin(int margin) { m_margin = margin; }			//设置绘制绘制的矩形的边缘到单元格边框的矩形，此值越大则绘制的矩形越细，但是不能超过列表行距的一半
+	void SetDrawItemRangMargin(int margin) { m_margin = margin; }			//Sets the rectangle that draws the edge of the drawn rectangle to the cell border. The larger this value is, the thinner the drawn rectangle is, but it cannot exceed half of the list line spacing.
 
 protected:
 	int m_margin{};
-	std::map<int, std::map<int, COLORREF>> m_colors;	//用于保存每一行每一列的颜色
+	std::map<int, std::map<int, COLORREF>> m_colors;	//Used to save the color of each row and column
 
 	DECLARE_MESSAGE_MAP()
 	afx_msg void OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult);

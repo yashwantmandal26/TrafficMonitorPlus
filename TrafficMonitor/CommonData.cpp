@@ -8,14 +8,14 @@
 ///////////////////////////////////////////////////////////////////////////////////
 int Date::week() const
 {
-    //计算当前是一年的第几天
+    //Calculate the current day of the year
     int days{};
     for (int i{ 1 }; i < month; i++)
     {
         days += CCalendarHelper::DaysInMonth(year, i);
     }
     days += day;
-    //计算这一年的1月1日是星期几
+    //Calculate what day of the week January 1st of this year falls on
     int week_day = CCalendarHelper::CaculateWeekDay(year, 1, 1);
     if (theApp.m_cfg_data.m_sunday_first)
     {
@@ -204,19 +204,19 @@ void TaskBarSettingData::SetTaskabrTransparent(bool transparent)
     {
         if (CWindowsSettingHelper::IsWindows10LightTheme() || theApp.m_win_version.IsWindows8Or8point1() || theApp.IsWindows11Taskbar())
         {
-            //浅色模式下要设置任务栏窗口透明，只需将透明色设置成和背景色一样即可
+            //To make the taskbar window transparent in light mode, just set the transparent color to be the same as the background color.
             CCommon::TransparentColorConvert(back_color);
             transparent_color = back_color;
         }
         else
         {
-            //深色模式下，背景色透明将透明色设置成黑色
+            //In dark mode, the background color is transparent and the transparent color is set to black
             transparent_color = 0;
         }
     }
     else
     {
-        //要设置任务栏窗口不透明，只需将透明色设置成和背景色不一样即可
+        //To set the taskbar window to be opaque, just set the transparent color to be different from the background color.
         if (back_color != TASKBAR_TRANSPARENT_COLOR1)
             transparent_color = TASKBAR_TRANSPARENT_COLOR1;
         else
@@ -258,7 +258,7 @@ void TaskBarSettingData::ValidWindowOffsetLeft()
 
 unsigned __int64 TaskBarSettingData::GetNetspeedFigureMaxValueInBytes() const
 {
-    if (netspeed_figure_max_value_unit == 0)        //单位为KB
+    if (netspeed_figure_max_value_unit == 0)        //Unit is KB
         return static_cast<unsigned __int64>(netspeed_figure_max_value) * 1024;
     else
         return static_cast<unsigned __int64>(netspeed_figure_max_value) * 1024 * 1024;
@@ -269,21 +269,21 @@ COLORREF TaskBarSettingData::GetUsageGraphColor() const
     if (graph_color_following_system)
     {
         COLORREF theme_color = theApp.GetThemeColor();
-        //转换为HLS
+        //Convert to HLS
         double h, l, s;
         CDrawingManager::RGBtoHSL(theme_color, &h, &s, &l);
-        //根据当前系统深浅色模式指定亮度
+        //Specify brightness based on the current system light and dark color mode
         if (theApp.m_last_light_mode)
         {
-            //浅色任务栏，将亮度设为0.7
+            //Light taskbar, set brightness to 0.7
             l = 0.7;
         }
         else
         {
-            //深色任务栏，将亮度设为0.4
+            //Dark taskbar, set brightness to 0.4
             l = 0.4;
         }
-        //转换回RGB
+        //Convert back to RGB
         COLORREF graph_color = CDrawingManager::HLStoRGB_ONE(h, l, s);
         return graph_color;
     }

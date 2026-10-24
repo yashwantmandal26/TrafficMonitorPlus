@@ -49,15 +49,15 @@ static void DrawLine(CDC* pDC, CPoint point1, CPoint point2, COLORREF color)
 
 void CCustomDrawItem::DrawItem(void* hDC, int x, int y, int w, int h, bool dark_mode)
 {
-    //绘图句柄
+    //drawing handle
     CDC* pDC = CDC::FromHandle((HDC)hDC);
-    //矩形区域
+    //Rectangular area
     CRect rect(CPoint(x, y), CSize(w, h));
-    //设置颜色
+    //Set color
     COLORREF color1{ dark_mode ? RGB(255, 143, 107) : RGB(227, 81, 16) };
     COLORREF color2{ dark_mode ? RGB(183, 241, 96) : RGB(83, 131, 11) };
     COLORREF color3{ dark_mode ? RGB(158, 218, 251) : RGB(6, 111, 168) };
-    //显示时、分、秒的矩形区域
+    //A rectangular area that displays hours, minutes, and seconds
     CRect rect1{ rect }, rect2{ rect }, rect3{ rect };
     rect1.bottom = rect.top + rect.Height() / 3;
     rect2 = rect1;
@@ -66,7 +66,7 @@ void CCustomDrawItem::DrawItem(void* hDC, int x, int y, int w, int h, bool dark_
     rect1.DeflateRect(1, 1);
     rect2.DeflateRect(1, 1);
     rect3.DeflateRect(1, 1);
-    //根据当前时间计算矩形的宽度
+    //Calculate the width of the rectangle based on the current time
     SYSTEMTIME& time{ CDataManager::Instance().m_system_time };
     int hour_width{ static_cast<int>((time.wHour + time.wMinute / 60.0) * w / 24) };
     int min_width{ static_cast<int>((time.wMinute + time.wSecond / 60.0) * w / 60) };
@@ -74,11 +74,11 @@ void CCustomDrawItem::DrawItem(void* hDC, int x, int y, int w, int h, bool dark_
     rect1.right = rect1.left + hour_width;
     rect2.right = rect2.left + min_width;
     rect3.right = rect3.left + sec_width;
-    //填充矩形
+    //filled rectangle
     pDC->FillSolidRect(rect1, color1);
     pDC->FillSolidRect(rect2, color2);
     pDC->FillSolidRect(rect3, color3);
-    //绘制刻度
+    //draw ticks
     COLORREF color_scale{ dark_mode ? RGB(225, 225, 225) : RGB(45, 45, 45) };
     for (int i{}; i < 24; i++)
     {

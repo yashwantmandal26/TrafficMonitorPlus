@@ -14,7 +14,7 @@ Gdiplus::Image* LoadPngResource(HINSTANCE hInstance, int resourceId)
         if (HGLOBAL hResData = ::LoadResource(hInstance, hRes))
         {
             LPVOID pResourceData = ::LockResource(hResData);
-            // 在缓冲区上创建内存流
+            // Create a memory stream on a buffer
             if (IStream* pStream = SHCreateMemStream(static_cast<const BYTE*>(pResourceData), imageSize))
             {
                 pImage = Gdiplus::Image::FromStream(pStream);
@@ -72,7 +72,7 @@ int CCustomDrawItem2::GetItemWidth() const
 void CCustomDrawItem2::DrawItem(void* hDC, int x, int y, int w, int h, bool dark_mode)
 {
     CRect rect(CPoint(x, y), CSize(w, h));
-    //绘制PNG图像
+    //Draw PNG images
     CRect png_rect(rect);
     int icon_size = CPluginDemo::Instance().DPI(16);
     png_rect.top = y + (h - icon_size) / 2;
@@ -91,7 +91,7 @@ bool CCustomDrawItem2::DrawItemEx(IPluginDrawer* pDrawer, int x, int y, int w, i
     COLORREF text_color = dark_mode ? RGB(255, 198, 105) : RGB(160, 99, 0);
     pDrawer->DrawRectOutLine(x, y, w, h, text_color);
 
-    //绘制图标
+    //draw icon
     CRect icon_rect(rect);
     int icon_size = CPluginDemo::Instance().DPI(16);
     icon_rect.left += CPluginDemo::Instance().DPI(2);
@@ -102,14 +102,14 @@ bool CCustomDrawItem2::DrawItemEx(IPluginDrawer* pDrawer, int x, int y, int w, i
     pDrawer->DrawIcon(hIcon, icon_rect.left, icon_rect.top, icon_rect.Width(), icon_rect.Height());
     //pDrawer->DrawRectOutLine(icon_rect.left, icon_rect.top, icon_rect.Width(), icon_rect.Height(), text_color);
     
-    //绘制PNG格式图标
+    //Draw icons in PNG format
     CRect png_rect(icon_rect);
     png_rect.MoveToX(icon_rect.right + CPluginDemo::Instance().DPI(4));
     //pDrawer->DrawRectOutLine(png_rect.left, png_rect.top, png_rect.Width(), png_rect.Height(), text_color);
     //pDrawer->DrawBitmap(m_png, png_rect.left, png_rect.top, png_rect.Width(), png_rect.Height());
-    //在DrawItem函数中直接使用GDI+绘制透明PNG图像
+    //Use GDI+ directly in the DrawItem function to draw transparent PNG images
 
-    //绘制文本
+    //draw text
     CRect text_rect(rect);
     text_rect.left = png_rect.right + CPluginDemo::Instance().DPI(4);
     int text_height = CPluginDemo::Instance().DPI(16);

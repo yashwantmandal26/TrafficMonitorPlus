@@ -2,25 +2,25 @@
 #include "LinkStatic.h"
 #include "BaseDialog.h"
 
-// 用于应用程序“关于”菜单项的 CAboutDlg 对话框
+// CAboutDlg dialog for application About menu item
 
 class CAboutDlg : public CBaseDialog
 {
 public:
     CAboutDlg();
 
-    // 对话框数据
+    // Dialog data
 #ifdef AFX_DESIGN_TIME
     enum { IDD = IDD_ABOUTBOX };
 #endif
 
 protected:
-    CLinkStatic m_mail;             //“联系作者”超链接
-    CLinkStatic m_acknowledgement;  //“鸣谢”超链接
-    CLinkStatic m_github;           //“GitHub”超链接
-    CLinkStatic m_gitee;            //“Gitee”超链接
-    CLinkStatic m_license;          //“开源协议”超链接
-    CToolTipCtrl m_tool_tip;            //鼠标指向时的工具提示
+    CLinkStatic m_mail;             //"Contact the author" hyperlink
+    CLinkStatic m_acknowledgement;  //"Acknowledgements" hyperlink
+    CLinkStatic m_github;           //"GitHub" hyperlink
+    CLinkStatic m_gitee;            //"Gitee" hyperlink
+    CLinkStatic m_license;          //"Open Source Agreement" hyperlink
+    CToolTipCtrl m_tool_tip;            //Tooltip on mouse pointer
     CLinkStatic m_translator_static;
     CLinkStatic m_openhardwaremonitor_link;
     CLinkStatic m_tinyxml2_link;
@@ -29,13 +29,13 @@ protected:
 
     CBitmap m_about_pic;
 
-    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
-    CString GetDonateList();        //从资源文件加载捐赠人员名单
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+    CString GetDonateList();        //Load donor list from resource file
     virtual CString GetDialogName() const override;
     virtual bool InitializeControls() override;
-    CRect CalculatePicRect();       //计算图片的位置
+    CRect CalculatePicRect();       //Calculate the position of the image
 
-    // 实现
+    // realize
 protected:
     DECLARE_MESSAGE_MAP()
 public:

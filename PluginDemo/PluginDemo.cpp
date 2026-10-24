@@ -56,7 +56,7 @@ IPluginItem* CPluginDemo::GetItem(int index)
 
 void CPluginDemo::DataRequired()
 {
-    //获取时间和日期
+    //Get time and date
     SYSTEMTIME& system_time{ CDataManager::Instance().m_system_time };
     GetLocalTime(&system_time);
     wchar_t buff[128];
@@ -116,7 +116,7 @@ void CPluginDemo::OnExtenedInfo(ExtendedInfoIndex index, const wchar_t* data)
     switch (index)
     {
     case ITMPlugin::EI_CONFIG_DIR:
-        //从配置文件读取配置
+        //Read configuration from configuration file
         g_data.LoadConfig(std::wstring(data));
 
         break;

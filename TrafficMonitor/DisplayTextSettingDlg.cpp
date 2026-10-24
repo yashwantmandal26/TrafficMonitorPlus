@@ -1,4 +1,4 @@
-﻿// DisplayTextSettingDlg.cpp: 实现文件
+﻿// DisplayTextSettingDlg.cpp: implementation file
 //
 
 #include "stdafx.h"
@@ -8,7 +8,7 @@
 #include "SkinManager.h"
 
 
-// CDisplayTextSettingDlg 对话框
+// CDisplayTextSettingDlg dialog box
 
 IMPLEMENT_DYNAMIC(CDisplayTextSettingDlg, CBaseDialog)
 
@@ -43,28 +43,28 @@ BEGIN_MESSAGE_MAP(CDisplayTextSettingDlg, CBaseDialog)
 END_MESSAGE_MAP()
 
 
-// CDisplayTextSettingDlg 消息处理程序
+// CDisplayTextSettingDlg message handler
 
 
 BOOL CDisplayTextSettingDlg::OnInitDialog()
 {
     CBaseDialog::OnInitDialog();
 
-    // TODO:  在此添加额外的初始化
+    // TODO: Add additional initialization here
 
-    SetIcon(theApp.GetMenuIcon(IDI_ITEM), FALSE);		// 设置小图标
+    SetIcon(theApp.GetMenuIcon(IDI_ITEM), FALSE);		// Set small icon
 
-    //初始化列表控件
+    //Initialize list control
     CRect rect;
     m_list_ctrl.GetClientRect(rect);
     m_list_ctrl.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_LABELTIP);
     int width0, width1;
     width0 = rect.Width() / 2;
     width1 = rect.Width() - width0 - theApp.DPI(20) - 1;
-    m_list_ctrl.InsertColumn(0, CCommon::LoadText(IDS_ITEM), LVCFMT_LEFT, width0);		//插入第0列
-    m_list_ctrl.InsertColumn(1, CCommon::LoadText(IDS_VALUE), LVCFMT_LEFT, width1);		//插入第1列
+    m_list_ctrl.InsertColumn(0, CCommon::LoadText(IDS_ITEM), LVCFMT_LEFT, width0);		//Insert column 0
+    m_list_ctrl.InsertColumn(1, CCommon::LoadText(IDS_VALUE), LVCFMT_LEFT, width1);		//Insert column 1
 
-    //如果是主窗口，清除当前皮肤中没有的行
+    //If it is the main window, clear rows that are not in the current skin
     if (m_main_window_text)
     {
         std::set<CommonDisplayItem> all_skin_items;
@@ -78,7 +78,7 @@ BOOL CDisplayTextSettingDlg::OnInitDialog()
         }
     }
 
-    //向列表中插入行
+    //Insert row into list
     for (auto iter = m_display_texts.GetAllItems().begin(); iter != m_display_texts.GetAllItems().end(); ++iter)
     {
         CString item_name = iter->first.GetItemName();
@@ -91,13 +91,13 @@ BOOL CDisplayTextSettingDlg::OnInitDialog()
         }
     }
 
-    m_list_ctrl.SetEditColMethod(CListCtrlEx::EC_SPECIFIED);        //设置列表可编辑
-    m_list_ctrl.SetEditableCol({ 1 });                              //设置可编辑的列
+    m_list_ctrl.SetEditColMethod(CListCtrlEx::EC_SPECIFIED);        //Setting list is editable
+    m_list_ctrl.SetEditableCol({ 1 });                              //Set editable columns
 
-    CCommon::LoadMenuResource(m_menu, IDR_DISPLAY_ITEM_CONTEXT_MENU); //装载右键菜单
+    CCommon::LoadMenuResource(m_menu, IDR_DISPLAY_ITEM_CONTEXT_MENU); //Load right-click menu
 
     return TRUE;  // return TRUE unless you set the focus to a control
-                  // 异常: OCX 属性页应返回 FALSE
+                  // Exception: OCX property page should return FALSE
 }
 
 CommonDisplayItem CDisplayTextSettingDlg::GetDisplayItem(int row)
@@ -108,7 +108,7 @@ CommonDisplayItem CDisplayTextSettingDlg::GetDisplayItem(int row)
 
 void CDisplayTextSettingDlg::OnOK()
 {
-    // TODO: 在此添加专用代码和/或调用基类
+    // TODO: Add specialized code here and/or call the base class
 
     int item_count = m_list_ctrl.GetItemCount();
     for (int i{}; i < item_count; i++)
@@ -124,12 +124,12 @@ void CDisplayTextSettingDlg::OnOK()
 
 void CDisplayTextSettingDlg::OnBnClickedRestoreDefaultButton()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     int item_count = m_list_ctrl.GetItemCount();
     CTrafficMonitorDlg* pMainWnd = CTrafficMonitorDlg::Instance();
     if (m_main_window_text && pMainWnd != nullptr)
     {
-        //主窗口恢复默认显示文本时，从皮肤获取
+        //When the main window restores the default display text, it is obtained from the skin
         SkinSettingData skin_setting_data;
         CSkinManager::SkinSettingDataFronSkin(skin_setting_data, pMainWnd->GetCurSkin());
         for (int i{}; i < item_count; i++)
@@ -157,7 +157,7 @@ void CDisplayTextSettingDlg::OnRestoreDefault()
         CTrafficMonitorDlg* pMainWnd = CTrafficMonitorDlg::Instance();
         if (m_main_window_text && pMainWnd != nullptr)
         {
-            //主窗口恢复默认显示文本时，从皮肤获取
+            //When the main window restores the default display text, it is obtained from the skin
             SkinSettingData skin_setting_data;
             CSkinManager::SkinSettingDataFronSkin(skin_setting_data, pMainWnd->GetCurSkin());
             CommonDisplayItem display_item = GetDisplayItem(m_item_selected);
@@ -177,11 +177,11 @@ void CDisplayTextSettingDlg::OnNMRClickList1(NMHDR* pNMHDR, LRESULT* pResult)
 {
     LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
     m_item_selected = pNMItemActivate->iItem;
-    //弹出右键菜单
-    CMenu* pContextMenu = m_menu.GetSubMenu(0);	//获取第一个弹出菜单
-    CPoint point1;	//定义一个用于确定光标位置的位置
-    GetCursorPos(&point1);	//获取当前光标的位置，以便使得菜单可以跟随光标
-    pContextMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
+    //Pop up right-click menu
+    CMenu* pContextMenu = m_menu.GetSubMenu(0);	//Get the first popup menu
+    CPoint point1;	//Define a position used to determine the cursor position
+    GetCursorPos(&point1);	//Get the current cursor position so that the menu can follow the cursor
+    pContextMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //Show popup menu at specified location
 
     *pResult = 0;
 }

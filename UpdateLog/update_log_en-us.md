@@ -1,5 +1,3 @@
-**[简体中文](./update_log.md) | [繁體中文](./update_log_zh-tw.md) | English**
-
 # TrafficMonitor Update log
 ## V1.86(2026/03/29)
 
@@ -212,7 +210,7 @@
 * Improvements in other details.
 ### Release Notes:
 This update solves the problem that the text is not clear in the taskbar when the taskbar is white in the latest version of Windows 10. You need to manually set the transparent color in "Options" - "Taskbar Window Settings" - "Transparent Color". It is an opaque effect when the transparent color is not black and is different from the background color, and is transparent if it is the same as the background color. In the Windows 10 white taskbar, it is recommended to set as the following picture:
-![白色任务栏截图](https://user-images.githubusercontent.com/30562462/57004858-36b55300-6c05-11e9-89d8-9911dc99f09c.PNG)
+![Light Taskbar Screenshot](https://user-images.githubusercontent.com/30562462/57004858-36b55300-6c05-11e9-89d8-9911dc99f09c.PNG)
 ## V1.76 (2018/11/11)
 * Fix the problem that the resolution changes may cause the program crash.
 * Add the options for the saving location of the configuration files.

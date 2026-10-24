@@ -9,7 +9,7 @@ CPdhDiskUsage::CPdhDiskUsage()
     m_isAvailable = Initialize();
     if (m_isAvailable)
     {
-        // 预热：触发PDH内部初始化（首次QueryValues会填充实例列表）
+        // Warm-up: Trigger PDH internal initialization (QueryValues will populate the instance list for the first time)
         std::vector<CounterValueItem> dummy;
         QueryValues(dummy);
         ExtractDiskNames();
@@ -37,17 +37,17 @@ void CPdhDiskUsage::ExtractDiskNames()
 
 int CPdhDiskUsage::CalculateUtilization(double idleTime) const
 {
-    // 关键处理：NVMe/RAID等多队列磁盘的空闲时间可能 >100%
-    // 例如: 4队列磁盘空闲时间=400% → 实际空闲=100% → 利用率=0%
+    // Key processing: The idle time of multi-queue disks such as NVMe/RAID may be >100%
+    // For example: 4 queue disk idle time = 400% → actual idle = 100% → utilization = 0%
     if (idleTime > 100.0)
         idleTime = 100.0;
 
-    // 确保范围在0-100
+    // Make sure the range is 0-100
     idleTime = (std::max)(0.0, (std::min)(100.0, idleTime));
 
-    // 利用率 = 100% - 空闲时间
+    // Utilization = 100% - Idle time
     double utilization = 100.0 - idleTime;
-    return static_cast<int>(utilization + 0.5); // 四舍五入
+    return static_cast<int>(utilization + 0.5); // Rounding
 }
 
 bool CPdhDiskUsage::GetDiskUsage(int diskIndex, int& usage)

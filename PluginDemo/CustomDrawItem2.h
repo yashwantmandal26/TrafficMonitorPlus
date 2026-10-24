@@ -7,7 +7,7 @@ class CCustomDrawItem2 : public IPluginItem
 public:
     CCustomDrawItem2();
 
-    // 通过 IPluginItem 继承
+    // Inherited through IPluginItem
     virtual const wchar_t* GetItemName() const override;
     virtual const wchar_t* GetItemId() const override;
     virtual const wchar_t* GetItemLableText() const override;
@@ -17,7 +17,7 @@ public:
     virtual int GetItemWidth() const override;
     virtual void DrawItem(void* hDC, int x, int y, int w, int h, bool dark_mode) override;
     virtual bool DrawItemEx(IPluginDrawer* pDrawer, int x, int y, int w, int h, bool dark_mode) override;
-    virtual int IsDoubleLineExclusive() const { return 1; }     //在任务栏中独占双行
+    virtual int IsDoubleLineExclusive() const { return 1; }     //Exclusively double rows in taskbar
 
 private:
     Gdiplus::Image* m_png{};

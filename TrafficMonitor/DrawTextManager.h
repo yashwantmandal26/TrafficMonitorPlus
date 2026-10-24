@@ -33,7 +33,7 @@ template <class FunctionPointer>
 using to_std_function_t = typename to_std_function<FunctionPointer>::type;
 
 /**
- * @brief 用于管理hook后的User32.dll中的DrawText系列函数的行为，目前只有D2D渲染在使用
+ * @brief is used to manage the behavior of the DrawText series functions in User32.dll after hooking. Currently, only D2D rendering is used.
  *
  */
 class User32DrawTextManager
@@ -48,10 +48,10 @@ private:
     };
 
     /**
-     * @brief 各个类的设置数据合集，为了方便内部的非成员函数访问，内部都是静态成员
+     * @brief is a collection of setting data for each class. In order to facilitate access by internal non-member functions, all internal members are static.
      *
-     * @tparam Owner 拥有设置数据的类类型，防止多个类共享一套数据
-     * @tparam Function 要储存的函数指针类型
+     * @tparam Owner owns the class type that sets the data to prevent multiple classes from sharing a set of data
+     * @tparam Function The function pointer type to be stored
      */
     template <class Owner, class Function, class = std::enable_if_t<std::is_pointer<Function>{}>>
     struct CommonSettings
@@ -112,17 +112,17 @@ private:
     template <class T>
     static inline void FunctionReplacer(void** p_found_function_pointer, void* p_args) noexcept
     {
-        //保存原始的函数指针
+        //Save the original function pointer
         decltype(T::BaseSettings::m_p_iat_old_function_pointer) p_iat_function = &*p_found_function_pointer;
         T::BaseSettings::m_p_iat_old_function_pointer = p_iat_function;
-        //保存原始函数指针的地址
+        //Save the address of the original function pointer
         decltype(T::BaseSettings::m_old_function_pointer) iat_function =
             reinterpret_cast<typename T::Function>(*p_found_function_pointer);
         T::BaseSettings::m_old_function_pointer = iat_function;
-        //替换IAT中的函数
+        //Replace functions in IAT
         EnableWriteMemoryGuard enable_write{p_found_function_pointer};
         auto p_custom_function = T::GetFunction();
-        //规避msvc扩展
+        //Circumvent msvc extension
         ::memcpy(p_found_function_pointer, &p_custom_function, sizeof(p_custom_function));
     }
 

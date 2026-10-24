@@ -1,4 +1,4 @@
-﻿//这是用于Tab标签中的子对话框类
+﻿//This is the subdialog class used in the Tab tag
 #pragma once
 #include "BaseDialog.h"
 
@@ -12,13 +12,13 @@ public:
     virtual BOOL OnInitDialog();
     CWnd* GetParentWindow();
     void SetScrollbarInfo(int nPage, int nMax);
-    virtual void OnTabEntered() {}      //当标签切换到当前窗口时被调用
+    virtual void OnTabEntered() {}      //Called when the tab switches to the current window
     virtual void OnOK();
     void SetScrollEnable(bool enable) { m_scroll_enable = enable; }
-    virtual void SetControlMouseWheelEnable(bool enable) {}     //在派生类中重写此函数以设置控件是否允许响应鼠标滚轮
-    virtual void OnSettingsApplied() {}   //点击了“应用”按钮，应用完设置之后被调用
+    virtual void SetControlMouseWheelEnable(bool enable) {}     //Override this function in a derived class to set whether the control is allowed to respond to the mouse wheel
+    virtual void OnSettingsApplied() {}   //Click the "Apply" button and be called after applying the settings.
 
-    bool IsScrollBarVisible();    //滚动条是否可见
+    bool IsScrollBarVisible();    //Is the scroll bar visible?
 
 private:
     void ScrollWindowSimple(int step, bool absolute = false);
@@ -33,9 +33,9 @@ protected:
     int m_last_pos{};
 
 protected:
-    // CWnd的虚方法，声明在afxwin.h，实现在wincore.cpp，在WM_SIZE消息处理时被CWnd调用
-    // 内部在一些判断之后使用CWnd持有的CMFCDynamicLayout指针执行m_pDynamicLayout->Adjust()
-    virtual void ResizeDynamicLayout() override final;  // 这里重写是为了改变调用时机，从默认的窗口OnSize之前改为父窗口OnSize之后
+    // The virtual method of CWnd is declared in afxwin.h, implemented in wincore.cpp, and is called by CWnd during WM_SIZE message processing.
+    // Internally, after some judgments, the CMFCDynamicLayout pointer held by CWnd is used to execute m_pDynamicLayout->Adjust()
+    virtual void ResizeDynamicLayout() override final;  // The purpose of rewriting here is to change the calling timing from before the default window OnSize to after the parent window OnSize.
 
 public:
     DECLARE_MESSAGE_MAP()

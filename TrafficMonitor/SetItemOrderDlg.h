@@ -1,41 +1,41 @@
 ﻿#pragma once
 #include "BaseDialog.h"
 
-// CSetItemOrderDlg 对话框
+// CSetItemOrderDlg dialog box
 
 class CSetItemOrderDlg : public CBaseDialog
 {
     DECLARE_DYNAMIC(CSetItemOrderDlg)
 
 public:
-    CSetItemOrderDlg(CWnd* pParent = nullptr);   // 标准构造函数
+    CSetItemOrderDlg(CWnd* pParent = nullptr);   // Standard constructor
     virtual ~CSetItemOrderDlg();
 
-    //设置/获取显示顺序
+    //Set/get display order
     void SetItemOrder(const std::vector<int>& item_order);
     const std::vector<int>& GetItemOrder() const;
 
-    //设置/获取显示项目
+    //Set/get display items
     void SetDisplayItem(const DisplayItemSet& display_item);
     DisplayItemSet GetDisplayItem() const;
 
     void SetPluginDisplayItem(const StringSet& plugin_item);
     const StringSet& GetPluginDisplayItem() const;
 
-    // 对话框数据
+    // Dialog data
 #ifdef AFX_DESIGN_TIME
     enum { IDD = IDD_SELECT_ORDER_DIALOG };
 #endif
 
 private:
-    CTaskbarItemOrderHelper m_item_order;   //显示项目的顺序
+    CTaskbarItemOrderHelper m_item_order;   //The order in which items are displayed
     CCheckListBox m_list_ctrl;
-    DisplayItemSet m_display_item;        //要显示的内置项目
-    StringSet m_plugin_item;            //要显示的插件项目
-    std::vector<CommonDisplayItem> m_all_displayed_item;    //在列表中显示的所有项目
+    DisplayItemSet m_display_item;        //Built-in items to display
+    StringSet m_plugin_item;            //Plug-in items to display
+    std::vector<CommonDisplayItem> m_all_displayed_item;    //All items shown in the list
 
 protected:
-    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
     void ShowItem();
     void EnableCtrl(int list_selected);
     void EnableDlgCtrl(UINT id, bool enable);
@@ -43,7 +43,7 @@ protected:
     bool GetItemChecked(CommonDisplayItem item);
     void SaveItemChecked(CommonDisplayItem item, bool checked);
 
-    // 通过 CBaseDialog 继承
+    // Inherited through CBaseDialog
     virtual CString GetDialogName() const override;
 
     DECLARE_MESSAGE_MAP()

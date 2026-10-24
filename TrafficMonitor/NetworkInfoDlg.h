@@ -5,50 +5,50 @@
 #include "BaseDialog.h"
 #include "ListCtrlEx.h"
 
-// CNetworkInfoDlg 对话框
+// CNetworkInfoDlg dialog box
 
 class CNetworkInfoDlg : public CBaseDialog
 {
     DECLARE_DYNAMIC(CNetworkInfoDlg)
 
 public:
-    CNetworkInfoDlg(vector<NetWorkConection>& adapters, MIB_IFROW* pIfRow, int connection_selected, CWnd* pParent = NULL);   // 标准构造函数
+    CNetworkInfoDlg(vector<NetWorkConection>& adapters, MIB_IFROW* pIfRow, int connection_selected, CWnd* pParent = NULL);   // Standard constructor
     virtual ~CNetworkInfoDlg();
 
-    // 对话框数据
+    // Dialog data
 #ifdef AFX_DESIGN_TIME
     enum { IDD = IDD_NETWORK_INFO_DIALOG };
 #endif
 
-    SYSTEMTIME m_start_time;		//程序启动的时间
+    SYSTEMTIME m_start_time;		//Program start time
 
 protected:
 
     vector<NetWorkConection>& m_connections;
     MIB_IFROW* m_pIfRow;
-    int m_connection_selected;		//当前对话框显示的连接
-    int m_current_connection;		//初始选择的连接
+    int m_connection_selected;		//The connection currently displayed in the dialog box
+    int m_current_connection;		//Initial selected connection
 
     CListCtrlEx m_info_list;
     CMenu m_menu;
     CString m_selected_string;
-    CFont m_font_bold;		//默认字体的粗体
+    CFont m_font_bold;		//Default font bold
 
-    CWinThread* m_pGetIPThread;			//获取外网IP的线程
-    bool m_ip_acquired{ false };        //如果已获取外网ip地址，则为true
+    CWinThread* m_pGetIPThread;			//Thread to obtain external network IP
+    bool m_ip_acquired{ false };        //True if the external IP address has been obtained
 
-    //void GetIPAddress();	//获取IP地址
+    //void GetIPAddress(); //Get IP address
     void ShowInfo();
     void GetProgramElapsedTime();
-    MIB_IFROW& GetConnectIfTable(int connection_index);    //获取当前选择的网络连接的MIB_IFROW对象。connection_index为m_connections中的索引
-    NetWorkConection GetConnection(int connection_index); //获取当前选择的网络连接的NetWorkConection对象。connection_index为m_connections中的索引
+    MIB_IFROW& GetConnectIfTable(int connection_index);    //Gets the MIB_IFROW object of the currently selected network connection. connection_index is the index in m_connections
+    NetWorkConection GetConnection(int connection_index); //Gets the NetWorkConection object of the currently selected network connection. connection_index is the index in m_connections
 
-    //获取外网IP的线程函数
+    //Thread function to obtain external network IP
     static UINT GetInternetIPThreadFunc(LPVOID lpParam);
 
     virtual CString GetDialogName() const override;
 
-    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
     DECLARE_MESSAGE_MAP()
 

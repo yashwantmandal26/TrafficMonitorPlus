@@ -13,19 +13,19 @@ public:
 
     //
     /**
-     * @brief  从文件载入皮肤信息
-     * @param skin_name 皮肤名称
+     * @brief Load skin information from file
+     * @param skin_name skin name
      */
     bool Load(const wstring& skin_name);
 
-    //皮肤信息
+    //Skin information
     struct SkinInfo
     {
-        std::vector<COLORREF> text_color;   //文本颜色
-        bool specify_each_item_color{};     //是否指定每个项目的颜色
-        wstring skin_author;                //皮肤的作者
-        FontInfo font_info;                 //字体信息
-        DispStrings display_text;    //每一项的显示文本
+        std::vector<COLORREF> text_color;   //text color
+        bool specify_each_item_color{};     //Whether to specify the color of each item
+        wstring skin_author;                //author of skin
+        FontInfo font_info;                 //Font information
+        DispStrings display_text;    //Display text for each item
 
         COLORREF TextColor(size_t i) const
         {
@@ -38,31 +38,31 @@ public:
         }
     };
 
-    //对齐方式
+    //Alignment
     enum class Alignment
     {
-        LEFT,       //左对齐
-        RIGHT,      //右对齐
-        CENTER,     //居中
-        SIDE        //两端对齐
+        LEFT,       //left aligned
+        RIGHT,      //Align right
+        CENTER,     //center
+        SIDE        //Justify
     };
 
-    //皮肤中每一项的布局信息
+    //Layout information for each item in the skin
     struct LayoutItem
     {
-        int x{};            //X位置
-        int y{};            //Y位置
-        int width{};        //宽度
-        Alignment align{};  //对齐方式
-        bool show{};        //是否显示
+        int x{};            //X position
+        int y{};            //Y position
+        int width{};        //Width
+        Alignment align{};  //Alignment
+        bool show{};        //Whether to display
     };
 
-    //皮肤布局
+    //Skin layout
     struct Layout
     {
-        int width{};        //宽度
-        int height{};       //高度
-        std::map<CommonDisplayItem, LayoutItem> layout_items; //每一项的布局信息
+        int width{};        //Width
+        int height{};       //height
+        std::map<CommonDisplayItem, LayoutItem> layout_items; //Layout information for each item
         LayoutItem GetItem(CommonDisplayItem display_item) const
         {
             auto iter = layout_items.find(display_item);
@@ -72,16 +72,16 @@ public:
         }
     };
 
-    //皮肤布局信息
+    //Skin layout information
     struct LayoutInfo
     {
-        int text_height{};  //皮肤文本的高度
-        bool no_label{};    //是否不显示标签
-        Layout layout_l;    //“显示更多信息”时的布局
-        Layout layout_s;    //不“显示更多信息”时的布局
+        int text_height{};  //Skin text height
+        bool no_label{};    //Whether to hide labels
+        Layout layout_l;    //Layout when "Show more information"
+        Layout layout_s;    //Layout without "Show more information"
     };
 
-    //皮肤预览图信息
+    //Skin preview information
     struct PreviewInfo
     {
         struct Pos
@@ -89,10 +89,10 @@ public:
             int x{};
             int y{};
         };
-        int width{};    //预览图的宽度
-        int height{};   //预览图的高度
-        Pos l_pos;      //“显示更多信息”时的窗口在预览图中的位置
-        Pos s_pos;      //不“显示更多信息”时的窗口在预览图中的位置
+        int width{};    //Preview width
+        int height{};   //Preview height
+        Pos l_pos;      //The position of the window in the preview when "Show more information"
+        Pos s_pos;      //The position of the window in the preview when "Show more information" is not enabled
     };
 
     const SkinInfo& GetSkinInfo() const { return m_skin_info; }
@@ -103,26 +103,26 @@ public:
     const CImage& GetBackgroundS() const { return m_background_s; }
 
     bool IsPNG() const { return m_is_png; }
-    void SetAlpha(int alpha);       //设置主窗口的不透明度，alpha:0~255，仅当使用png背景时有效
+    void SetAlpha(int alpha);       //Set the opacity of the main window, alpha: 0~255, only valid when using png background
 
     void SetSettingData(const SkinSettingData& setting_data);
 
-    //绘制预览图
-    //pDC: 绘图的CDC
-    //rect: 绘图区域
+    //Draw preview
+    //pDC: Plotted CDC
+    //rect: drawing area
     void DrawPreview(CDC* pDC, CRect rect);
 
-    //绘制主界面
+    //Draw the main interface
     void DrawInfo(CDC* pDC, bool show_more_info);
 
     static string GetDisplayItemXmlNodeName(DisplayItem display_item);
 
-    //获取此皮肤上所有显示项目
+    //Get all displayed items on this skin
     void GetSkinDisplayItems(std::set<CommonDisplayItem>& skin_all_items) const;
 
 private:
-    bool LoadFromXml(const wstring& file_path);     //从xml文件读取皮肤数据
-    void LoadFromIni(const wstring& file_path);     //从ini文件读取皮肤数据（用于兼容旧版皮肤）
+    bool LoadFromXml(const wstring& file_path);     //Read skin data from xml file
+    void LoadFromIni(const wstring& file_path);     //Read skin data from ini file (for compatibility with older skins)
 
     CSkinFile::Layout LayoutFromXmlNode(tinyxml2::XMLElement* ele);
 
@@ -138,14 +138,14 @@ private:
 
     static void DrawSkinText(IDrawCommon& drawer, DrawStr draw_str, CRect rect, COLORREF color, Alignment align);
 
-    //绘制主界面中除背景图外所有显示项目
+    //Draw all display items in the main interface except the background image
     void DrawItemsInfo(IDrawCommon& drawer, Layout& layout, CFont& font) const;
 
 private:
     SkinInfo m_skin_info;
     LayoutInfo m_layout_info;
     PreviewInfo m_preview_info;
-    std::map<std::string, std::string> m_plugin_map;  //插件名称与xml节点名称的映射关系。key是xml节点名称，value是插件ID
+    std::map<std::string, std::string> m_plugin_map;  //The mapping relationship between plug-in names and xml node names. key is the xml node name, value is the plug-in ID
 
     CFont m_font;
     CImage m_background_s;
@@ -153,7 +153,7 @@ private:
     bool m_is_png{};
     Gdiplus::Image* m_background_png_s{};
     Gdiplus::Image* m_background_png_l{};
-    int m_alpha{ 255 };     //不透明度，仅当背景为png时有效
+    int m_alpha{ 255 };     //Opacity, only valid when the background is png
     SkinSettingData m_setting_data;
     bool m_is_error{ false };
 };

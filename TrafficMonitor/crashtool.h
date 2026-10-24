@@ -3,10 +3,10 @@
 namespace CRASHREPORT
 {
     /**@brief
-        开启dmup模式
-        开启后，当程序崩溃时，会生成一个dump文件，该文件在C:\Users\<用户名>\AppData\Local\Temp目录
-        文件名格式：崩溃时间_程序名称.exe.dmp
-        如下
+        Enable dmup mode
+        After turning it on, when the program crashes, a dump file will be generated, which is in the C:\Users\<username>\AppData\Local\Temp directory.
+        File name format: crash time_program name.exe.dmp
+        As follows
         20150116174802_CrashShare.exe.dmp
     */
     void StartCrashReport();

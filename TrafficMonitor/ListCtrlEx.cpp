@@ -14,20 +14,20 @@ CListCtrlEx::~CListCtrlEx()
 
 void CListCtrlEx::Edit(int row, int col)
 {
-    EnsureVisible(row, FALSE);				//编辑一行时确保该行可见
+    EnsureVisible(row, FALSE);				//Make sure a row is visible when editing it
     m_editing = true;
 
     m_edit_row = row;
     m_edit_col = col;
     CRect item_rect;
-    GetSubItemRect(row, col, LVIR_LABEL, item_rect);	//取得子项的矩形
+    GetSubItemRect(row, col, LVIR_LABEL, item_rect);	//Get the rectangle of the child
 
-    CString text = GetItemText(row, col);		//取得子项的内容
+    CString text = GetItemText(row, col);		//Get the content of the child item
 
-    m_item_edit.SetWindowText(text);		//将子项的内容显示到编辑框中
-    m_item_edit.ShowWindow(SW_SHOW);		//显示编辑框
-    m_item_edit.MoveWindow(item_rect);		//将编辑框移动到子项上面，覆盖在子项上
-    m_item_edit.SetFocus();					//使编辑框取得焦点
+    m_item_edit.SetWindowText(text);		//Display the content of the subitem into the edit box
+    m_item_edit.ShowWindow(SW_SHOW);		//Show edit box
+    m_item_edit.MoveWindow(item_rect);		//Move the edit box above the child item and cover it
+    m_item_edit.SetFocus();					//Focus the edit box
     m_item_edit.SetSel(0, -1);
 }
 
@@ -48,10 +48,10 @@ void CListCtrlEx::EndEdit()
         if (m_edit_row >= 0 && m_edit_row < GetItemCount())
         {
             CString str;
-            m_item_edit.GetWindowText(str);	//取得编辑框的内容
-            SetItemText(m_edit_row, m_edit_col, str);	//将该内容更新到CListCtrl中
+            m_item_edit.GetWindowText(str);	//Get the contents of the edit box
+            SetItemText(m_edit_row, m_edit_col, str);	//Update the content into CListCtrl
         }
-        m_item_edit.ShowWindow(SW_HIDE);//隐藏编辑框
+        m_item_edit.ShowWindow(SW_HIDE);//Hide edit box
         m_editing = false;
     }
 }
@@ -66,7 +66,7 @@ END_MESSAGE_MAP()
 
 void CListCtrlEx::OnEnKillfocusEdit1()
 {
-    //当文本编辑控件控件失去焦点时响应
+    //Responding when a text edit control control loses focus
     EndEdit();
 }
 
@@ -74,7 +74,7 @@ void CListCtrlEx::OnEnKillfocusEdit1()
 
 void CListCtrlEx::PreSubclassWindow()
 {
-    // TODO: 在此添加专用代码和/或调用基类
+    // TODO: Add specialized code here and/or call the base class
     m_item_edit.Create(WS_BORDER | ES_AUTOHSCROLL, CRect(), this, IDC_ITEM_EDITBOX);
     m_item_edit.SetFont(GetFont());
 
@@ -85,9 +85,9 @@ void CListCtrlEx::PreSubclassWindow()
 BOOL CListCtrlEx::OnNMDblclk(NMHDR *pNMHDR, LRESULT *pResult)
 {
     LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
 
-    //如果双击的列是要编辑的列
+    //If the double-clicked column is the column to be edited
     if (m_edit_col_method == EC_ALL
         || (m_edit_col_method == EC_SPECIFIED && m_edit_cols.find(pNMItemActivate->iSubItem) != m_edit_cols.end()))
     {
@@ -104,10 +104,10 @@ BOOL CListCtrlEx::OnNMDblclk(NMHDR *pNMHDR, LRESULT *pResult)
 
 void CListCtrlEx::OnLvnBeginScroll(NMHDR *pNMHDR, LRESULT *pResult)
 {
-    // 此功能要求 Internet Explorer 5.5 或更高版本。
-    // 符号 _WIN32_IE 必须是 >= 0x0560。
+    // This feature requires Internet Explorer 5.5 or higher.
+    // Symbol _WIN32_IE must be >= 0x0560.
     LPNMLVSCROLL pStateChanged = reinterpret_cast<LPNMLVSCROLL>(pNMHDR);
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     EndEdit();
 
     *pResult = 0;
@@ -124,7 +124,7 @@ BOOL CListCtrlEx::PreTranslateMessage(MSG* pMsg)
 {
     if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN)
     {
-        //编辑状态下按回车键结束编辑而不是关闭对话框
+        //Press the Enter key in editing mode to end editing instead of closing the dialog box
         if (m_editing)
         {
             EndEdit();

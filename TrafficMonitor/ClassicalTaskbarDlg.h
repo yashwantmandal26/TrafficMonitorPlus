@@ -6,25 +6,25 @@ class CClassicalTaskbarDlg :
 public:
 
 private:
-    // 通过 CTaskBarDlg 继承
+    // Inherited via CTaskBarDlg
     virtual void AdjustTaskbarWndPos(bool force_adjust) override;
     void InitTaskbarWnd() override;
     void ResetTaskbarPos() override;
     virtual HWND GetParentHwnd() override;
 
 private:
-    CRect m_rcMinOri;   //初始状态时最小化窗口的矩形区域
-    int m_left_space{};			//最小化窗口和二级窗口窗口左侧的边距
-    int m_top_space{};			//最小化窗口和二级窗口窗口顶部的边距（用于任务栏在屏幕左侧或右侧时）
-    HWND m_hBar;		//任务栏窗口二级容器的句柄
-    HWND m_hMin;		//最小化窗口的句柄
-    CRect m_rcBar;		//初始状态时任务栏窗口的矩形区域
-    CRect m_rcMin;		//最小化窗口的矩形区域
+    CRect m_rcMinOri;   //Minimizes the rectangular area of the window in the initial state
+    int m_left_space{};			//Minimize window and secondary window left margin
+    int m_top_space{};			//Margins at the top of the window for minimized windows and secondary windows (used when the taskbar is on the left or right side of the screen)
+    HWND m_hBar;		//The handle of the secondary container of the taskbar window
+    HWND m_hMin;		//Minimize window handle
+    CRect m_rcBar;		//The rectangular area of the taskbar window in the initial state
+    CRect m_rcMin;		//Minimize the rectangular area of the window
 
-    int m_last_width;	//用于检测宽度变化的上一次的宽度
-    int m_last_height;	//用于检测高度变化的上一次的高度（用于任务栏在屏幕左侧或右侧时）
+    int m_last_width;	//Used to detect the last width of the width change
+    int m_last_height;	//The last height used to detect height changes (used when the taskbar is on the left or right side of the screen)
 
-    // 通过 CTaskBarDlg 继承
+    // Inherited via CTaskBarDlg
     void CheckTaskbarOnTopOrBottom() override;
 };
 

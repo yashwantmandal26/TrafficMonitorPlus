@@ -5,17 +5,17 @@
 #include "HistoryTrafficCalendarDlg.h"
 #include "BaseDialog.h"
 
-// CHistoryTrafficDlg 对话框
+// CHistoryTrafficDlg dialog box
 
 class CHistoryTrafficDlg : public CBaseDialog
 {
     DECLARE_DYNAMIC(CHistoryTrafficDlg)
 
 public:
-    CHistoryTrafficDlg(deque<HistoryTraffic>& history_traffics, CWnd* pParent = NULL);   // 标准构造函数
+    CHistoryTrafficDlg(deque<HistoryTraffic>& history_traffics, CWnd* pParent = NULL);   // Standard constructor
     virtual ~CHistoryTrafficDlg();
 
-    // 对话框数据
+    // Dialog data
 #ifdef AFX_DESIGN_TIME
     enum { IDD = IDD_HISTORY_TRAFFIC_DIALOG };
 #endif
@@ -31,7 +31,7 @@ protected:
     int m_tab_selected;
 
 protected:
-    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
     void SetTabWndSize();
     virtual CString GetDialogName() const override;
 

@@ -27,7 +27,7 @@ CGeneralSettingsDlg::~CGeneralSettingsDlg()
 
 void CGeneralSettingsDlg::CheckTaskbarDisplayItem()
 {
-    //如果选项设置中关闭了某个硬件监控，则不显示对应的温度监控相关项目
+    //If a certain hardware monitoring is turned off in the option settings, the corresponding temperature monitoring related items will not be displayed.
     if (!theApp.m_general_data.IsHardwareEnable(HI_CPU))
     {
         theApp.m_taskbar_data.display_item.Remove(TDI_CPU_TEMP);
@@ -61,7 +61,7 @@ void CGeneralSettingsDlg::SetControlMouseWheelEnable(bool enable)
 
 void CGeneralSettingsDlg::OnSettingsApplied()
 {
-    //当设置被应用时，重置xxxx_ori的值
+    //When the setting is applied, reset the value of xxxx_ori
     m_monitor_time_span_ori = m_data.monitor_time_span;
     m_update_source_ori = m_data.update_source;
 }
@@ -85,14 +85,14 @@ bool CGeneralSettingsDlg::InitializeControls()
         { CtrlTextInfo::L3, IDC_LANGUAGE_COMBO }
         });
 
-    //调整“今日使用流量已达到”这一行控件的水平位置
+    //Adjust the horizontal position of the row control "Today's usage traffic has reached"
     RepositionTextBasedControls({
         { CtrlTextInfo::L4, IDC_TODAY_TRAFFIC_TIP_CHECK, CtrlTextInfo::W24 },
         { CtrlTextInfo::L3, IDC_TODAY_TRAFFIC_TIP_EDIT },
         { CtrlTextInfo::L2, IDC_TODAY_TRAFFIC_TIP_COMBO },
         { CtrlTextInfo::L1, IDC_TODAY_TRAFFIC_BACK_STATIC}
         });
-    //调整“内存使用率已达到”、“温度已达到”这几行控件的水平位置
+    //Adjust the horizontal position of the controls in the lines "Memory Usage Has Reached" and "Temperature Has Reached"
     RepositionTextBasedControls({
         { CtrlTextInfo::L4, IDC_MEMORY_USAGE_TIP_CHECK, CtrlTextInfo::W24 },
         { CtrlTextInfo::L3, IDC_MEMORY_USAGE_TIP_EDIT },
@@ -135,7 +135,7 @@ bool CGeneralSettingsDlg::InitializeControls()
 
 bool CGeneralSettingsDlg::ShowHardwareMonitorWarning()
 {
-    //如果已经有硬件监控项目被勾选了，则不再弹出提示
+    //If there is already a hardware monitoring item checked, no prompt will pop up again.
     if (m_data.hardware_monitor_item != 0)
         return true;
 
@@ -253,14 +253,14 @@ BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CTabDlg)
 END_MESSAGE_MAP()
 
 
-// CGeneralSettingsDlg 消息处理程序
+// CGeneralSettingsDlg message handler
 
 
 BOOL CGeneralSettingsDlg::OnInitDialog()
 {
     CTabDlg::OnInitDialog();
 
-    // TODO:  在此添加额外的初始化
+    // TODO: Add additional initialization here
 
     ((CButton*)GetDlgItem(IDC_CHECK_UPDATE_CHECK))->SetCheck(m_data.check_update_when_start);
     if (theApp.IsForceShowNotifyIcon())
@@ -275,7 +275,7 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     else
         CheckDlgButton(IDC_GITEE_RADIO, TRUE);
 
-    //检查开始菜单的“启动”目录下有没有程序的快捷方式，如果有则设置开机自启动，然后删除快捷方式
+    //Check whether there is a shortcut to the program in the "Startup" directory of the start menu. If so, set it to start automatically at boot, and then delete the shortcut.
     wstring start_up_path = CCommon::GetStartUpPath();
     bool shortcut_exist = CCommon::FileExist((start_up_path + L"\\TrafficMonitor.lnk").c_str());
     m_data.auto_run = false;
@@ -292,7 +292,7 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
         DeleteFile((start_up_path + L"\\TrafficMonitor.lnk").c_str());
         CheckDlgButton(IDC_AUTO_RUN_METHOD_REGESTRY_RADIO, TRUE);
     }
-    //检查开机自动运行的设置是通过注册表还是任务计划程序实现的，并设置相应的选项
+    //Check whether the setting to run automatically at startup is implemented through the registry or task scheduler, and set the corresponding options
     else
     {
         bool auto_run_by_registry = theApp.GetAutoRun(&m_auto_run_path, false);
@@ -354,7 +354,7 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     SetControlEnable();
 
     m_language_combo.AddString(CCommon::LoadText(IDS_FOLLOWING_SYSTEM));
-    int current_language_index{ -1 };       //当前语言在所有语言列表中的序号
+    int current_language_index{ -1 };       //The serial number of the current language in the list of all languages
     for (size_t i = 0; i < theApp.m_str_table.GetLanguageList().size(); i++)
     {
         const LanguageInfo& language_info = theApp.m_str_table.GetLanguageList()[i];
@@ -362,7 +362,7 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
         if (language_info == m_data.language)
             current_language_index = static_cast<int>(i);
     }
-    m_language_combo.SetCurSel(current_language_index + 1);     //由于ComboBox第一项是“跟随系统”，因此ComboBox的序号需要加1
+    m_language_combo.SetCurSel(current_language_index + 1);     //Since the first item of ComboBox is "following the system", the serial number of ComboBox needs to be increased by 1.
 
     ((CButton*)GetDlgItem(IDC_SHOW_ALL_CONNECTION_CHECK))->SetCheck(m_data.show_all_interface);
 
@@ -397,7 +397,7 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
         m_hard_disk_combo.SetCurSel(cur_index);
     }
 #ifndef WITHOUT_TEMPERATURE
-    //初始化硬件监控Check box
+    //Initialize the hardware monitoring check box
     CheckDlgButton(IDC_CPU_CHECK, m_data.IsHardwareEnable(HI_CPU));
     CheckDlgButton(IDC_GPU_CHECK, m_data.IsHardwareEnable(HI_GPU));
     CheckDlgButton(IDC_HDD_CHECK, m_data.IsHardwareEnable(HI_HDD));
@@ -406,7 +406,7 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     if (theApp.m_pMonitor != nullptr)
     {
         CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
-        //初始化选择硬盘下拉列表
+        //Initialize the hard disk selection drop-down list
         if (!CTrafficMonitorDlg::Instance()->IsGetDiskUsageByPdh())
         {
             for (const auto& hdd_item : theApp.m_pMonitor->AllHDDTemperature())
@@ -414,7 +414,7 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
             int cur_index = m_hard_disk_combo.FindString(-1, m_data.hard_disk_name.c_str());
             m_hard_disk_combo.SetCurSel(cur_index);
         }
-        //初始化选择CPU下拉列表
+        //Initialize select CPU drop-down list
         m_select_cpu_combo.AddString(CCommon::LoadText(IDS_AVREAGE_TEMPERATURE));
         for (const auto& cpu_item : theApp.m_pMonitor->AllCpuTemperature())
             m_select_cpu_combo.AddString(cpu_item.first.c_str());
@@ -425,7 +425,7 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     }
 #endif
 
-    //不含温度监控的版本，禁用温度相关的控件
+    //Version without temperature monitoring, disable temperature-related controls
 #ifdef WITHOUT_TEMPERATURE
     EnableDlgCtrl(IDC_CPU_TEMP_TIP_CHECK, false);
     EnableDlgCtrl(IDC_CPU_TEMP_TIP_EDIT, false);
@@ -454,27 +454,27 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     m_select_connection_btn.SetIcon(theApp.GetMenuIcon(IDI_CONNECTION));
 
     return TRUE;  // return TRUE unless you set the focus to a control
-                  // 异常: OCX 属性页应返回 FALSE
+                  // Exception: OCX property page should return FALSE
 }
 
 
 void CGeneralSettingsDlg::OnBnClickedCheckNowButton()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     theApp.CheckUpdateInThread(true);
 }
 
 
 void CGeneralSettingsDlg::OnBnClickedCheckUpdateCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.check_update_when_start = (IsDlgButtonChecked(IDC_CHECK_UPDATE_CHECK) != 0);
 }
 
 
 void CGeneralSettingsDlg::OnBnClickedAutoRunCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.auto_run = (IsDlgButtonChecked(IDC_AUTO_RUN_CHECK) != 0);
     m_auto_run_modified = true;
     SetControlEnable();
@@ -483,8 +483,8 @@ void CGeneralSettingsDlg::OnBnClickedAutoRunCheck()
 
 void CGeneralSettingsDlg::OnOK()
 {
-    // TODO: 在此添加专用代码和/或调用基类
-    //获取消息提示的设置
+    // TODO: Add specialized code here and/or call the base class
+    //Get message prompt settings
     m_data.traffic_tip_value = m_traffic_tip_edit.GetValue();
     if (m_data.traffic_tip_value < 1) m_data.traffic_tip_value = 1;
     if (m_data.traffic_tip_value > 32767) m_data.traffic_tip_value = 32767;
@@ -515,11 +515,11 @@ void CGeneralSettingsDlg::OnOK()
     m_data.mainboard_temp_tip.tip_value = m_mbd_temp_tip_edit.GetValue();
     checkTempTipValue(m_data.mainboard_temp_tip.tip_value);
 
-    //获取语言的设置
+    //Get language settings
     m_data.language = LanguageInfo();
     if (m_language_combo.GetCurSel() > 0)
     {
-        //选择的不是“跟随系统”
+        //The choice was not "Follow the system"
         int current_language_index = m_language_combo.GetCurSel() - 1;
         if (current_language_index >= 0 && current_language_index < static_cast<int>(theApp.m_str_table.GetLanguageList().size()))
         {
@@ -532,7 +532,7 @@ void CGeneralSettingsDlg::OnOK()
     }
     m_show_all_interface_modified = (m_data.show_all_interface != theApp.m_general_data.show_all_interface);
 
-    //获取数据文件保存位置的设置
+    //Get the settings for where the data files are saved
     m_data.portable_mode = (((CButton*)GetDlgItem(IDC_SAVE_TO_PROGRAM_DIR_RADIO))->GetCheck() != 0);
     if (m_data.portable_mode != theApp.m_general_data.portable_mode)
     {
@@ -547,7 +547,7 @@ void CGeneralSettingsDlg::OnOK()
 
 void CGeneralSettingsDlg::OnBnClickedTodayTrafficTipCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.traffic_tip_enable = (IsDlgButtonChecked(IDC_TODAY_TRAFFIC_TIP_CHECK) != 0);
     SetControlEnable();
 }
@@ -555,7 +555,7 @@ void CGeneralSettingsDlg::OnBnClickedTodayTrafficTipCheck()
 
 void CGeneralSettingsDlg::OnBnClickedMemoryUsageTipCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.memory_usage_tip.enable = (IsDlgButtonChecked(IDC_MEMORY_USAGE_TIP_CHECK) != 0);
     SetControlEnable();
 }
@@ -563,14 +563,14 @@ void CGeneralSettingsDlg::OnBnClickedMemoryUsageTipCheck()
 
 void CGeneralSettingsDlg::OnBnClickedOpenConfigPathButton()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     ShellExecute(NULL, _T("explore"), theApp.m_config_dir.c_str(), NULL, NULL, SW_SHOWNORMAL);
 }
 
 
 void CGeneralSettingsDlg::OnBnClickedShowAllConnectionCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.show_all_interface = (IsDlgButtonChecked(IDC_SHOW_ALL_CONNECTION_CHECK) != 0);
     SetControlEnable();
 }
@@ -578,7 +578,7 @@ void CGeneralSettingsDlg::OnBnClickedShowAllConnectionCheck()
 
 BOOL CGeneralSettingsDlg::PreTranslateMessage(MSG* pMsg)
 {
-    // TODO: 在此添加专用代码和/或调用基类
+    // TODO: Add specialized code here and/or call the base class
     if (pMsg->message == WM_MOUSEMOVE)
         m_toolTip.RelayEvent(pMsg);
 
@@ -602,12 +602,12 @@ afx_msg LRESULT CGeneralSettingsDlg::OnSpinEditPosChanged(WPARAM wParam, LPARAM 
     if (pSpin == nullptr)
         return 0;
     CWnd* pEdit = pSpin->GetBuddy();
-    if (pEdit == &m_monitor_span_edit)       //当用户点击了“监控时间间隔”的微调按钮时
+    if (pEdit == &m_monitor_span_edit)       //When the user clicks the fine-tuning button of "Monitoring Interval"
     {
         LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(lParam);
         if (pNMUpDown->iDelta == -1)
         {
-            // 用户按下了spin控件的向下箭头
+            // The user pressed the down arrow of the spin control
             int value = m_monitor_span_edit.GetValue();
             value -= MONITOR_SPAN_STEP;
             value /= MONITOR_SPAN_STEP;
@@ -616,7 +616,7 @@ afx_msg LRESULT CGeneralSettingsDlg::OnSpinEditPosChanged(WPARAM wParam, LPARAM 
         }
         else if (pNMUpDown->iDelta == 1)
         {
-            // 用户按下了spin控件的向上箭头
+            // The user pressed the up arrow of the spin control
             int value = m_monitor_span_edit.GetValue();
             value += MONITOR_SPAN_STEP;
             value /= MONITOR_SPAN_STEP;
@@ -632,9 +632,9 @@ afx_msg LRESULT CGeneralSettingsDlg::OnSpinEditPosChanged(WPARAM wParam, LPARAM 
 
 void CGeneralSettingsDlg::OnEnKillfocusMonitorSpanEdit()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
 
-    //这里限制监控时间间隔只能输入100的倍数
+    //The monitoring time interval here is limited to multiples of 100.
     CString str;
     GetDlgItemText(IDC_MONITOR_SPAN_EDIT, str);
     str.Replace(_T(","), _T(""));
@@ -654,7 +654,7 @@ void CGeneralSettingsDlg::OnEnKillfocusMonitorSpanEdit()
 
 void CGeneralSettingsDlg::OnBnClickedCpuTempTipCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.cpu_temp_tip.enable = (IsDlgButtonChecked(IDC_CPU_TEMP_TIP_CHECK) != 0);
     SetControlEnable();
 }
@@ -662,7 +662,7 @@ void CGeneralSettingsDlg::OnBnClickedCpuTempTipCheck()
 
 void CGeneralSettingsDlg::OnBnClickedGpuTempTipCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.gpu_temp_tip.enable = (IsDlgButtonChecked(IDC_GPU_TEMP_TIP_CHECK) != 0);
     SetControlEnable();
 }
@@ -670,7 +670,7 @@ void CGeneralSettingsDlg::OnBnClickedGpuTempTipCheck()
 
 void CGeneralSettingsDlg::OnBnClickedHddTempTipCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.hdd_temp_tip.enable = (IsDlgButtonChecked(IDC_HDD_TEMP_TIP_CHECK) != 0);
     SetControlEnable();
 }
@@ -678,7 +678,7 @@ void CGeneralSettingsDlg::OnBnClickedHddTempTipCheck()
 
 void CGeneralSettingsDlg::OnBnClickedMbdTempTipCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.mainboard_temp_tip.enable = (IsDlgButtonChecked(IDC_MBD_TEMP_TIP_CHECK) != 0);
     SetControlEnable();
 }
@@ -686,15 +686,15 @@ void CGeneralSettingsDlg::OnBnClickedMbdTempTipCheck()
 
 void CGeneralSettingsDlg::OnBnClickedGithubRadio()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.update_source = 0;
-    theApp.m_general_data.update_source = 0;        //点击“更新源”的单选按钮时，同时更改theApp中的设置，以确保点击“立即检查”按钮时使用选择的更新源更新
+    theApp.m_general_data.update_source = 0;        //When clicking the radio button for "Update Source", also change the settings in theApp to ensure that the selected update source is used when clicking the "Check Now" button
 }
 
 
 void CGeneralSettingsDlg::OnBnClickedGiteeRadio()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.update_source = 1;
     theApp.m_general_data.update_source = 1;
 }
@@ -702,8 +702,8 @@ void CGeneralSettingsDlg::OnBnClickedGiteeRadio()
 
 void CGeneralSettingsDlg::OnCancel()
 {
-    // TODO: 在此添加专用代码和/或调用基类
-    theApp.m_general_data.update_source = m_update_source_ori;      //点击“取消”时恢复开始的“更新源”选项
+    // TODO: Add specialized code here and/or call the base class
+    theApp.m_general_data.update_source = m_update_source_ori;      //Restore starting "Update source" option when clicking "Cancel"
 
     CTabDlg::OnCancel();
 }
@@ -711,14 +711,14 @@ void CGeneralSettingsDlg::OnCancel()
 
 void CGeneralSettingsDlg::OnBnClickedRestoreDefaultTimeSpanButton()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_monitor_span_edit.SetValue(1000);
 }
 
 
 void CGeneralSettingsDlg::OnCbnSelchangeSelectHardDiskCombo()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     CString hard_disk_name;
     m_hard_disk_combo.GetWindowText(hard_disk_name);
     m_data.hard_disk_name = hard_disk_name.GetString();
@@ -727,7 +727,7 @@ void CGeneralSettingsDlg::OnCbnSelchangeSelectHardDiskCombo()
 
 void CGeneralSettingsDlg::OnBnClickedCpuCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     bool checked = IsDlgButtonChecked(IDC_CPU_CHECK) != 0;
     if (checked && !ShowHardwareMonitorWarning())
     {
@@ -740,7 +740,7 @@ void CGeneralSettingsDlg::OnBnClickedCpuCheck()
 
 void CGeneralSettingsDlg::OnBnClickedGpuCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     bool checked = IsDlgButtonChecked(IDC_GPU_CHECK) != 0;
     if (checked && !ShowHardwareMonitorWarning())
     {
@@ -753,7 +753,7 @@ void CGeneralSettingsDlg::OnBnClickedGpuCheck()
 
 void CGeneralSettingsDlg::OnBnClickedHddCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     bool checked = IsDlgButtonChecked(IDC_HDD_CHECK) != 0;
     if (checked && !ShowHardwareMonitorWarning())
     {
@@ -766,7 +766,7 @@ void CGeneralSettingsDlg::OnBnClickedHddCheck()
 
 void CGeneralSettingsDlg::OnBnClickedMbdCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     bool checked = IsDlgButtonChecked(IDC_MBD_CHECK) != 0;
     if (checked && !ShowHardwareMonitorWarning())
     {
@@ -780,7 +780,7 @@ void CGeneralSettingsDlg::OnBnClickedMbdCheck()
 
 void CGeneralSettingsDlg::OnCbnSelchangeSelectCpuCombo()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     CString cpu_core_name;
     m_select_cpu_combo.GetWindowText(cpu_core_name);
     m_data.cpu_core_name = cpu_core_name.GetString();
@@ -789,7 +789,7 @@ void CGeneralSettingsDlg::OnCbnSelchangeSelectCpuCombo()
 
 void CGeneralSettingsDlg::OnBnClickedPluginManageButton()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     CPluginManagerDlg dlg;
     dlg.DoModal();
 }
@@ -797,14 +797,14 @@ void CGeneralSettingsDlg::OnBnClickedPluginManageButton()
 
 void CGeneralSettingsDlg::OnBnClickedShowNotifyIconCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.show_notify_icon = (IsDlgButtonChecked(IDC_SHOW_NOTIFY_ICON_CHECK) != 0);
 }
 
 
 void CGeneralSettingsDlg::OnBnClickedSelectConnectionsButton()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     CSelectConnectionsDlg dlg(m_data.connections_hide);
     if (dlg.DoModal() == IDOK)
     {
@@ -815,19 +815,19 @@ void CGeneralSettingsDlg::OnBnClickedSelectConnectionsButton()
 
 void CGeneralSettingsDlg::OnBnClickedResetAutoRunButton()
 {
-    //先删除开机自动运行
+    //First delete the automatic run on startup
     theApp.SetAutoRunByRegistry(false);
     theApp.SetAutoRunByTaskScheduler(false);
-    if (!theApp.SetAutoRun(true, m_data.auto_run_by_task_scheduler))    //重新设置开机自动运行
+    if (!theApp.SetAutoRun(true, m_data.auto_run_by_task_scheduler))    //Reset to run automatically on startup
     {
         MessageBox(CCommon::LoadText(IDS_SET_AUTO_RUN_FAILED_WARNING), NULL, MB_ICONWARNING | MB_OK);
         return;
     }
-    //获取开机自动运行的路径
+    //Get the path to run automatically at startup
     bool auto_run = theApp.GetAutoRun(&m_auto_run_path, m_data.auto_run_by_task_scheduler);
-    //重新勾选“开机自动运行”复选框
+    //Recheck the "Run automatically at startup" checkbox
     CheckDlgButton(IDC_AUTO_RUN_CHECK, auto_run);
-    //更新鼠标提示
+    //Update mouse tips
     AddOrUpdateAutoRunTooltip(false);
 }
 

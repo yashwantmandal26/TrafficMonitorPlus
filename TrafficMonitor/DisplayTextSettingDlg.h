@@ -3,17 +3,17 @@
 #include "CommonData.h"
 #include "ListCtrlEx.h"
 
-// CDisplayTextSettingDlg 对话框
+// CDisplayTextSettingDlg dialog box
 
 class CDisplayTextSettingDlg : public CBaseDialog
 {
 	DECLARE_DYNAMIC(CDisplayTextSettingDlg)
 
 public:
-	CDisplayTextSettingDlg(DispStrings& display_texts, bool main_window_text = false, CWnd* pParent = nullptr);   // 标准构造函数
+	CDisplayTextSettingDlg(DispStrings& display_texts, bool main_window_text = false, CWnd* pParent = nullptr);   // Standard constructor
 	virtual ~CDisplayTextSettingDlg();
 
-// 对话框数据
+// Dialog data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_DISPLAY_TEXT_SETTINGS_DIALOG };
 #endif
@@ -22,7 +22,7 @@ private:
     DispStrings& m_display_texts;
 
     CListCtrlEx m_list_ctrl;
-    bool m_main_window_text{ false };       //如果为true，则为主窗口文本设置，否则为任务栏窗口设置
+    bool m_main_window_text{ false };       //If true, it is set for the main window text, otherwise it is set for the taskbar window.
     CMenu m_menu;
     int m_item_selected{ -1 };
 
@@ -30,7 +30,7 @@ protected:
     virtual CString GetDialogName() const override;
     CommonDisplayItem GetDisplayItem(int row);
 
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 	DECLARE_MESSAGE_MAP()
 

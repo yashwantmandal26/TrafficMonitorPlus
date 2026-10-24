@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "PluginInterface.h"
 
-//内置的显示的项目
+//Built-in display items
 enum DisplayItem
 {
     TDI_UP,
@@ -19,7 +19,7 @@ enum DisplayItem
     TDI_TODAY_TRAFFIC
 };
 
-//所有内置显示项目的集合
+//Collection of all built-in display items
 const std::set<DisplayItem> AllDisplayItems
 {
     TDI_UP, TDI_DOWN, TDI_CPU, TDI_MEMORY, TDI_GPU_USAGE
@@ -29,7 +29,7 @@ const std::set<DisplayItem> AllDisplayItems
     , TDI_HDD_USAGE, TDI_CPU_FREQ, TDI_TOTAL_SPEED, TDI_TODAY_TRAFFIC
 };
 
-//显示的项目
+//Displayed items
 class CommonDisplayItem
 {
 public:
@@ -40,45 +40,45 @@ public:
     bool operator<(const CommonDisplayItem&) const;
     bool operator==(const CommonDisplayItem&) const;
 
-    //是否为插件项目
+    //Whether it is a plug-in project
     bool IsPlugin() const;
 
-    //获取内置的显示项目
+    //Get built-in display items
     DisplayItem ItemType() const;
 
-    //获取插件显示项目
+    //Get plug-in display items
     IPluginItem* PluginItem() const;
 
-    //获取显示项目的名称
+    //Get the name of the displayed item
     CString GetItemName() const;
 
-    //获取一个显示项目的默认显示文本
+    //Get the default display text of a display item
     std::wstring DefaultString(bool is_main_window) const;
 
-    //获取一个显示项目的显示文本保存在ini文件中的key的名称
+    //Get the name of the key that the display text of a display item is saved in the ini file
     const wchar_t* GetItemIniKeyName() const;
 
     /**
-     * @brief   获取一个显示项目的数值文本
-     * @param   is_main_window 如果为true则为主窗口，否则为任务栏窗口
-     * @return  显示的文本
+     * @brief Gets a numerical text that displays the item
+     * @param is_main_window If true, it is the main window, otherwise it is the taskbar window
+     * @return displayed text
      */
     CString GetItemValueText(bool is_main_window) const;
 
     /**
-     * @brief   获取一个显示项目的数值示例文本
-     * @param   is_main_window 如果为true则为主窗口，否则为任务栏窗口
-     * @return  示例文本
+     * @brief Gets a numerical example text that displays the item
+     * @param is_main_window If true, it is the main window, otherwise it is the taskbar window
+     * @return sample text
      */
     CString GetItemValueSampleText(bool is_main_window) const;
 
-    //是否在任务栏中独占双行
+    //Whether to occupy two rows exclusively in the taskbar
     bool IsDoubleLineExclusive() const;
 
 private:
-    bool is_plugin{};           //是否为插件项目
-    DisplayItem item_type{};    //内置的显示项目
-    IPluginItem* plugin_item{}; //插件显示项目
+    bool is_plugin{};           //Whether it is a plug-in project
+    DisplayItem item_type{};    //Built-in display items
+    IPluginItem* plugin_item{}; //Plug-in display items
 };
 
 

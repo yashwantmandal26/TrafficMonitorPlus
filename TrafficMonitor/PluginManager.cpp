@@ -11,7 +11,7 @@
 #include "Common.h"
 #include "TrafficMonitor.h"
 
-#define PLUGIN_UNSUPPORT_VERSION 0      //不被支持的插件版本
+#define PLUGIN_UNSUPPORT_VERSION 0      //Unsupported plug-in version
 
 CPluginManager::CPluginManager()
 {
@@ -19,7 +19,7 @@ CPluginManager::CPluginManager()
 
 CPluginManager::~CPluginManager()
 {
-    //卸载插件
+    //Uninstall plugin
     for (const auto& m : m_modules)
         FreeLibrary(m.plugin_module);
 }
@@ -34,29 +34,29 @@ static wstring WcharArrayToWString(const wchar_t* str)
 
 void CPluginManager::LoadPlugins()
 {
-    //从plugins目录下加载插件
+    //Load plugins from the plugins directory
     wstring plugin_dir;
     plugin_dir = CCommon::GetModuleDir() + L"plugins";
     vector<wstring> plugin_files;
-    CCommon::GetFiles((plugin_dir + L"\\*.dll").c_str(), plugin_files);		//获取Plugins目录下所有的dll文件的文件名
+    CCommon::GetFiles((plugin_dir + L"\\*.dll").c_str(), plugin_files);		//Get the file names of all dll files in the Plugins directory
     for (const auto& file : plugin_files)
     {
-        //插件信息
+        //Plug-in information
         m_modules.push_back(PluginInfo());
         PluginInfo& plugin_info{ m_modules.back() };
-        //插件dll的路径
+        //Path to plugin dll
         plugin_info.file_path = plugin_dir + file;
-        //插件文件名
+        //Plug-in file name
         std::wstring file_name{ file };
         if (!file_name.empty() && (file_name[0] == L'\\' || file_name[0] == L'/'))
             file_name = file_name.substr(1);
-        //如果插件被禁用，则不加载插件
+        //If the plugin is disabled, the plugin is not loaded
         if (theApp.m_cfg_data.plugin_disabled.Contains(file_name))
         {
             plugin_info.state = PluginState::PS_DISABLE;
             continue;
         }
-        //载入dll
+        //Load dll
         plugin_info.plugin_module = LoadLibrary(plugin_info.file_path.c_str());
         if (plugin_info.plugin_module == NULL)
         {
@@ -64,9 +64,9 @@ void CPluginManager::LoadPlugins()
             plugin_info.error_code = GetLastError();
             continue;
         }
-        // hook插件导入的User32.dll下的DrawText系列函数
+        // DrawText series functions under User32.dll imported by hook plug-in
         ReplacePluginDrawTextFunction(plugin_info.plugin_module);
-        //获取函数的入口地址
+        //Get the entry address of the function
         pfTMPluginGetInstance TMPluginGetInstance = (pfTMPluginGetInstance)::GetProcAddress(plugin_info.plugin_module, "TMPluginGetInstance");
         if (TMPluginGetInstance == NULL)
         {
@@ -74,11 +74,11 @@ void CPluginManager::LoadPlugins()
             plugin_info.error_code = GetLastError();
             continue;
         }
-        //创建插件对象
+        //Create plugin object
         plugin_info.plugin = TMPluginGetInstance();
         if (plugin_info.plugin == nullptr)
             continue;
-        //检查插件版本
+        //Check plugin version
         int version = plugin_info.plugin->GetAPIVersion();
         if (version <= PLUGIN_UNSUPPORT_VERSION)
         {
@@ -86,29 +86,29 @@ void CPluginManager::LoadPlugins()
             continue;
         }
 
-        //调用初始化函数
+        //Call initialization function
         if (version >= 7)
         {
             plugin_info.plugin->OnInitialize(&theApp);
         }
 
-        //向插件传递配置文件的路径
+        //Pass the path to the configuration file to the plugin
         std::wstring config_dir = theApp.m_config_dir;
         config_dir += L"plugins\\";
         if (version >= 2)
         {
-            CreateDirectory(config_dir.c_str(), NULL);       //如果plugins不存在，则创建它
+            CreateDirectory(config_dir.c_str(), NULL);       //If plugins does not exist, create it
             plugin_info.plugin->OnExtenedInfo(ITMPlugin::EI_CONFIG_DIR, config_dir.c_str());
         }
 
-        //获取插件信息
+        //Get plug-in information
         for (int i{}; i < ITMPlugin::TMI_MAX; i++)
         {
             ITMPlugin::PluginInfoIndex index{ static_cast<ITMPlugin::PluginInfoIndex>(i) };
             plugin_info.properties[index] = WcharArrayToWString(plugin_info.plugin->GetInfo(index));
         }
 
-        //获取插件显示项目
+        //Get plug-in display items
         int index = 0;
         while (true)
         {
@@ -121,10 +121,10 @@ void CPluginManager::LoadPlugins()
             index++;
         }
     }
-    // hook MFC导入的User32.dll下的DrawText系列函数
+    // Hook the DrawText series functions under User32.dll imported by MFC
     ReplaceMfcDrawTextFunction();
 
-    //初始化所有任务栏显示项目
+    //Initialize all taskbar display items
     for (const auto& display_item : AllDisplayItems)
     {
         m_all_display_items_with_plugins.insert(display_item);
@@ -223,7 +223,7 @@ int CPluginManager::GetItemWidth(IPluginItem* pItem, CDC* pDC)
     ITMPlugin* plugin = GetPluginByItem(pItem);
     if (plugin != nullptr && plugin->GetAPIVersion() >= 3)
     {
-        width = pItem->GetItemWidthEx(pDC->GetSafeHdc());       //优先使用GetItemWidthEx接口获取宽度
+        width = pItem->GetItemWidthEx(pDC->GetSafeHdc());       //Prioritize using the GetItemWidthEx interface to obtain the width.
     }
     if (width == 0)
     {
@@ -254,11 +254,11 @@ auto inline GetCLocale() noexcept
 };
 
 /**
- * @brief 将输入的dll名称转大写
+ * @brief Convert the entered dll name to uppercase
  *
- * @param dll_name 输入的dll名称
- * @param expected_length 期望的dll名称长度，不匹配则无操作
- * @return std::string 大写的dll名称
+ * @param dll_name input dll name
+ * @param expected_length The expected length of the dll name. If it does not match, no operation will be performed.
+ * @return std::string uppercase dll name
  */
 std::string UpperDllName(const char* dll_name, std::size_t expected_length)
 {
@@ -299,9 +299,9 @@ public:
         /**
          * @brief Construct a new Function Name Impl object
          *
-         * @param function_name 函数名称
-         * @param on_function_find_handler 当查找到函数时执行的方法，
-         类型为std::function<void(void** pp_found_function_address, void* p_args)>
+         * @param function_name function name
+         * @param on_function_find_handler Method executed when a function is found,
+         The type is std::function<void(void** pp_found_function_address, void* p_args)>
          */
         FunctionNameImpl(const std::string& function_name, Handler on_function_find_handler)
             : m_function_name{function_name}, m_on_function_find_handler{on_function_find_handler}, m_p_function{}
@@ -425,7 +425,7 @@ void CPluginManager::ReplacePluginDrawTextFunction(HMODULE plgin_dll_module) noe
     auto p_current_import_desc = reinterpret_cast<PIMAGE_IMPORT_DESCRIPTOR>(
         p_plugin_dll_module + import_table_offset);
 
-    //不区分大小写，需要输入的dll中导入表里User32.dll的4个函数
+    //It is not case-sensitive, and the 4 functions of User32.dll in the table need to be imported into the dll entered.
     static const char user32_dll_name[] = "User32.dll";
     static const DllName dll_names{ARR_ARRLENGTH(user32_dll_name),
                                    {{"DrawTextA", User32DrawTextManager::A::GetReplaceOperation()},
@@ -442,7 +442,7 @@ void CPluginManager::ReplacePluginDrawTextFunction(HMODULE plgin_dll_module) noe
         auto* p_matched_dll_name = dll_map.MatchDllName(p_import_dll_name);
         if (p_matched_dll_name != nullptr)
         {
-            //搜索IAT表
+            //Search IAT table
             auto p_current_chunk = reinterpret_cast<PIMAGE_THUNK_DATA>(
                 p_plugin_dll_module + p_current_import_desc->FirstThunk);
 

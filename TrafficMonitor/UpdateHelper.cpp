@@ -21,14 +21,14 @@ void CUpdateHelper::SetUpdateSource(UpdateSource update_source)
 bool CUpdateHelper::CheckForUpdate()
 {
     wstring version_info;
-    //使用GitHub更新源
+    //Update source using GitHub
     if (m_update_source == UpdateSource::GitHubSource)
     {
-        if (CCommon::GetURL(L"https://raw.githubusercontent.com/zhongyang219/TrafficMonitor/master/version_utf8.info", version_info, true))     //获取版本信息
+        if (CCommon::GetURL(L"https://raw.githubusercontent.com/zhongyang219/TrafficMonitor/master/version_utf8.info", version_info, true)) //Get version information
         {
             m_row_data = true;
         }
-        else if (CCommon::GetURL(L"https://github.com/zhongyang219/TrafficMonitor/blob/master/version_utf8.info", version_info, true))      //获取版本信息
+        else if (CCommon::GetURL(L"https://github.com/zhongyang219/TrafficMonitor/blob/master/version_utf8.info", version_info, true)) //Get version information
         {
             m_row_data = false;
         }
@@ -50,10 +50,10 @@ bool CUpdateHelper::CheckForUpdate()
             version_info = str_version_info;
         }
     }
-    //使用Gitee更新源
+    //Update sources using Gitee
     else
     {
-        if (!CCommon::GetURL(L"https://gitee.com/zhongyang219/TrafficMonitor/raw/master/version_utf8.info", version_info, true))     //获取版本信息
+        if (!CCommon::GetURL(L"https://gitee.com/zhongyang219/TrafficMonitor/raw/master/version_utf8.info", version_info, true)) //Get version information
             return false;
     }
 

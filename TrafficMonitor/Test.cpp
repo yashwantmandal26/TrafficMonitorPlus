@@ -66,7 +66,7 @@ static void TestDate()
 static void TestIni()
 {
     CIniHelper ini(L"D:\\Temp\\config.ini");
-    ini.RemoveSection(L"skin_360悬浮窗dark");
+    ini.RemoveSection(L"skin_360_floating_dark");
     ini.Save();
     int a = 0;
 }
@@ -107,7 +107,7 @@ void CTest::TestCommand()
 {
     //TestPlugin();
 
-    //测试消息对话框
+    //Test message dialog
     CMessageDlg dlg;
     dlg.SetWindowTitle(_T("System Info"));
     dlg.SetInfoText(_T("System Information for TrafficMonitor."));

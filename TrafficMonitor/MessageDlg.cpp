@@ -1,4 +1,4 @@
-﻿// HelpDlg.cpp : 实现文件
+﻿// HelpDlg.cpp: Implementation file
 //
 
 #include "stdafx.h"
@@ -7,7 +7,7 @@
 #include "DrawCommon.h"
 
 
-// CMessageDlg 对话框
+// CMessageDlg dialog box
 
 #define MESSAGE_DLG_ICON_SIZE (theApp.DPI(32))
 #define MESSAGE_DLG_ICON_VERTIAL_MARGIN (theApp.DPI(12))
@@ -87,18 +87,18 @@ BEGIN_MESSAGE_MAP(CMessageDlg, CBaseDialog)
 END_MESSAGE_MAP()
 
 
-// CMessageDlg 消息处理程序
+// CMessageDlg message handler
 
 
 BOOL CMessageDlg::OnInitDialog()
 {
 	CBaseDialog::OnInitDialog();
 
-	// TODO:  在此添加额外的初始化
+	// TODO: Add additional initialization here
 
-	SetIcon(AfxGetApp()->LoadIcon(IDR_MAINFRAME), FALSE);		// 设置小图标
+	SetIcon(AfxGetApp()->LoadIcon(IDR_MAINFRAME), FALSE);		// Set small icon
 
-	//获取初始时窗口的大小
+	//Get the initial window size
 	CRect rect;
 	GetWindowRect(rect);
 	m_min_size.cx = rect.Width();
@@ -115,13 +115,13 @@ BOOL CMessageDlg::OnInitDialog()
 	//	pLinkCtrl->SetWindowText(_T("<a>") + m_link_text + _T("</a>"));
 	//}
 
-    //设置图标的位置
+    //Set icon position
     if (m_icon != NULL)
     {
 		CRect rc_info = GetControlRect(&m_info_static);
-		//设置Static控件水平位置，为图标腾出空间
+		//Set the horizontal position of the Static control to make room for the icon
 		rc_info.left = rc_info.left + MESSAGE_DLG_ICON_SIZE + theApp.DPI(8);
-		//设置Static控件的垂直位置
+		//Set the vertical position of a Static control
 		rc_info.MoveToY(rc_info.top + MESSAGE_DLG_ICON_VERTIAL_MARGIN);
 		m_info_static.MoveWindow(rc_info);
 
@@ -132,7 +132,7 @@ BOOL CMessageDlg::OnInitDialog()
 		m_message_edit.MoveWindow(rc_edit);
     }
 
-	//没有图标，且消息标题为空时，隐藏Static控件
+	//When there is no icon and the message title is empty, the Static control is hidden.
 	if (m_icon == NULL && m_info.IsEmpty())
 	{
 		CRect rc_info = GetControlRect(&m_info_static);
@@ -143,16 +143,16 @@ BOOL CMessageDlg::OnInitDialog()
 	}
 
 	return TRUE;  // return TRUE unless you set the focus to a control
-				  // 异常: OCX 属性页应返回 FALSE
+				  // Exception: OCX property page should return FALSE
 }
 
 
 void CMessageDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 {
-	// TODO: 在此添加消息处理程序代码和/或调用默认值
-	//限制窗口最小大小
-	lpMMI->ptMinTrackSize.x = m_min_size.cx;		//设置最小宽度
-	lpMMI->ptMinTrackSize.y = m_min_size.cy;		//设置最小高度
+	// TODO: Add message handler code and/or call defaults here
+	//Limit window minimum size
+	lpMMI->ptMinTrackSize.x = m_min_size.cx;		//Set minimum width
+	lpMMI->ptMinTrackSize.y = m_min_size.cy;		//Set minimum height
 
 	CBaseDialog::OnGetMinMaxInfo(lpMMI);
 }
@@ -160,9 +160,9 @@ void CMessageDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 
 //void CMessageDlg::OnNMClickSyslink1(NMHDR *pNMHDR, LRESULT *pResult)
 //{
-//	// TODO: 在此添加控件通知处理程序代码
+//	// TODO: Add control notification handler code here
 //	if(!m_link_url.IsEmpty())
-//		ShellExecute(NULL, _T("open"), m_link_url, NULL, NULL, SW_SHOW);	//打开超链接
+//		ShellExecute(NULL, _T("open"), m_link_url, NULL, NULL, SW_SHOW); //Open hyperlink
 //
 //	*pResult = 0;
 //}
@@ -171,8 +171,8 @@ void CMessageDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 void CMessageDlg::OnPaint()
 {
     CPaintDC dc(this); // device context for painting
-                       // TODO: 在此处添加消息处理程序代码
-                       // 不为绘图消息调用 CBaseDialog::OnPaint()
+                       // TODO: add message handler code here
+                       // CBaseDialog::OnPaint() is not called for drawing messages
 
     CDrawCommon draw;
     draw.Create(&dc, this);
@@ -193,7 +193,7 @@ void CMessageDlg::OnSize(UINT nType, int cx, int cy)
 	if (m_message_edit.GetSafeHwnd() != NULL)
 	{
 		CRect rc_edit = GetControlRect(&m_message_edit);
-		//设置Edit控件的垂直位置
+		//Set the vertical position of the Edit control
 		CRect rc_ok = GetControlRect(IDOK);
 		if (!rc_ok.IsRectEmpty())
 		{

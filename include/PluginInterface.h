@@ -1,5 +1,5 @@
 ﻿/*********************************************************
-* TrafficMonitor 插件接口
+* TrafficMonitor plug-in interface
 * Copyright (C) by Zhong Yang 2021
 * zhongyang219@hotmail.com
 **********************************************************/
@@ -7,129 +7,129 @@
 
 class IPluginDrawer;
 
-//插件显示项目的接口
+//The plug-in displays the interface of the project
 class IPluginItem
 {
 public:
     /**
-     * @brief   获取显示项目的名称
+     * @brief Get the name of the displayed item
      * @return  const wchar_t*
      */
     virtual const wchar_t* GetItemName() const = 0;
 
     /**
-     * @brief   获取显示项目的唯一ID
+     * @brief Get the unique ID of the displayed item
      * @return  const wchar_t*
      */
     virtual const wchar_t* GetItemId() const = 0;
 
     /**
-     * @brief   获取项目标签的文本
+     * @brief Get the text of the project label
      * @return  const wchar_t*
      */
     virtual const wchar_t* GetItemLableText() const = 0;
 
     /**
-     * @brief   获取项目数值的文本
-     * @detail  由于此函数可能会被频繁调用，因此不要在这里获取监控数据，
-     *  而是在ITMPlugin::DataRequired函数中获取数据后保存起来，然后在这里返回获取的数值
+     * @brief Get the text of the item value
+     * @detail Since this function may be called frequently, do not obtain monitoring data here.
+     *  Instead, obtain the data in the ITMPlugin::DataRequired function, save it, and then return the obtained value here.
      * @return  const wchar_t*
      */
     virtual const wchar_t* GetItemValueText() const = 0;
 
     /**
-     * @brief   获取项目数值的示例文本
-     * @detail  此函数返回的字符串的长度会用于计算显示区域的宽度
+     * @brief Get the sample text of the item value
+     * @detail The length of the string returned by this function will be used to calculate the width of the display area
      * @return  const wchar_t*
      */
     virtual const wchar_t* GetItemValueSampleText() const = 0;
 
     /**
-     * @brief   显示区域是否由插件自行绘制
+     * @brief Whether the display area is drawn by the plug-in itself
      * @detail
-     *  如果返回false，则根据GetItemLableText和GetItemValueText返回的文本由主程序绘制显示区域，重写DrawItem函数将不起作用。
-     *  如果重写此函数并返回true，则必须重写DrawItem函数并在里面添加绘制显示区域的代码，
-     *  此时GetItemLableText、GetItemValueText和GetItemValueSampleText的返回值将被主程序忽略
+     *  If false is returned, the display area is drawn by the main program based on the text returned by GetItemLableText and GetItemValueText, and overriding the DrawItem function will not work.
+     *  If you override this function and return true, you must override the DrawItem function and add the code to draw the display area inside,
+     *  At this time, the return values of GetItemLableText, GetItemValueText and GetItemValueSampleText will be ignored by the main program.
      * @return  bool
      */
     virtual bool IsCustomDraw() const { return false; }
 
     /**
-     * @brief   获取显示区域的宽度
+     * @brief Get the width of the display area
      * @detail
-     *  只有当CustomDraw()函数返回true时重写此函数才有效。
-     *  返回的值为DPI为96（100%）时的宽度，主程序会根据当前系统DPI的设置自动按比例放大，
-     *  因此你不需要为不同的DPI设置返回不同的值。
-     *  需要注意的是，这里的返回值代表了自绘区域所需要的最小宽度，DrawItem函数中的参数w的值可能会大于这个值
+     *  Overriding this function will only work if the CustomDraw() function returns true.
+     *  The returned value is the width when the DPI is 96 (100%). The main program will automatically scale up according to the current system DPI setting.
+     *  So you don't need to return different values for different DPI settings.
+     *  It should be noted that the return value here represents the minimum width required for the self-drawn area. The value of the parameter w in the DrawItem function may be greater than this value.
      * @return  int
      */
     virtual int GetItemWidth() const { return 0; }
 
     /**
-     * @brief   自定义绘制显示区域的函数，只有当CustomDraw()函数返回true时重写此函数才有效
-     * @param   void * hDC 绘图的上下文句柄
-     * @param   int x 绘图的矩形区域
+     * @brief Customize the function for drawing the display area. Rewriting this function is only effective when the CustomDraw() function returns true.
+     * @param void * hDC drawing context handle
+     * @param int x rectangular area of drawing
      * @param   int y
      * @param   int w
      * @param   int h
-     * @param   bool dark_mode 深色模式为true，浅色模式为false
+     * @param bool dark_mode dark mode is true, light mode is false
      * @return  void
      */
     virtual void DrawItem(void* hDC, int x, int y, int w, int h, bool dark_mode) {}
 
     /**
-     * @brief   获取显示区域的宽度
+     * @brief Get the width of the display area
      * @detail
-     *  只有当CustomDraw()函数返回true时重写此函数才有效。
-     *  此函数和GetItemWidth不同，插件可以根据参数hDC来计算需要的宽度，
-     *  它返回的是实际的宽度，主程序不会根据当前系统的DPI对返回值进行放大。
-     *  需要注意的是，这里的返回值代表了自绘区域所需要的最小宽度，DrawItem函数中的参数w的值可能会大于这个值
-     * @param   void * hDC 绘图的上下文句柄
+     *  Overriding this function will only work if the CustomDraw() function returns true.
+     *  This function is different from GetItemWidth. The plug-in can calculate the required width based on the parameter hDC.
+     *  It returns the actual width, and the main program will not enlarge the return value according to the DPI of the current system.
+     *  It should be noted that the return value here represents the minimum width required for the self-drawn area. The value of the parameter w in the DrawItem function may be greater than this value.
+     * @param void * hDC drawing context handle
      * @return  int
      */
     virtual int GetItemWidthEx(void* hDC) const { return 0; }
 
-    /** 鼠标事件的类型 */
+    /** Type of mouse event */
     enum MouseEventType
     {
-        MT_LCLICKED,    /**< 点击了鼠标左键 */
-        MT_RCLICKED,    /**< 点击了鼠标右键 */
-        MT_DBCLICKED,   /**< 双击了鼠标左键 */
-        MT_WHEEL_UP,    /**< 向上滚动了鼠标滚轮 */
-        MT_WHEEL_DOWN,  /**< 向下滚动了鼠标滚轮 */
+        MT_LCLICKED,    /**< Clicked the left mouse button */
+        MT_RCLICKED,    /**< Clicked the right mouse button */
+        MT_DBCLICKED,   /**< Double-clicked the left mouse button */
+        MT_WHEEL_UP,    /**< Mouse wheel scrolled up */
+        MT_WHEEL_DOWN,  /**< Mouse wheel scrolled down */
     };
 
     enum MouseEventFlag
     {
-        MF_TASKBAR_WND = 1 << 0,        /**< 是否为任务栏窗口的鼠标事件 */
+        MF_TASKBAR_WND = 1 << 0,        /**< Whether it is a mouse event of the taskbar window */
     };
 
     /**
-     * @brief   当插件显示区域有鼠标事件时由主程序调用
-     * @param   MouseEventType type 鼠标事件的类型
-     * @param   int x 鼠标指针所在的x坐标
-     * @param   int y 鼠标指针所在的y坐标
-     * @param   void* hWnd 产生此鼠标事件的窗口的句柄（主窗口或任务栏窗口）
-     * @param   int flag 为若干MouseEventFlag枚举常量的组合
-     * @return  int 如果返回非0，则主程序认为插件已经对此鼠标事件作出了全部的响应，主程序将不会再对此鼠标事件做额外的响应。
-     *   例如当type为MT_RCLICKED时，如果程序返回0，则会弹出主程序提供的右键菜单；而返回非0时，主程序不会再做任何处理。
+     * @brief Called by the main program when there is a mouse event in the plug-in display area
+     * @param MouseEventType type type of mouse event
+     * @param int x x coordinate of the mouse pointer
+     * @param int y The y coordinate of the mouse pointer
+     * @param void* hWnd The handle of the window that generated this mouse event (main window or taskbar window)
+     * @param int flag is a combination of several MouseEventFlag enumeration constants
+     * @return int If non-0 is returned, the main program believes that the plug-in has fully responded to this mouse event, and the main program will not make additional responses to this mouse event.
+     *   For example, when type is MT_RCLICKED, if the program returns 0, the right-click menu provided by the main program will pop up; if it returns non-0, the main program will not do any processing.
      */
     virtual int OnMouseEvent(MouseEventType type, int x, int y, void* hWnd, int flag) { return 0; }
 
     enum KeyboardEventFlag
     {
-        KF_TASKBAR_WND = 1 << 0,        /**< 是否为任务栏窗口的键盘事件 */
+        KF_TASKBAR_WND = 1 << 0,        /**< Whether it is a keyboard event of the taskbar window */
     };
 
     /**
-     * @brief   当插件显示区域有键盘事件时由主程序调用
-     * @param   int key 按下的键
-     * @param   bool ctrl 是否按下了Ctrl键
-     * @param   bool shift 是否按下了Shift键
-     * @param   bool alt 是否按下了Alt键
-     * @param   void* hWnd 产生此键盘事件的窗口的句柄（主窗口或任务栏窗口）
-     * @param   int flag 为若干KeyboardEventFlag枚举常量的组合
-     * @return  int 如果返回非0，则主程序认为插件已经对此键盘事件作出了全部的响应，主程序将不会再对此键盘事件做额外的响应。
+     * @brief Called by the main program when there is a keyboard event in the plug-in display area
+     * @param int key pressed key
+     * @param bool ctrl Whether the Ctrl key is pressed
+     * @param bool shift whether the Shift key is pressed
+     * @param bool alt Whether the Alt key is pressed
+     * @param void* hWnd The handle of the window that generated this keyboard event (main window or taskbar window)
+     * @param int flag is a combination of several KeyboardEventFlag enumeration constants
+     * @return int If non-0 is returned, the main program believes that the plug-in has fully responded to this keyboard event, and the main program will not make additional responses to this keyboard event.
      */
     virtual int OnKeboardEvent(int key, bool ctrl, bool shift, bool alt, void* hWnd, int flag) { return 0; }
 
@@ -137,36 +137,36 @@ public:
     {
 
     };
-    //预留的接口
+    //Reserved interface
     virtual void* OnItemInfo(ItemInfoType, void* para1, void* para2) { return 0; }
 
     /**
-     * @brief   是否在在任务栏中显示此项目的资源占用图
-     * @return  1：显示，0：不显示
+     * @brief Whether to display the resource usage graph of this project in the taskbar
+     * @return 1: display, 0: not display
      */
     virtual int IsDrawResourceUsageGraph() const { return 0; }
 
     /**
-     * @brief   获取资源占用图的值。当IsDrawResourceUsageGraphType返回值不为0时有效
-     * @return  float 资源占用图的值，范围为0.0~1.0。
+     * @brief Gets the value of the resource usage map. Valid when the return value of IsDrawResourceUsageGraphType is not 0
+     * @return float The value of the resource usage map, ranging from 0.0 to 1.0.
      */
     virtual float GetResourceUsageGraphValue() const { return 0.0; }
 
     /**
-     * @brief   自定义绘制显示区域的函数，只有当CustomDraw()函数返回true时重写此函数才有效
-     * @param   IPluginDrawer* pDrawer 用于插件绘图接口的的指针
-     * @param   int x 绘图的矩形区域
+     * @brief Customize the function for drawing the display area. Rewriting this function is only effective when the CustomDraw() function returns true.
+     * @param IPluginDrawer* pDrawer pointer for the plug-in drawing interface
+     * @param int x rectangular area of drawing
      * @param   int y
      * @param   int w
      * @param   int h
-     * @param   bool dark_mode 深色模式为true，浅色模式为false
+     * @param bool dark_mode dark mode is true, light mode is false
      * @return  bool
      */
     virtual bool DrawItemEx(IPluginDrawer* pDrawer, int x, int y, int w, int h, bool dark_mode) { return false; }
 
     /**
-     * @brief   是否在任务中独占双行
-     * @return  1：是，0：否
+     * @brief Whether to exclusive double rows in the task
+     * @return 1: yes, 0: no
      */
     virtual int IsDoubleLineExclusive() const { return 0; }
 };
@@ -174,67 +174,67 @@ public:
 class ITrafficMonitor;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-//插件接口
+//Plug-in interface
 class ITMPlugin
 {
 public:
     /**
-     * @brief   插件接口的版本，仅当修改了插件接口时才会修改这里的返回值。
-     * @attention 插件开发者不应该修改这里的返回值，也不应该重写此虚函数。
+     * @brief The version of the plug-in interface. The return value here will be modified only when the plug-in interface is modified.
+     * @attention Plug-in developers should not modify the return value here, nor should they override this virtual function.
      * @return  int
      */
     virtual int GetAPIVersion() const { return 8; }
 
     /**
-     * @brief   获取插件显示项目的对象
-     * @detail  一个插件dll可以提供多个实现IPluginItem接口的对象，对应多个显示项目。
-     *  当index的值大于或等于0且小于IPluginItem接口的对象的个数时，返回对象的IPluginItem接口的指针，其他情况应该返回空指针。
-     *  例如插件提供两个显示项目，则当index等于0或1时返回对应IPluginItem接口的对象，其他值时必须返回空指针。
-     * @param   int index 对象的索引
-     * @return  IPluginItem* 插件显示项目的对象
+     * @brief Gets the object of the plug-in display item
+     * @detail A plug-in dll can provide multiple objects that implement the IPluginItem interface, corresponding to multiple display items.
+     *  When the value of index is greater than or equal to 0 and less than the number of objects of the IPluginItem interface, the pointer of the IPluginItem interface of the object is returned. In other cases, a null pointer should be returned.
+     *  For example, if the plug-in provides two display items, when the index is equal to 0 or 1, an object corresponding to the IPluginItem interface is returned. For other values, a null pointer must be returned.
+     * @param int index The index of the object
+     * @return IPluginItem* The object of the plug-in display item
      */
     virtual IPluginItem* GetItem(int index) = 0;
 
     /**
-     * @brief   主程序会每隔一定时间调用此函数，插件需要在函数里获取一次监控的数据
+     * @brief The main program will call this function at regular intervals, and the plug-in needs to obtain the monitored data in the function.
      */
     virtual void DataRequired() = 0;
 
-    /** 选项设置对话框的返回值 */
+    /** Return value of option setting dialog box */
     enum OptionReturn
     {
-        OR_OPTION_CHANGED,          /**< 选项设置对话框中更改了选项设置 */
-        OR_OPTION_UNCHANGED,        /**< 选项设置对话框中未更改选项设置 */
-        OR_OPTION_NOT_PROVIDED      /**< 未提供选项设置对话框 */
+        OR_OPTION_CHANGED,          /**< The option settings were changed in the option settings dialog box */
+        OR_OPTION_UNCHANGED,        /**< The option settings were not changed in the option settings dialog box */
+        OR_OPTION_NOT_PROVIDED      /**< No option settings dialog provided */
     };
 
     /**
-     * @brief   主程序调用此函数以打开插件的选项设置对话框
-     * @detail  此函数不一定要重写。如果插件提供了选项设置界面，则应该重写此函数，并在最后返回OR_OPTION_CHANGED或OR_OPTION_UNCHANGED。
-     * @param   void * hParent 父窗口的句柄
-     *  返回值为OR_OPTION_NOT_PRVIDED则认为插件不提供选项设置对话框。
+     * @brief The main program calls this function to open the plug-in option setting dialog box
+     * @detail This function does not necessarily need to be overridden. If the plug-in provides an option setting interface, this function should be overridden and return OR_OPTION_CHANGED or OR_OPTION_UNCHANGED at the end.
+     * @param void * hParent The handle of the parent window
+     *  If the return value is OR_OPTION_NOT_PRVIDED, it is considered that the plug-in does not provide an option setting dialog box.
      * @return  ITMPlugin::OptionReturn
      */
     virtual OptionReturn ShowOptionsDialog(void* hParent) { return OR_OPTION_NOT_PROVIDED; }
 
-    /** 插件信息的索引 */
+    /** Index of plug-in information */
     enum PluginInfoIndex
     {
-        TMI_NAME,           /**< 名称 */
-        TMI_DESCRIPTION,    /**< 描述 */
-        TMI_AUTHOR,         /**< 作者 */
-        TMI_COPYRIGHT,      /**< 版权 */
-        TMI_VERSION,        /**< 版本 */
-        TMI_URL,            /**< 主页 */
-        TMI_MAX             /**< 插件信息的最大值 */
+        TMI_NAME,           /**< Name */
+        TMI_DESCRIPTION,    /**< Description */
+        TMI_AUTHOR,         /**< Author */
+        TMI_COPYRIGHT,      /**< Copyright */
+        TMI_VERSION,        /**< Version */
+        TMI_URL,            /**< Home */
+        TMI_MAX             /**< Maximum value of plug-in information */
     };
 
     /**
-     * @brief   获取此插件的信息，根据index的值返回对应的信息
+     * @brief Get the information of this plug-in and return the corresponding information according to the value of index
      */
     virtual const wchar_t* GetInfo(PluginInfoIndex index) = 0;
 
-    /** 主程序的监控信息 */
+    /** Monitoring information of the main program */
     struct MonitorInfo
     {
         unsigned long long up_speed{};
@@ -251,93 +251,93 @@ public:
     };
 
     /**
-     * @brief   主程序调用此函数以向插件传递所有获取到的监控信息
+     * @brief The main program calls this function to pass all obtained monitoring information to the plug-in
      */
     virtual void OnMonitorInfo(const MonitorInfo& monitor_info) {}
 
     /**
-     * @brief   获取插件要在鼠标提示中显示的文本
+     * @brief Gets the text to be displayed by the plug-in in the mouse prompt
      */
     virtual const wchar_t* GetTooltipInfo() { return L""; }
 
     enum ExtendedInfoIndex
     {
-        EI_LABEL_TEXT_COLOR,    //绘图的标签文本颜色
-        EI_VALUE_TEXT_COLOR,    //绘图的数值文本颜色
-        EI_DRAW_TASKBAR_WND,    //是否绘制任务栏窗口
+        EI_LABEL_TEXT_COLOR,    //Label text color for drawing
+        EI_VALUE_TEXT_COLOR,    //Numeric text color for plots
+        EI_DRAW_TASKBAR_WND,    //Whether to draw the taskbar window
 
-        //主窗口选项设置
-        EI_NAIN_WND_NET_SPEED_SHORT_MODE,   //网速显示简洁模式
-        EI_MAIN_WND_SPERATE_WITH_SPACE,     //数值和单位使用空格分隔
-        EI_MAIN_WND_UNIT_BYTE,              //网速单位是否使用B（字节）
-        EI_MAIN_WND_UNIT_SELECT,            //网速单位选择（0：自动，1：固定为KB/s，2：固定为MB/s）
-        EI_MAIN_WND_NOT_SHOW_UNIT,          //不显示网速单位
-        EI_MAIN_WND_NOT_SHOW_PERCENT,       //不显示百分号
+        //Main window option settings
+        EI_NAIN_WND_NET_SPEED_SHORT_MODE,   //Network speed display simple mode
+        EI_MAIN_WND_SPERATE_WITH_SPACE,     //Use spaces to separate values and units
+        EI_MAIN_WND_UNIT_BYTE,              //Whether the network speed unit uses B (bytes)
+        EI_MAIN_WND_UNIT_SELECT,            //Network speed unit selection (0: automatic, 1: fixed to KB/s, 2: fixed to MB/s)
+        EI_MAIN_WND_NOT_SHOW_UNIT,          //Do not display network speed units
+        EI_MAIN_WND_NOT_SHOW_PERCENT,       //Do not show percent signs
 
-        //任务栏窗口设置
-        EI_TASKBAR_WND_NET_SPEED_SHORT_MODE,    //网速显示简洁模式
-        EI_TASKBAR_WND_SPERATE_WITH_SPACE,      //数值和单位使用空格分隔
-        EI_TASKBAR_WND_VALUE_RIGHT_ALIGN,       //数值右对齐
-        EI_TASKBAR_WND_NET_SPEED_WIDTH,         //网速数据宽度
-        EI_TASKBAR_WND_UNIT_BYTE,               //网速单位是否使用B（字节）
-        EI_TASKBAR_WND_UNIT_SELECT,             //网速单位选择（0：自动，1：固定为KB/s，2：固定为MB/s）
-        EI_TASKBAR_WND_NOT_SHOW_UNIT,           //不显示网速单位
-        EI_TASKBAR_WND_NOT_SHOW_PERCENT,        //不显示百分号
+        //Taskbar window settings
+        EI_TASKBAR_WND_NET_SPEED_SHORT_MODE,    //Network speed display simple mode
+        EI_TASKBAR_WND_SPERATE_WITH_SPACE,      //Use spaces to separate values and units
+        EI_TASKBAR_WND_VALUE_RIGHT_ALIGN,       //Right-justify numeric values
+        EI_TASKBAR_WND_NET_SPEED_WIDTH,         //Internet speed data width
+        EI_TASKBAR_WND_UNIT_BYTE,               //Whether the network speed unit uses B (bytes)
+        EI_TASKBAR_WND_UNIT_SELECT,             //Network speed unit selection (0: automatic, 1: fixed to KB/s, 2: fixed to MB/s)
+        EI_TASKBAR_WND_NOT_SHOW_UNIT,           //Do not display network speed units
+        EI_TASKBAR_WND_NOT_SHOW_PERCENT,        //Do not show percent signs
 
-        EI_CONFIG_DIR,                      //配置文件的目录
+        EI_CONFIG_DIR,                      //Directory of configuration files
     };
 
     /**
-     * @brief   主程序调用此函数以向插件传递更多信息
-     * @param   ExtendedInfoIndex index 信息的索引，用于区分向插件传递的信息
-     * @param   const wchar_t* data 传递的数据
+     * @brief The main program calls this function to pass more information to the plugin
+     * @param ExtendedInfoIndex index The index of the information, used to distinguish the information passed to the plug-in
+     * @param const wchar_t* data passed data
      * @return  void
      */
     virtual void OnExtenedInfo(ExtendedInfoIndex index, const wchar_t* data) {}
 
     /**
-     * @brief   获取插件的图标，HICON格式
+     * @brief Get the icon of the plug-in, HICON format
      */
     virtual void* GetPluginIcon() { return nullptr; }
 
     /**
-     * @brief   获取插件的命令的数量
-     * @return  int 插件的命令的数量
+     * @brief Get the number of plugin commands
+     * @return int The number of plugin commands
      */
     virtual int GetCommandCount() { return 0; }
 
     /**
-     * @brief   获取插件的命令名称
-     * @param   int command_index 插件命令的索引（从0开始，小于GetCommandCount()的返回值）
-     * @return  wchar_t* 插件命令的名称
+     * @brief Get the command name of the plug-in
+     * @param int command_index The index of the plug-in command (starting from 0, less than the return value of GetCommandCount())
+     * @return wchar_t* The name of the plug-in command
      */
     virtual const wchar_t* GetCommandName(int command_index) { return nullptr; }
 
     /**
-     * @brief   获取插件的命令图标
-     * @param   int command_index 插件命令的索引（从0开始，小于GetCommandCount()的返回值）
-     * @return  void* 插件命令的图标，HICON格式
+     * @brief Get the command icon of the plug-in
+     * @param int command_index The index of the plug-in command (starting from 0, less than the return value of GetCommandCount())
+     * @return void* Icon of the plug-in command, HICON format
      */
     virtual void* GetCommandIcon(int command_index) { return nullptr; }
 
     /**
-     * @brief   执行一个插件命令时由框架调用
-     * @param   int command_index 插件命令的索引（从0开始，小于GetCommandCount()的返回值）
-     * @param   void* hWnd 发送此命令的窗口句柄
-     * @param   void* para 预留参数
+     * @brief is called by the framework when executing a plugin command
+     * @param int command_index The index of the plug-in command (starting from 0, less than the return value of GetCommandCount())
+     * @param void* hWnd The window handle to which this command is sent
+     * @param void* para reserved parameters
      */
     virtual void OnPluginCommand(int command_index, void* hWnd, void* para) {}
 
     /**
-    * @brief   获取插件命令是否处于勾选状态
-    * @param   int command_index 插件命令的索引（从0开始，小于GetCommandCount()的返回值）
-    * @return  1：已勾选；0：未勾选
+    * @brief Gets whether the plug-in command is checked
+    * @param int command_index The index of the plug-in command (starting from 0, less than the return value of GetCommandCount())
+    * @return 1: checked; 0: not checked
     */
     virtual int IsCommandChecked(int command_index) { return false; }
 
     /**
-     * @brief   插件初始化
-     * @detail  当插件被加载时被调用，传递ITrafficMonitor接口的指针。插件可以保存此指针以调用ITrafficMonitor接口中的函数
+     * @brief plugin initialization
+     * @detail is called when the plug-in is loaded, passing a pointer to the ITrafficMonitor interface. Plugins can save this pointer to call functions in the ITrafficMonitor interface
      * @param   pApp
      */
     virtual void OnInitialize(ITrafficMonitor* pApp) {}
@@ -345,272 +345,272 @@ public:
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-//主程序接口
+//Main program interface
 class ITrafficMonitor
 {
 public:
     /**
-     * @brief   获取此接口的版本。
-     * @attention 插件在调用ITrafficMonitor中的函数时需要先判断接口的版本
+     * @brief Gets the version of this interface.
+     * @attention The plug-in needs to first determine the version of the interface when calling the function in ITrafficMonitor.
      * @return  int
      */
     virtual int GetAPIVersion() = 0;
 
     /**
-     * @brief   获取TrafficMonitor的版本。
+     * @brief Get the version of TrafficMonitor.
      * @return  const wchar_t*
      */
     virtual const wchar_t* GetVersion() = 0;
 
-    /** 主程序的所有监控信息 */
+    /** All monitoring information of the main program */
     enum MonitorItem
     {
-        MI_UP,                  /**< 上传速度 */
-        MI_DOWN,                /**< 下载速度 */
-        MI_CPU,                 /**< CPU利用率 */
-        MI_MEMORY,              /**< 内存利用率 */
-        MI_GPU_USAGE,           /**< 显卡利用率 */
-        MI_CPU_TEMP,            /**< CPU温度 */
-        MI_GPU_TEMP,            /**< 显卡温度 */
-        MI_HDD_TEMP,            /**< 硬盘温度 */
-        MI_MAIN_BOARD_TEMP,     /**< 主板温度 */
-        MI_HDD_USAGE,           /**< 硬盘利用率 */
-        MI_CPU_FREQ,            /**< CPU频率 */
-        MI_TODAY_UP_TRAFFIC,    /**< 今日上传流量 */
-        MI_TODAY_DOWN_TRAFFIC   /**< 今日下载流量 */
+        MI_UP,                  /**< Upload speed */
+        MI_DOWN,                /**< Download speed */
+        MI_CPU,                 /**< CPU utilization */
+        MI_MEMORY,              /**< Memory utilization */
+        MI_GPU_USAGE,           /**< Graphics card utilization */
+        MI_CPU_TEMP,            /**< CPU temperature */
+        MI_GPU_TEMP,            /**< Graphics card temperature */
+        MI_HDD_TEMP,            /**< Hard disk temperature */
+        MI_MAIN_BOARD_TEMP,     /**< Motherboard temperature */
+        MI_HDD_USAGE,           /**< Hard drive utilization */
+        MI_CPU_FREQ,            /**< CPU frequency */
+        MI_TODAY_UP_TRAFFIC,    /**< Today’s upload traffic */
+        MI_TODAY_DOWN_TRAFFIC   /**< Today’s download traffic */
     };
 
     /**
-     * @brief   获取一个主程序的监控信息的数值
-     *          （ITMPlugin::OnMonitorInfo将被弃用）
-     * @param   item 要获取监控信息的项目
-     * @return  获取到监控信息
+     * @brief Gets the value of monitoring information of a main program
+     *          (ITMPlugin::OnMonitorInfo will be deprecated)
+     * @param item The item to obtain monitoring information
+     * @return Obtain monitoring information
      */
     virtual double GetMonitorValue(MonitorItem item) = 0;
 
     /**
-     * @brief   以字符串的形式获取一个主程序监控信息的数值
-     * @param   item 要获取监控信息的项目
-     * @param   is_main_window 是否为主窗口的数值
-     * @return  获取到监控信息
+     * @brief Gets the value of a main program monitoring information in the form of a string
+     * @param item The item to obtain monitoring information
+     * @param is_main_window is the value of the main window
+     * @return Obtain monitoring information
      */
     virtual const wchar_t* GetMonitorValueString(MonitorItem item, int is_main_window = false) = 0;
 
     /**
-     * @brief   显示一个通知消息
-     * @param   strMsg 要显示的通知消息
+     * @brief displays a notification message
+     * @param strMsg Notification message to display
      */
     virtual void ShowNotifyMessage(const wchar_t* strMsg) = 0;
 
     /**
-     * @brief   获取当前语言id
-     * @return  当前主程序的语言id
+     * @brief Get the current language id
+     * @return the language id of the current main program
      */
     virtual unsigned short GetLanguageId() const = 0;
 
     /**
-     * @brief   获取配置文件目录
-     * @return  配置文件目录
+     * @brief Get the configuration file directory
+     * @return configuration file directory
      */
     virtual const wchar_t* GetPluginConfigDir() const = 0;
 
-    /** 主程序DPI类型 */
+    /** Main program DPI type */
     enum DPIType
     {
-        DPI_MAIN_WND,   /**< 主窗口的DPI */
-        DPI_TASKBAR     /**< 任务栏窗口的DPI */
+        DPI_MAIN_WND,   /**< DPI of main window */
+        DPI_TASKBAR     /**< DPI of taskbar window */
     };
 
     /**
-     * @brief   获取主程序DPI
-     * @return  主程序DPI
+     * @brief Get the main program DPI
+     * @return main program DPI
      */
     virtual int GetDPI(DPIType type) const = 0;
 
     /**
-     * @brief   获取当前系统主题颜色
-     * @return  COLORREF格式的颜色值
+     * @brief Get the current system theme color
+     * @return color value in COLORREF format
      */
     virtual unsigned int GetThemeColor() const = 0;
 
     /**
-     * @brief   获取当前语言的字符串资源
-     * @param   str_id 字符串资源id
-     * @param   str_section 字符串资源在ini文件中的段名称
+     * @brief Get the string resource of the current language
+     * @param str_id string resource id
+     * @param str_section The section name of the string resource in the ini file
      * @return 
      */
     virtual const wchar_t* GetStringRes(const wchar_t* key, const wchar_t* section) = 0;
 
     /**
-     * @brief   获取主窗口的句柄
+     * @brief Get the handle of the main window
      * @return  
      */
     virtual void* GetMainWindowHwnd() = 0;
 
     /**
-     * @brief   获取任务栏窗口的句柄。不显示任务栏窗口时，返回值为空
+     * @brief Gets the handle of the taskbar window. When the taskbar window is not displayed, the return value is empty.
      * @return  
      */
     virtual void* GetTaskbarWindowHwnd() = 0;
 
     /**
      * API Version
-     *      1       新增GetMainWindowHwnd、GetTaskbarWindowHwnd函数
+     *      1 Added GetMainWindowHwnd and GetTaskbarWindowHwnd functions
      */
 };
 
 
-//插件绘图接口
+//Plug-in drawing interface
 class IPluginDrawer
 {
 public:
     /**
-     * @brief   获取此接口的版本。
+     * @brief Gets the version of this interface.
      * @return  int
      */
     virtual int GetAPIVersion() = 0;
 
-    // 拉伸模式
+    // stretch mode
     enum StretchMode
     {
-        STRETCH,    /**< 拉伸，会改变比例 */
-        FILL,       /**< 填充，不改变比例，会裁剪长边 */
-        FIT         /**< 适应，不会改变比例，不裁剪 */
+        STRETCH,    /**< Stretching will change the proportion */
+        FILL,       /**< Fill, do not change the proportion, will crop the long edge */
+        FIT         /**< Adapt without changing proportions or cropping */
     };
 
-    //对齐方式
+    //Alignment
     enum Alignment
     {
-        LEFT,       /**< 左对齐 */
-        RIGHT,      /**< 右对齐 */
-        CENTER,     /**< 居中 */
+        LEFT,       /**< Align left */
+        RIGHT,      /**< Align right */
+        CENTER,     /**< Center */
     };
 
     /**
-     * @brief   在指定的矩形区域内绘制文本
-     * @param   x 矩形区域的左侧坐标
-     * @param   y 矩形区域的顶部坐标
-     * @param   w 矩形区域的宽
-     * @param   h 矩形区域的高
-     * @param   lpszString 绘制的文本
-     * @param   color 文本的颜色，格式为0xBBGGRR
-     * @param   align 文本对齐方式
-     * @param   multi_line 是否多行显示
-     * @param   alpha 不透明度，0~255
+     * @brief draws text within the specified rectangular area
+     * @param x left coordinate of the rectangular area
+     * @param y The top coordinate of the rectangular area
+     * @param w width of rectangular area
+     * @param h the height of the rectangular area
+     * @param lpszString drawn text
+     * @param color The color of the text, the format is 0xBBGGRR
+     * @param align text alignment
+     * @param multi_line Whether to display multiple lines
+     * @param alpha opacity, 0~255
      */
     virtual void DrawWindowText(int x, int y, int w, int h, const wchar_t* lpszString, unsigned long color, Alignment align = Alignment::LEFT, bool multi_line = false, unsigned char alpha = 255) = 0;
 
     /**
-     * @brief   设置绘图剪辑区域
-     * @param   x 矩形区域的左侧坐标
-     * @param   y 矩形区域的顶部坐标
-     * @param   w 矩形区域的宽
-     * @param   h 矩形区域的高
+     * @brief sets the drawing clipping area
+     * @param x left coordinate of the rectangular area
+     * @param y The top coordinate of the rectangular area
+     * @param w width of rectangular area
+     * @param h the height of the rectangular area
      */
     virtual void SetDrawRect(int x, int y, int w, int h) = 0;
 
     /**
-     * @brief   用纯色填充矩形
-     * @param   x 矩形区域的左侧坐标
-     * @param   y 矩形区域的顶部坐标
-     * @param   w 矩形区域的宽
-     * @param   h 矩形区域的高
-     * @param   color 填充的颜色，格式为0xBBGGRR
-     * @param   alpha 不透明度，0~255
+     * @brief Fill the rectangle with a solid color
+     * @param x left coordinate of the rectangular area
+     * @param y The top coordinate of the rectangular area
+     * @param w width of rectangular area
+     * @param h the height of the rectangular area
+     * @param color fill color, format is 0xBBGGRR
+     * @param alpha opacity, 0~255
      */
     virtual void FillRect(int x, int y, int w, int h, unsigned long color, unsigned char alpha = 255) = 0;
     
     /**
-     * @brief   绘制矩形边框
-     * @param   x 矩形区域的左侧坐标
-     * @param   y 矩形区域的顶部坐标
-     * @param   w 矩形区域的宽
-     * @param   h 矩形区域的高
-     * @param   color 边框的颜色，格式为0xBBGGRR
-     * @param   width 边框的线宽
-     * @param   dot_line 是否为虚线
-     * @param   alpha 不透明度，0~255
-     * @param   radius 圆角半径，如果为0则为直角矩形
+     * @brief draws a rectangular border
+     * @param x left coordinate of the rectangular area
+     * @param y The top coordinate of the rectangular area
+     * @param w width of rectangular area
+     * @param h the height of the rectangular area
+     * @param color The color of the border, the format is 0xBBGGRR
+     * @param width The line width of the border
+     * @param dot_line whether it is a dotted line
+     * @param alpha opacity, 0~255
+     * @param radius rounded corner radius, if it is 0, it is a right rectangle
      */
     virtual void DrawRectOutLine(int x, int y, int w, int h, unsigned long color, int width = 1, bool dot_line = false, unsigned char alpha = 255, int radius = 0) = 0;
 
     /**
-     * @brief   绘制一个位图
-     * @param   hbitmap 位图的句柄
-     * @param   x 矩形区域的左侧坐标
-     * @param   y 矩形区域的顶部坐标
-     * @param   w 矩形区域的宽
-     * @param   h 矩形区域的高
-     * @param   stretch_mode 绘图的拉伸模式
-     * @param   alpha 不透明度，0~255
+     * @brief draws a bitmap
+     * @param hbitmap bitmap handle
+     * @param x left coordinate of the rectangular area
+     * @param y The top coordinate of the rectangular area
+     * @param w width of rectangular area
+     * @param h the height of the rectangular area
+     * @param stretch_mode Drawing stretch mode
+     * @param alpha opacity, 0~255
      */
     virtual void DrawBitmap(void* hbitmap, int x, int y, int w, int h, StretchMode stretch_mode = StretchMode::STRETCH, unsigned char alpha = 255) = 0;
 
     /**
-     * @brief	绘制一个图标
-     * @param	hIcon 图标的句柄
-     * @param   x 矩形区域的左侧坐标
-     * @param   y 矩形区域的顶部坐标
-     * @param   w 矩形区域的宽
-     * @param   h 矩形区域的高
+     * @brief draw an icon
+     * @param hIcon handle of the icon
+     * @param x left coordinate of the rectangular area
+     * @param y The top coordinate of the rectangular area
+     * @param w width of rectangular area
+     * @param h the height of the rectangular area
      */
     virtual void DrawIcon(void* hIcon, int x, int y, int w, int h) = 0;
 
     /**
-     * @brief   计算一个字符串的的宽度和高度
-     * @param   lpszString 字符串
-     * @param[out]  w 字符串的宽度
-     * @param[out]  h 字符串的高度
+     * @brief calculates the width and height of a string
+     * @param lpszString string
+     * @param[out] w width of string
+     * @param[out] h The height of the string
      */
     virtual void GetTextExtent(const wchar_t* lpszString, int& w, int& h) = 0;
 
     /**
-     * @brief   绘制一个线段
-     * @param   x1 第1个点的x坐标
-     * @param   y1 第1个点的y坐标
-     * @param   x2 第2个点的x坐标
-     * @param   y2 第2个点的7坐标
-     * @param   color 颜色
-     * @param   alpha 不透明度
+     * @brief draws a line segment
+     * @param x1 x coordinate of the first point
+     * @param y1 y coordinate of the first point
+     * @param x2 The x coordinate of the second point
+     * @param y2 7 coordinates of the second point
+     * @param color color
+     * @param alpha opacity
      */
     virtual void DrawLine(int x1, int y1, int x2, int y2, unsigned long color, int width = 1, bool dot_line = false, unsigned char alpha = 255) = 0;
 
     /**
-     * @brief   获取GDI绘图的句柄
-     * @return  HDC格式句柄
+     * @brief Get the handle of GDI drawing
+     * @return HDC format handle
      */
     virtual void* GetHDC() = 0;
 };
 
 
 /*
-* 注意：插件dll需导出以下函数
+* Note: The plug-in dll needs to export the following functions
 * ITMPlugin* TMPluginGetInstance();
-*   函数返回一个ITMPlugin接口的对象的指针。
-*   此对象通常应该为一个全局或静态的对象，在程序运行结束前，它都不应该被释放。
+*   The function returns a pointer to an object of the ITMPlugin interface.
+*   This object should usually be a global or static object, and it should not be released before the program ends.
 */
 
 
 /*
-* 更新记录：
+* Update record:
 * ITMPlugin
 * -------------------------------------------------------------------------
-* API version |                       更新内容
+* API version | Update content
 * -------------------------------------------------------------------------
-*     1       | 第一个版本
+*     1 | First version
 * -------------------------------------------------------------------------
-*     2       | 新增 ITMPlugin::GetTooltipInfo 函数
+*     2 | Added ITMPlugin::GetTooltipInfo function
 * -------------------------------------------------------------------------
-*     3       | 新增 IPluginItem::GetItemWidthEx, IPluginItem::OnMouseEvent 函数
+*     3 | Added IPluginItem::GetItemWidthEx, IPluginItem::OnMouseEvent functions
 * -------------------------------------------------------------------------
-*     4       | 新增 IPluginItem::OnKeboardEvent IPluginItem::OnItemInfo 函数
+*     4 | Added IPluginItem::OnKeboardEvent IPluginItem::OnItemInfo function
 * -------------------------------------------------------------------------
-*     5       | 新增 ITMPlugin::GetCommandName ITMPlugin::GetCommandIcon ITMPlugin::OnPluginCommand 函数
+*     5 | Added ITMPlugin::GetCommandName ITMPlugin::GetCommandIcon ITMPlugin::OnPluginCommand function
 * -------------------------------------------------------------------------
-*     6       | 新增 IPluginItem::GetResourceUsageGraphType IPluginItem::GetResourceUsageGraphValue 函数
+*     6 | Added IPluginItem::GetResourceUsageGraphType IPluginItem::GetResourceUsageGraphValue function
 * -------------------------------------------------------------------------
-*     7       | 新增 ITMPlugin::OnInitialize 函数
+*     7 | Added ITMPlugin::OnInitialize function
 * -------------------------------------------------------------------------
-*     8       | 新增 IPluginItem::DrawItemEx, IPluginItem::IsDoubleLineExclusive 函数
+*     8 | Added IPluginItem::DrawItemEx, IPluginItem::IsDoubleLineExclusive functions
 * -------------------------------------------------------------------------
 */

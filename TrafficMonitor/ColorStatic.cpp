@@ -1,4 +1,4 @@
-﻿// ColorStatic.cpp : 实现文件
+﻿// ColorStatic.cpp: implementation file
 //
 
 #include "stdafx.h"
@@ -63,7 +63,7 @@ END_MESSAGE_MAP()
 
 
 
-// CColorStatic 消息处理程序
+// CColorStatic message handler
 
 
 
@@ -71,8 +71,8 @@ END_MESSAGE_MAP()
 void CColorStatic::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
-					   // TODO: 在此处添加消息处理程序代码
-					   // 不为绘图消息调用 CStatic::OnPaint()
+					   // TODO: add message handler code here
+					   // CStatic::OnPaint() is not called for drawing messages
 	CRect rect;
 	GetClientRect(rect);
 	rect.MoveToXY(0, 0);
@@ -89,16 +89,16 @@ void CColorStatic::OnPaint()
 		{
 			dc.FillSolidRect(rect, m_colors[0]);
 		}
-		//颜色数量大于或等于4，并且是4个位数时，上下两行以“Z”字形排列
+		//When the number of colors is greater than or equal to 4 and it is 4 digits, the upper and lower rows are arranged in a "Z" shape.
 		else if (color_num >= 4 && color_num % 4 == 0)
 		{
 			dc.FillSolidRect(rect, RGB(255, 255, 255));
-			int group_num = color_num / 4;		//颜色组数（4个为一组）
+			int group_num = color_num / 4;		//Number of color groups (4 as a group)
 			for (int i = 0; i < group_num; i++)
 			{
 				int group_left = rect.Width() * i / group_num;
 				int group_right = rect.Width() * (i + 1) / group_num;
-				CRect rc_group(group_left, 0, group_right, rect.Height());	//当前组的矩形区域
+				CRect rc_group(group_left, 0, group_right, rect.Height());	//The rectangular area of the current group
 				CRect rc1(group_left, 0, group_left + rc_group.Width() / 2, rc_group.Height() / 2);
 				CRect rc2(group_left + rc_group.Width() / 2, 0, rc_group.right, rc_group.Height() / 2);
 				CRect rc3(group_left, rc_group.Height() / 2, group_left + rc_group.Width() / 2, rc_group.bottom);
@@ -109,7 +109,7 @@ void CColorStatic::OnPaint()
 				dc.FillSolidRect(rc4, m_colors[static_cast<size_t>(i) * 4 + 3]);
 			}
 		}
-		//其他情况，一行从左到右排列
+		//Otherwise, a row is arranged from left to right.
 		else
 		{
 			dc.FillSolidRect(rect, RGB(255, 255, 255));
@@ -122,7 +122,7 @@ void CColorStatic::OnPaint()
 			}
 		}
 
-		//画边框
+		//draw borders
 		draw.DrawRectOutLine(rect, RGB(160, 160, 160));
 	}
 	else
@@ -136,7 +136,7 @@ void CColorStatic::OnPaint()
 
 void CColorStatic::OnMouseHover(UINT nFlags, CPoint point)
 {
-	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	// TODO: Add message handler code and/or call defaults here
 	m_hover = true;
 
 	CStatic::OnMouseHover(nFlags, point);
@@ -145,7 +145,7 @@ void CColorStatic::OnMouseHover(UINT nFlags, CPoint point)
 
 void CColorStatic::OnMouseLeave()
 {
-	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	// TODO: Add message handler code and/or call defaults here
 	m_hover = false;
 
 	CStatic::OnMouseLeave();
@@ -154,7 +154,7 @@ void CColorStatic::OnMouseLeave()
 
 BOOL CColorStatic::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 {
-	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	// TODO: Add message handler code and/or call defaults here
 	if(m_link_cursor && m_hover)
 	{
 		::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(32649)));
@@ -167,7 +167,7 @@ BOOL CColorStatic::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 
 void CColorStatic::PreSubclassWindow()
 {
-	// TODO: 在此添加专用代码和/或调用基类
+	// TODO: Add specialized code here and/or call the base class
 	DWORD dwStyle = GetStyle();
 	::SetWindowLong(GetSafeHwnd(), GWL_STYLE, dwStyle | SS_NOTIFY);
 	ModifyStyleEx(WS_EX_STATICEDGE, NULL);
@@ -178,7 +178,7 @@ void CColorStatic::PreSubclassWindow()
 
 void CColorStatic::OnMouseMove(UINT nFlags, CPoint point)
 {
-	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	// TODO: Add message handler code and/or call defaults here
 	if (m_link_cursor)
 	{
 		TRACKMOUSEEVENT tme;
@@ -195,8 +195,8 @@ void CColorStatic::OnMouseMove(UINT nFlags, CPoint point)
 
 void CColorStatic::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	// TODO: 在此添加消息处理程序代码和/或调用默认值
-	//如果单击了鼠标左键，则向父窗口发送一个WM_STATIC_CLICKED消息
+	// TODO: Add message handler code and/or call defaults here
+	//If the left mouse button is clicked, send a WM_STATIC_CLICKED message to the parent window
 	CWnd* pParent{ GetParent() };
 	if (pParent != nullptr)
 		pParent->SendMessage(WM_STATIC_CLICKED, (WPARAM)this);

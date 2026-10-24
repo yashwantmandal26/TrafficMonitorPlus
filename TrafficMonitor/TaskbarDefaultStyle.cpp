@@ -98,7 +98,7 @@ void CTaskbarDefaultStyle::SaveConfig() const
 		wchar_t buff[64];
 		swprintf_s(buff, L"default%d_", i + 1);
 		wstring key_name = buff;
-        if (IsTaskBarStyleDataValid(m_default_style[i]))           //保存前检查当前颜色预设是否有效
+        if (IsTaskBarStyleDataValid(m_default_style[i]))           //Check whether the current color preset is valid before saving
         {
             ini.SaveTaskbarWndColors(L"taskbar_default_style", (key_name + L"text_color").c_str(), m_default_style[i].text_colors);
             ini.WriteInt(L"taskbar_default_style", (key_name + L"back_color").c_str(), m_default_style[i].back_color);
@@ -108,7 +108,7 @@ void CTaskbarDefaultStyle::SaveConfig() const
         }
         else
         {
-            //写入日志
+            //write log
             CString log_str;
             log_str.Format(_T("When saving preset %d, background color and text color were both black. The preset was not saved."), i);
             CCommon::WriteLog(log_str, theApp.m_log_path.c_str());
@@ -173,5 +173,5 @@ bool CTaskbarDefaultStyle::IsTaskBarStyleDataValid(const TaskBarStyleData& data)
         if (item.second.label != data.back_color || item.second.value != data.back_color)
             return true;
     }
-    return false;     //如果文本颜色全部等于背景颜色，则该颜色预设无效
+    return false;     //If the text colors are all equal to the background color, the color preset has no effect
 }

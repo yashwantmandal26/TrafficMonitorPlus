@@ -8,7 +8,7 @@ public:
 
     void Init();
 
-    //根据设定的顺序获取任务窗口每个显示项目
+    //Get each displayed item in the task window according to the set order
     std::vector<CommonDisplayItem> GetAllDisplayItemsWithOrder() const;
 
     void FromString(const std::wstring& str);
@@ -21,11 +21,11 @@ public:
     static bool IsItemDisplayed(CommonDisplayItem item);
 
 private:
-    //规范m_item_order里的项目，如果m_item_order里有序号超过了显示项目的个数，则将其移除，并在后面添加缺少的项目的序号
+    //Standardize the items in m_item_order. If there are serial numbers in m_item_order that exceed the number of displayed items, remove them and add the serial numbers of the missing items later.
     void NormalizeItemOrder();
 
 private:
-    vector<int> m_item_order;   //保存每个项目的顺序
-    vector<CommonDisplayItem> m_all_item_in_default_order;    //以默认顺序保存的所有显示项目
+    vector<int> m_item_order;   //Save the order of each item
+    vector<CommonDisplayItem> m_all_item_in_default_order;    //All display items saved in default order
     bool m_displayed_only;
 };

@@ -8,53 +8,53 @@ void CWin11TaskbarDlg::AdjustTaskbarWndPos(bool force_adjust)
     ::GetWindowRect(m_hStart, m_rcStart);
     m_rcStart.MoveToXY(m_rcStart.left - m_rcTaskbar.left, m_rcStart.top - m_rcTaskbar.top);
 
-    //设置窗口大小
+    //Set window size
     m_rect.right = m_rect.left + m_window_width;
     m_rect.bottom = m_rect.top + m_window_height;
-    if (force_adjust || m_rcNotify.Width() != m_last_notify_width || m_rcStart.left != m_last_start_pos)   //如果最小化窗口的宽度改变了，重新设置任务栏窗口的位置
+    if (force_adjust || m_rcNotify.Width() != m_last_notify_width || m_rcStart.left != m_last_start_pos)   //If the width of the minimized window changes, reposition the taskbar window
     {
         m_last_notify_width = m_rcNotify.Width();
         m_last_start_pos = m_rcStart.left;
-        //任务窗口显示在右侧时，或者Windows11下任务栏左对齐时
-        //（Windows11下，如果任务栏设置为左对齐，即使在“任务栏窗口设置”中设置了任务窗口显示在左边，窗口仍然显示在右边）
+        //When the task window is displayed on the right, or when the taskbar is aligned to the left under Windows 11
+        //(Under Windows 11, if the taskbar is set to left alignment, even if the task window is set to be displayed on the left in "Taskbar Window Settings", the window will still be displayed on the right)
         if (!theApp.m_taskbar_data.tbar_wnd_on_left || !CWindowsSettingHelper::IsTaskbarCenterAlign())
         {
-            ////靠近任务栏图标的情况
+            ////Close to the taskbar icon
             //if (theApp.m_taskbar_data.tbar_wnd_snap && IsTaskbarCloseToIconEnable(theApp.m_taskbar_data.tbar_wnd_on_left))
             //{
             //    m_rect.MoveToX(m_rcMin.right + 2);
             //}
-            ////靠近通知区的情况
+            ////Situation close to the notification area
             //else
             //{
-            //通知区窗口的水平位置
+            //The horizontal position of the notification area window
             int notify_x_pos = m_rcNotify.left;
-            //没有获取到通知区位置的情况
+            //The location of the notification area is not obtained
             if (notify_x_pos == 0)
             {
-                //Win11副屏没有通知区窗口，这里使用固定的值（88像素的系统时间区域）
+                //Win11 secondary screen does not have a notification area window, and a fixed value is used here (88-pixel system time area)
                 if (m_is_secondary_display)
                     notify_x_pos = m_rcTaskbar.Width() - DPI(88);
-                //如果不是副屏，但是仍然没有获取到通知区域的位置，使用配置文件中taskbar_right_space_win11指定的值
+                //If it is not a secondary screen, but the location of the notification area is still not obtained, use the value specified by taskbar_right_space_win11 in the configuration file.
                 else
                     notify_x_pos = m_rcTaskbar.Width() - DPI(theApp.m_taskbar_data.taskbar_right_space_win11);
             }
-            //如果显示了小组件，并且任务栏靠左显示，则留出小组件的位置
+            //If the widget is displayed and the taskbar is displayed to the left, leave the position of the widget
             if (theApp.m_taskbar_data.avoid_overlap_with_widgets && CWindowsSettingHelper::IsTaskbarWidgetsBtnShown() && !CWindowsSettingHelper::IsTaskbarCenterAlign())
                 m_rect.MoveToX(notify_x_pos - m_rect.Width() + 2 - DPI(theApp.m_taskbar_data.taskbar_left_space_win11));
             else
                 m_rect.MoveToX(notify_x_pos - m_rect.Width() + 2);
             //}
         }
-        //任务栏窗口显示在左侧时
+        //When the taskbar window is displayed on the left
         else
         {
-            //靠近“开始”按钮
+            //Near the Start button
             if (theApp.m_taskbar_data.tbar_wnd_snap)
             {
                 m_rect.MoveToX(m_rcStart.left - m_rect.Width() - 2);
             }
-            //靠近最左侧
+            //near the far left
             else
             {
                 if (CWindowsSettingHelper::IsTaskbarWidgetsBtnShown())
@@ -63,20 +63,20 @@ void CWin11TaskbarDlg::AdjustTaskbarWndPos(bool force_adjust)
                     m_rect.MoveToX(2);
             }
         }
-        //水平偏移
+        //horizontal offset
         m_rect.MoveToX(m_rect.left + DPI(theApp.m_taskbar_data.window_offset_left));
-        ////确保水平方向不超出屏幕边界
+        ////Make sure the horizontal direction does not exceed the screen boundaries
         //if (m_rect.left < 0)
         //    m_rect.MoveToX(0);
         //if (m_rcTaskbar.Width() > m_rect.Width() && m_rect.right > m_rcTaskbar.Width())
         //    m_rect.MoveToX(m_rcTaskbar.Width() - m_rect.Width());
 
-        //设置任务栏窗口的垂直位置
-        //注：这里加上(m_rcTaskbar.Height() - rcStart.Height())用于修正Windows11 build 22621版本后触屏设备任务栏窗口位置不正确的问题。
-        //在这种情况下m_rcTaskbar的高度要大于m_rcBar的高度，正常情况下，它们的高度相同
-        //但是当任务栏上没有任何图标时，m_rcBar的高度会变为0，因此使用rcStart代替
+        //Set the vertical position of the taskbar window
+        //Note: (m_rcTaskbar.Height() - rcStart.Height()) is added here to correct the problem of incorrect taskbar window position of touch screen devices after Windows 11 build 22621.
+        //In this case, the height of m_rcTaskbar is greater than the height of m_rcBar. Under normal circumstances, their heights are the same.
+        //But when there are no icons on the taskbar, the height of m_rcBar becomes 0, so use rcStart instead
         m_rect.MoveToY((m_rcStart.Height() - m_rect.Height()) / 2 + (m_rcTaskbar.Height() - m_rcStart.Height()) + DPI(theApp.m_taskbar_data.window_offset_top));
-        ////确保垂直方向不超出屏幕边界
+        ////Make sure the vertical direction does not exceed the screen boundaries
         //if (m_rect.top < 0)
         //    m_rect.MoveToY(0);
         //if (m_rcTaskbar.Height() > m_rect.Height() && m_rect.bottom > m_rcTaskbar.Height())

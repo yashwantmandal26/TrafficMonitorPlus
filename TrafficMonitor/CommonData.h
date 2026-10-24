@@ -1,4 +1,4 @@
-﻿//此文件包含全局结构体、枚举类型的定义
+﻿//This file contains the definition of global structures and enumeration types
 #pragma once
 #include "stdafx.h"
 #include "TaskbarItemOrderHelper.h"
@@ -9,61 +9,61 @@ struct Date
     int month{};
     int day{};
 
-    int week() const;       //该日期是一年的第几周
+    int week() const;       //The date is the week of the year
 
-    //比较两个HistoryTraffic对象的日期，如果a的时间大于b，则返回true
+    //Compares the dates of two HistoryTraffic objects and returns true if the time of a is greater than b
     static bool DateGreater(const Date& a, const Date& b);
 
-    //判断两个HistoryTraffic对象的日期是否相等
+    //Determine whether the dates of two HistoryTraffic objects are equal
     static bool DateEqual(const Date& a, const Date& b);
 
 };
 
-//储存某一天的历史流量
+//Store historical traffic for a certain day
 struct HistoryTraffic : public Date
 {
-    //当天使用的流量（以KB为单位）
+    //Traffic used on the day (in KB)
     unsigned __int64 up_kBytes{};
     unsigned __int64 down_kBytes{};
-    bool mixed{ true };     //如果不区分上传和下载流量，则为true
+    bool mixed{ true };     //True if no distinction is made between upload and download traffic
 
     unsigned __int64 kBytes() const;
 
 };
 
-//历史流量统计中用于指示不同范围内的流量的颜色
+//Colors used in historical traffic statistics to indicate different ranges of traffic
 #define TRAFFIC_COLOR_BLUE RGB(0, 183, 238)
 #define TRAFFIC_COLOR_GREEN RGB(128, 194, 105)
 #define TRAFFIC_COLOR_YELLOE RGB(255, 216, 58)
 #define TRAFFIC_COLOR_RED RGB(255, 95, 74)
 #define TRAFFIC_COLOR_DARK_RED RGB(166, 19, 0)
 
-//网速单位
+//Internet speed unit
 enum class SpeedUnit
 {
-    AUTO,       //自动
+    AUTO,       //automatic
     KBPS,       //KB/s
     MBPS        //MB/s
 };
 
 
-//硬件监控的项目
+//Hardware monitoring projects
 enum HardwareItem
 {
     HI_CPU = 1 << 0,        //CPU
-    HI_GPU = 1 << 1,        //显卡
-    HI_HDD = 1 << 2,        //硬盘
-    HI_MBD = 1 << 3         //主板
+    HI_GPU = 1 << 1,        //graphics card
+    HI_HDD = 1 << 2,        //hard drive
+    HI_MBD = 1 << 3         //motherboard
 };
 
-#define DEF_CH L'\"'        //写入和读取ini文件字符串时，在字符串前后添加的字符
-struct DispStrings      //显示的文本
+#define DEF_CH L'\"'        //Characters added before and after the string when writing and reading ini file strings
+struct DispStrings      //displayed text
 {
 private:
     std::map<CommonDisplayItem, wstring> map_str;
 
 public:
-    //获取一个显示的文本
+    //Get a displayed text
     wstring& Get(CommonDisplayItem item);
     const wstring& GetConst(CommonDisplayItem item) const;
 
@@ -71,34 +71,34 @@ public:
 
     bool operator==(const DispStrings& disp_str) const;
 
-    //载入一个插件项目的显示文本
+    //Load the display text of a plug-in project
     void Load(const std::wstring& plugin_id, const std::wstring& disp_str);
 
-    //是否无效
+    //Is it invalid?
     bool IsInvalid() const;
 };
 
-//鼠标双击窗口的动作
+//The action of double-clicking the window with the mouse
 enum class DoubleClickAction
 {
-    CONNECTION_INFO,    //连接详情
-    HISTORY_TRAFFIC,    //历史流量统计
-    SHOW_MORE_INFO,     //显示更多信息
-    OPTIONS,            //选项设置
-    TASK_MANAGER,       //任务管理器
-    SEPCIFIC_APP,       //指定应用程序
-    CHANGE_SKIN,        //更换皮肤
-    NONE                //不执行任何动作
+    CONNECTION_INFO,    //Connection details
+    HISTORY_TRAFFIC,    //Historical traffic statistics
+    SHOW_MORE_INFO,     //Show more information
+    OPTIONS,            //Option settings
+    TASK_MANAGER,       //task manager
+    SEPCIFIC_APP,       //Specify application
+    CHANGE_SKIN,        //Change skin
+    NONE                //Take no action
 };
 
-//颜色模式
+//color mode
 enum class ColorMode
 {
-    Default, //默认颜色
-    Light   //浅色
+    Default, //Default color
+    Light   //light color
 };
 
-//将字号转成LOGFONT结构中的lfHeight
+//Convert the font size to lfHeight in the LOGFONT structure
 inline int FontSizeToLfHeight(int font_size, int dpi = 0)
 {
     if (dpi == 0)
@@ -111,19 +111,19 @@ inline int FontSizeToLfHeight(int font_size, int dpi = 0)
     return lfHeight;
 }
 
-//字体
+//font
 struct FontInfo
 {
-    CString name;       //字体名称
-    int size{ 9 };      //字体大小
-    bool bold{};        //粗体
-    bool italic{};      //斜体
-    bool underline{};   //下划线
-    bool strike_out{};  //删除线
+    CString name;       //Font name
+    int size{ 9 };      //font size
+    bool bold{};        //Bold
+    bool italic{};      //italics
+    bool underline{};   //Underline
+    bool strike_out{};  //strikethrough
 
     bool operator==(const FontInfo& a) const;
 
-    //创建一个CFont对象
+    //Create a CFont object
     void Create(CFont& font, int dpi = 0) const
     {
         font.CreateFont(
@@ -144,14 +144,14 @@ struct FontInfo
     }
 };
 
-//历史流量统计列表视图中显示模式
+//Display mode in historical traffic statistics list view
 enum class HistoryTrafficViewType
 {
-    HV_DAY,         //日视图
-    HV_WEEK,        //周视图
-    HV_MONTH,          //月视图
-    HV_QUARTER,     //季视图
-    HV_YEAR            //年视图
+    HV_DAY,         //day view
+    HV_WEEK,        //Weekly view
+    HV_MONTH,          //month view
+    HV_QUARTER,     //quarter view
+    HV_YEAR            //year view
 };
 
 struct StringSet
@@ -170,9 +170,9 @@ private:
 
 struct LanguageInfo
 {
-    wstring display_name;           // 在语言设置下拉菜单显示的字符串
-    wstring bcp_47;                 // BCP-47代码
-    wstring default_font_name;      // 默认字体
+    wstring display_name;           // The string displayed in the language settings drop-down menu
+    wstring bcp_47;                 // BCP-47 code
+    wstring default_font_name;      // Default font
     wstring translator;
     wstring translator_url;
     WORD language_id{};
@@ -183,101 +183,101 @@ struct LanguageInfo
     bool isEmpty() const;
 };
 
-//选项设置数据
+//option setting data
 struct MainConfigData
 {
-    int m_transparency{ 100 };          //窗口透明度
-    bool m_show_more_info{ false };     //显示更多信息
-    bool m_show_task_bar_wnd{ false };  //显示任务栏窗口
-    bool m_hide_main_window;            //隐藏主窗口
-    //bool m_tbar_show_cpu_memory;      //任务栏窗口显示CPU和内存利用率
+    int m_transparency{ 100 };          //window transparency
+    bool m_show_more_info{ false };     //Show more information
+    bool m_show_task_bar_wnd{ false };  //Show taskbar window
+    bool m_hide_main_window;            //Hide main window
+    //bool m_tbar_show_cpu_memory; //The taskbar window displays CPU and memory utilization
 
-    int m_position_x;   //窗口位置的x坐标
-    int m_position_y;   //窗口位置的y坐标
+    int m_position_x;   //x coordinate of window position
+    int m_position_y;   //The y coordinate of the window position
 
-    bool m_auto_select{ false };    //自动选择连接
-    bool m_select_all{ false };     //统计所有连接的网速
-    string m_connection_name;      //当前选择网络的名称
+    bool m_auto_select{ false };    //Automatically select connection
+    bool m_select_all{ false };     //Count the speed of all connections
+    string m_connection_name;      //The name of the currently selected network
 
-    wstring m_skin_name;            //选择的皮肤的名称
+    wstring m_skin_name;            //The name of the selected skin
 
-    bool skin_auto_adapt{ false };  //根据深色/浅色模式自动切换皮肤
-    wstring skin_name_light_mode;   //浅色模式下的皮肤名称
-    wstring skin_name_dark_mode;    //深色模式下的皮肤名称
+    bool skin_auto_adapt{ false };  //Automatically switch skin based on dark/light mode
+    wstring skin_name_light_mode;   //Skin name in light mode
+    wstring skin_name_dark_mode;    //Skin name in dark mode
 
-    int m_dft_notify_icon = 0;      //默认的通知图标(用于区分win10的深色和浅色模式)
-    int m_notify_icon_selected{};   //要显示的通知区图标
-    bool m_notify_icon_auto_adapt{ false }; //通知区图标是否自动适应Win10深浅色模式
+    int m_dft_notify_icon = 0;      //Default notification icon (used to distinguish between dark and light modes of win10)
+    int m_notify_icon_selected{};   //Notification area icon to display
+    bool m_notify_icon_auto_adapt{ false }; //Whether the notification area icon automatically adapts to the dark and light color modes of Win10
 
-    //bool m_show_internet_ip{ false };     //是否在“连接详情”对话框中显示外网IP地址
-    bool m_use_log_scale{ false };          //“历史流量统计”对话框中绘制表示历史流量数值的矩形时是否使用对数比例
+    //bool m_show_internet_ip{ false }; //Whether to display the external IP address in the "Connection Details" dialog box
+    bool m_use_log_scale{ false };          //Whether to use a logarithmic scale when drawing a rectangle representing historical traffic values in the "Historical Traffic Statistics" dialog box
     HistoryTrafficViewType m_view_type{};
-    bool m_sunday_first{ true };            //是否将周日作为一周的第一天
-    StringSet plugin_disabled;      //已禁用的插件
+    bool m_sunday_first{ true };            //Whether to use Sunday as the first day of the week
+    StringSet plugin_disabled;      //Disabled plugins
 
 };
 
-//内存显示方式
+//Memory display mode
 enum class MemoryDisplay
 {
-    USAGE_PERCENTAGE,       //已使用百分比
-    MEMORY_USED,            //内存已使用
-    MEMORY_AVAILABLE        //内存可用
+    USAGE_PERCENTAGE,       //Percentage used
+    MEMORY_USED,            //memory used
+    MEMORY_AVAILABLE        //memory available
 };
 
-//为每个皮肤单独保存的数据
+//Data saved separately for each skin
 struct SkinSettingData
 {
-    FontInfo font;          //字体
-    DispStrings disp_str;   //显示的文本
-    std::map<CommonDisplayItem, COLORREF> text_colors{};    //文字的颜色
+    FontInfo font;          //font
+    DispStrings disp_str;   //displayed text
+    std::map<CommonDisplayItem, COLORREF> text_colors{};    //text color
     bool specify_each_item_color{};
 
     bool IsEmpty() const;
     bool operator==(const SkinSettingData& a) const;
 };
 
-//选项设置中“主窗口设置”和“任务栏窗口设置”中公共的数据（不使用此结构体创建对象）
+//Common data in "Main Window Settings" and "Taskbar Window Settings" in option settings (this structure is not used to create objects)
 struct PublicSettingData
 {
-    bool specify_each_item_color{ false };      //是否指定每个项目的颜色
-    FontInfo font;          //字体
-    DispStrings disp_str;   //显示的文本
-    bool speed_short_mode{ false };     //网速显示简洁模式（减少小数点的位数，单位不显示“B”）
-    bool separate_value_unit_with_space{ true };    //网速数值和单位用空格分隔
-    bool show_tool_tip{ true };         //显示鼠标提示
-    MemoryDisplay memory_display{ MemoryDisplay::USAGE_PERCENTAGE };    //内存显示方式
+    bool specify_each_item_color{ false };      //Whether to specify the color of each item
+    FontInfo font;          //font
+    DispStrings disp_str;   //displayed text
+    bool speed_short_mode{ false };     //Simple mode for network speed display (reduce the number of decimal places and do not display “B” in units)
+    bool separate_value_unit_with_space{ true };    //Network speed value and unit are separated by spaces.
+    bool show_tool_tip{ true };         //Show mouse tip
+    MemoryDisplay memory_display{ MemoryDisplay::USAGE_PERCENTAGE };    //Memory display mode
 
-    bool unit_byte{ true };             //使用字节(B)而不是比特(b)为单位
-    SpeedUnit speed_unit;       //网速的单位
-    bool hide_unit;         //隐藏单位
-    bool hide_percent;      //隐藏百分号
-    DoubleClickAction double_click_action;      //鼠标双击动作
-    wstring double_click_exe;   //鼠标双击动作为打开指定应用程序时，打开的程序路径
+    bool unit_byte{ true };             //Use bytes (B) instead of bits (b) as units
+    SpeedUnit speed_unit;       //unit of internet speed
+    bool hide_unit;         //Hidden units
+    bool hide_percent;      //Hide percent sign
+    DoubleClickAction double_click_action;      //Mouse double click action
+    wstring double_click_exe;   //When the mouse double-click action is to open the specified application, the opened program path
 };
 
-//#define MAIN_WND_COLOR_NUM 9      //主窗口颜色数量
-//选项设置中“主窗口设置”的数据
+//#define MAIN_WND_COLOR_NUM 9 //Number of main window colors
+//Data of "Main Window Settings" in option settings
 struct MainWndSettingData : public PublicSettingData
 {
-    std::map<CommonDisplayItem, COLORREF> text_colors{};    //文字的颜色
-    bool swap_up_down{ false };     //交换上传和下载显示的位置
-    bool hide_main_wnd_when_fullscreen;     //有程序全屏运行时隐藏悬浮窗
-    bool m_always_on_top{ false };      //窗口置顶
-    bool m_lock_window_pos{ false };    //锁定窗口位置
-    bool m_mouse_penetrate{ false };    //鼠标穿透
-    bool m_alow_out_of_border{ false };     //是否允许悬浮窗超出屏幕边界
+    std::map<CommonDisplayItem, COLORREF> text_colors{};    //text color
+    bool swap_up_down{ false };     //Swap upload and download display locations
+    bool hide_main_wnd_when_fullscreen;     //Hide the floating window when a program is running in full screen
+    bool m_always_on_top{ false };      //Window on top
+    bool m_lock_window_pos{ false };    //Lock window position
+    bool m_mouse_penetrate{ false };    //mouse penetration
+    bool m_alow_out_of_border{ false };     //Whether to allow floating windows to exceed the boundaries of the screen
 
     void FormSkinSettingData(const SkinSettingData& sking_setting_data);
     SkinSettingData ToSkinSettingData() const;
 };
 
-//#define TASKBAR_COLOR_NUM 18      //任务栏窗口颜色数量
+//#define TASKBAR_COLOR_NUM 18 //Number of taskbar window colors
 
-struct TaskbarItemColor //任务栏窗口每一项的颜色
+struct TaskbarItemColor //The color of each item in the taskbar window
 {
-    COLORREF label{};   //标签颜色
-    COLORREF value{};   //数值颜色
+    COLORREF label{};   //Label color
+    COLORREF value{};   //numerical color
 
     bool operator==(const TaskbarItemColor& item) const
     {
@@ -285,112 +285,112 @@ struct TaskbarItemColor //任务栏窗口每一项的颜色
     }
 };
 
-//选项设置中“任务栏窗口设置”的数据
+//Data for "Taskbar Window Settings" in Options Settings
 struct TaskBarSettingData : public PublicSettingData
 {
-    COLORREF  back_color{ RGB(0, 0, 0) };   //背景颜色
-    COLORREF transparent_color{ RGB(0, 0, 0) };     //透明色
-    COLORREF status_bar_color{ RGB(0, 0, 0) };      // CPU/内存 状态条颜色
-    std::map<CommonDisplayItem, TaskbarItemColor> text_colors{};    //文字的颜色
-    int dft_back_color = 0;                         //默认背景颜色
-    int dft_transparent_color = 0;                  //默认透明色
-    int dft_status_bar_color = 0x005A5A5A;          //默认CPU/内存 状态条颜色
-    int dft_text_colors = 0x00ffffffU;              //默认文字颜色
+    COLORREF  back_color{ RGB(0, 0, 0) };   //background color
+    COLORREF transparent_color{ RGB(0, 0, 0) };     //Transparent color
+    COLORREF status_bar_color{ RGB(0, 0, 0) };      // CPU/memory status bar color
+    std::map<CommonDisplayItem, TaskbarItemColor> text_colors{};    //text color
+    int dft_back_color = 0;                         //Default background color
+    int dft_transparent_color = 0;                  //Default transparent color
+    int dft_status_bar_color = 0x005A5A5A;          //Default CPU/memory status bar color
+    int dft_text_colors = 0x00ffffffU;              //Default text color
 
-    bool auto_adapt_light_theme{ true };            //是否自动适应浅色主题
-    int dark_default_style{ 0 };                    //深色主题时使用的预设方案
-    int light_default_style{ -1 };                  //浅色主题时使用的预设方案
-    bool auto_set_background_color{ false };        //根据任务栏颜色自动设置背景色
-    bool auto_save_taskbar_color_settings_to_preset{};    //当启用“自动适应Windows10深色/浅色主题”时，是否在颜色设置有更改时自动将当前颜色设置保存到对应的预设
+    bool auto_adapt_light_theme{ true };            //Whether to automatically adapt to light themes
+    int dark_default_style{ 0 };                    //The default scheme used when using dark themes
+    int light_default_style{ -1 };                  //The default scheme used when using light themes
+    bool auto_set_background_color{ false };        //Automatically set background color based on taskbar color
+    bool auto_save_taskbar_color_settings_to_preset{};    //When "Automatically adapt to Windows 10 dark/light theme" is enabled, whether to automatically save the current color settings to the corresponding preset when the color settings are changed
     bool IsTaskbarTransparent() const;
     void SetTaskabrTransparent(bool transparent);
 
     CTaskbarItemOrderHelper item_order;
-    DisplayItemSet display_item{ TDI_UP, TDI_DOWN };      //任务栏窗口显示的项目
-    StringSet plugin_display_item;                  //任务窗口显示的插件项目
+    DisplayItemSet display_item{ TDI_UP, TDI_DOWN };      //Items displayed in the taskbar window
+    StringSet plugin_display_item;                  //Plug-in projects displayed in the task window
 
-    bool show_taskbar_wnd_in_secondary_display{ false };    //是否在副显示器上显示任务栏窗口
-    int secondary_display_index{};      //在第几个副显示器上显示任务栏窗口
-    bool value_right_align{ false };    //数值是否右对齐
-    int digits_number{ 4 };             //数据位数
-    bool horizontal_arrange{ true };    //水平排列
-    bool show_status_bar{ true };       //显示 CPU/内存的状态条
-    bool tbar_wnd_on_left{ false };     //如果为true，则任务栏窗口显示在任务栏的左侧（或上方）
-    bool tbar_wnd_snap{ false };     	//如果为true，则在Win11中任务栏窗口贴靠中间任务栏，否则靠近边缘
-    bool cm_graph_type{ false };        //如果为false，默认原样式，柱状图显示占用率，如为true，滚动显示占用率
-    bool show_graph_dashed_box{ true }; //显示占用图虚线框
+    bool show_taskbar_wnd_in_secondary_display{ false };    //Whether to display the taskbar window on the secondary monitor
+    int secondary_display_index{};      //Display the taskbar window on which secondary monitor
+    bool value_right_align{ false };    //Whether the value is right aligned
+    int digits_number{ 4 };             //Number of data bits
+    bool horizontal_arrange{ true };    //Arrange horizontally
+    bool show_status_bar{ true };       //Display CPU/memory status bar
+    bool tbar_wnd_on_left{ false };     //If true, the taskbar window is displayed to the left of (or above) the taskbar
+    bool tbar_wnd_snap{ false };     	//If true, the taskbar window snaps to the middle taskbar in Win11, otherwise it is close to the edge
+    bool cm_graph_type{ false };        //If it is false, the default style is the original style, and the histogram displays the occupancy rate. If it is true, the occupancy rate is displayed by scrolling.
+    bool show_graph_dashed_box{ true }; //Show occupancy map dashed box
 
-    int item_space{};                   //项目间距
-    int vertical_margin{};              //项目垂直间距
-    int window_offset_top{};            //任务栏窗口顶部边距
-    int window_offset_left{};           //任务栏窗口左侧边距
+    int item_space{};                   //Item spacing
+    int vertical_margin{};              //Item vertical spacing
+    int window_offset_top{};            //Taskbar window top margin
+    int window_offset_left{};           //Taskbar window left margin
     void ValidItemSpace();
     void ValidVerticalMargin();
     void ValidWindowOffsetTop();
     void ValidWindowOffsetLeft();
-    bool avoid_overlap_with_widgets{ false };   //避免与右侧小组件重叠
-    int taskbar_left_space_win11{};         //Windows11下，任务栏小工具的宽度
-    int taskbar_right_space_win11{};        //Windows11下，任务栏窗口距离任务栏右侧的宽度（仅当无法获取到任务栏TrayNotifyWnd窗口的位置时有效）
+    bool avoid_overlap_with_widgets{ false };   //Avoid overlapping with right widgets
+    int taskbar_left_space_win11{};         //Under Windows 11, the width of taskbar gadgets
+    int taskbar_right_space_win11{};        //Under Windows 11, the width of the taskbar window from the right side of the taskbar (valid only when the position of the taskbar TrayNotifyWnd window cannot be obtained)
 
-    bool show_netspeed_figure{ false };     //是否显示网速占用图
-    int netspeed_figure_max_value;          //网速占用图的最大值
-    int netspeed_figure_max_value_unit{};   //网速占用图最大值的单位（0: KB, 1: MB）
-    unsigned __int64 GetNetspeedFigureMaxValueInBytes() const;  //获取网速占用图的最大值（以字节为单位）
-    bool graph_color_following_system{ false }; //占用图颜色跟随系统主题色
-    COLORREF GetUsageGraphColor() const;    //获取占用图的颜色
+    bool show_netspeed_figure{ false };     //Whether to display the network speed usage graph
+    int netspeed_figure_max_value;          //Maximum value of network speed usage chart
+    int netspeed_figure_max_value_unit{};   //The unit of the maximum value of the network speed occupancy graph (0: KB, 1: MB)
+    unsigned __int64 GetNetspeedFigureMaxValueInBytes() const;  //Get the maximum value of the network speed usage map (in bytes)
+    bool graph_color_following_system{ false }; //The color of the occupancy map follows the system theme color
+    COLORREF GetUsageGraphColor() const;    //Get the color of the occupancy map
 
-    bool disable_d2d{ false };//是否禁用d2d绘图
-    DWORD update_layered_window_error_code{0}; // 使用D2D1渲染时，UpdateLayeredWindowIndirect失败的错误代码，会在关闭任务栏窗口时被重置为0
-    bool enable_colorful_emoji{ true };       //是否显示彩色emoji
+    bool disable_d2d{ false };//Whether to disable d2d drawing
+    DWORD update_layered_window_error_code{0}; // When using D2D1 rendering, the error code of UpdateLayeredWindowIndirect failure will be reset to 0 when closing the taskbar window.
+    bool enable_colorful_emoji{ true };       //Whether to display colored emojis
 
-    bool is_windows_web_experience_detected{ false }; //是否检测到Windows Web Experience小组件安装信息
+    bool is_windows_web_experience_detected{ false }; //Whether Windows Web Experience widget installation information is detected
 };
 
-//选项设置中“常规设置”的数据
+//Data for "General Settings" in Options Settings
 struct GeneralSettingData
 {
     bool check_update_when_start{ true };
-    int update_source{};                    //更新源。0: GitHub; 1: Gitee
+    int update_source{};                    //Update source. 0: GitHub; 1: Gite
     bool auto_run{ false };
-    bool auto_run_by_task_scheduler{ false };   //是否通过任务计划程序实现开机自启
-    bool show_notify_icon{ true };    //显示通知区域图标
-//通知消息
-    bool traffic_tip_enable{ false };       //是否启用流量超出时提示
-    int traffic_tip_value;                  //要提示的流量临界值
-    int traffic_tip_unit{};                 //要提示的流量值的单位（0: MB, 1: GB）
+    bool auto_run_by_task_scheduler{ false };   //Whether to enable self-starting on boot through task scheduler
+    bool show_notify_icon{ true };    //Show notification area icon
+//notification message
+    bool traffic_tip_enable{ false };       //Whether to enable prompts when traffic exceeds
+    int traffic_tip_value;                  //Traffic threshold to be prompted
+    int traffic_tip_unit{};                 //The unit of the traffic value to be prompted (0: MB, 1: GB)
 
-    struct NotifyTipSettings        //超过某个值时弹出提示的设置
+    struct NotifyTipSettings        //Settings for prompts to pop up when a certain value is exceeded
     {
-        bool enable;                //是否启用提示
-        int tip_value;              //要弹出提示的临界值
+        bool enable;                //Whether to enable prompts
+        int tip_value;              //The critical value to pop up a prompt
     };
-    NotifyTipSettings memory_usage_tip;     //用内存使用率超出提示
-    NotifyTipSettings cpu_temp_tip;         //CPU温度超出提示
-    NotifyTipSettings gpu_temp_tip;         //显卡温度超出提示
-    NotifyTipSettings hdd_temp_tip;         //硬盘温度超出提示
-    NotifyTipSettings mainboard_temp_tip;   //主板温度超出提示
+    NotifyTipSettings memory_usage_tip;     //Memory usage exceeded prompt
+    NotifyTipSettings cpu_temp_tip;         //CPU temperature exceeded prompt
+    NotifyTipSettings gpu_temp_tip;         //Graphics card temperature exceeds prompt
+    NotifyTipSettings hdd_temp_tip;         //Hard drive temperature exceeds prompt
+    NotifyTipSettings mainboard_temp_tip;   //Motherboard temperature exceeds prompt
 
 
-    //语言
+    //language
     LanguageInfo language;
 
     bool show_all_interface{ true };
 
-    //CPU利用率获取方式
+    //How to obtain CPU utilization
     enum CpuUsageAcquireMethod
     {
-        CA_CPU_TIME,    //使用时间
-        CA_PDH         //性能计数器
+        CA_CPU_TIME,    //usage time
+        CA_PDH         //Performance counters
     };
-    CpuUsageAcquireMethod cpu_usage_acquire_method{};  //获取CPU利用率的方式
+    CpuUsageAcquireMethod cpu_usage_acquire_method{};  //How to get CPU utilization
 
-    bool portable_mode{ false };        //便携模式，如果为true，则程序所有数据都保存到exe所在目录下，否则保存到Appdata\Romaing目录下
-    int monitor_time_span{ 1000 };    //监控的时间间隔
+    bool portable_mode{ false };        //Portable mode, if true, all data of the program will be saved to the directory where the exe is located, otherwise it will be saved to the Appdata\Romaing directory.
+    int monitor_time_span{ 1000 };    //Monitoring interval
 
-    std::wstring hard_disk_name;        //要监控的硬盘名称
-    std::wstring cpu_core_name;         //要监控的CPU核心的名称
+    std::wstring hard_disk_name;        //The name of the hard disk to be monitored
+    std::wstring cpu_core_name;         //The name of the CPU core to monitor
 
-    unsigned int hardware_monitor_item{};   //要监控哪些硬件
+    unsigned int hardware_monitor_item{};   //What hardware to monitor
     bool IsHardwareEnable(HardwareItem item_type) const
     {
         return hardware_monitor_item & item_type;
@@ -403,14 +403,14 @@ struct GeneralSettingData
             hardware_monitor_item &= ~item_type;
     }
 
-    StringSet connections_hide;     //用于保存哪些网络要从“选择网络连接”子菜单项中隐藏
+    StringSet connections_hide;     //Used to save which networks to hide from the "Select Network Connections" submenu item
 };
 
-//定义监控时间间隔有效的最大值和最小值
+//Define the maximum and minimum values for which the monitoring time interval is valid
 #define MONITOR_TIME_SPAN_MIN 200
 #define MONITOR_TIME_SPAN_MAX 30000
 
-//通过构造函数传递一个bool变量的引用，在构造时将其置为true，析构时置为false
+//Pass a reference to a bool variable through the constructor, set it to true during construction, and set it to false during destruction.
 class CFlagLocker
 {
 public:

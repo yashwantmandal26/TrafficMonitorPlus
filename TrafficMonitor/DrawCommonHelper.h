@@ -1,7 +1,7 @@
 #pragma once
 #include "IDrawCommon.h"
 
-//用于双缓冲绘图的类
+//Classes for double-buffered drawing
 class CDrawDoubleBuffer final : public IDrawBuffer
 {
 public:
@@ -44,11 +44,11 @@ namespace DrawCommonHelper
 {
     UINT ProccessTextFormat(CRect rect, CSize text_length, IDrawCommon::Alignment align, bool multi_line) noexcept;
 
-    //根据图片拉伸模式，计算绘制图片的实际位置
-    //image_size[int]：图片的原始大小
-    //start_point[int][out]：绘制区域的起始位置
-    //size[int][out]：绘制区域的大小
-    //stretch_mode[int]：拉伸模式
+    //Calculate the actual position of drawing the picture according to the picture stretching mode
+    //image_size[int]: original size of the image
+    //start_point[int][out]: starting position of the drawing area
+    //size[int][out]: size of drawing area
+    //stretch_mode[int]: stretch mode
     void ImageDrawAreaConvert(CSize image_size, CPoint& start_point, CSize& size, IDrawCommon::StretchMode stretch_mode);
 
     struct Point
@@ -75,11 +75,11 @@ namespace DrawCommonHelper
         int m_y{};
     };
 
-    //获取一个位置中完全透明的点，并保存到points中
+    //Get a completely transparent point in a position and save it to points
     void GetBitmapAlphaPixel(HBITMAP hBitmap, std::set<Point>& points);
 
-    //修正位图中文本部分的Alpha通道
-    //使用了UpdateLayeredWindow后，使用GDI绘制的文本也会变得透明，此函数会遍历bitmap中alpha值为0，但是不在alpha_points中的像素，将其修正为正确的alpha值
+    //Fix alpha channel of text portion in bitmap
+    //After using UpdateLayeredWindow, the text drawn using GDI will also become transparent. This function will traverse the pixels in the bitmap with an alpha value of 0 but not in alpha_points, and correct them to the correct alpha value.
     void FixBitmapTextAlpha(HBITMAP hBitmap, BYTE alpha, std::set<Point> alpha_points);
 };
 

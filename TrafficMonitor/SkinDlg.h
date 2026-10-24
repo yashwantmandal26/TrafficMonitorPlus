@@ -6,19 +6,19 @@
 #include "LinkStatic.h"
 #include "BaseDialog.h"
 
-// CSkinDlg 对话框
+// CSkinDlg dialog box
 
 class CSkinDlg : public CBaseDialog
 {
     DECLARE_DYNAMIC(CSkinDlg)
 
 public:
-    CSkinDlg(CWnd* pParent = NULL);   // 标准构造函数
+    CSkinDlg(CWnd* pParent = NULL);   // Standard constructor
     virtual ~CSkinDlg();
 
-    int m_skin_selected;			//选择的皮肤
+    int m_skin_selected;			//skin of choice
 
-// 对话框数据
+// Dialog data
 #ifdef AFX_DESIGN_TIME
     enum { IDD = IDD_SKIN_DIALOG };
 #endif
@@ -28,22 +28,22 @@ public:
 protected:
     virtual CString GetDialogName() const override;
     virtual bool InitializeControls() override;
-    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 protected:
-    //控件变量
-    CListBox m_skin_list_box;   //选择皮肤列表
-    CLinkStatic m_skin_course;	//“皮肤制作教程”超链接
-    CLinkStatic m_skin_download;	//“更多皮肤下载”超链接
+    //control variable
+    CListBox m_skin_list_box;   //Select skin list
+    CLinkStatic m_skin_course;	//"Skin Making Tutorial" hyperlink
+    CLinkStatic m_skin_download;	//"More skin downloads" hyperlink
     CLinkStatic m_open_skin_dir_lnk;
-    CSkinPreviewView* m_view;	//预览区视图类
+    CSkinPreviewView* m_view;	//Preview area view class
     CStatic m_preview_static;
-    CStaticEx m_notify_static;	//显示提示信息的static控件
+    CStaticEx m_notify_static;	//Static control that displays prompt information
 
-    CSkinFile m_skin_data;		//皮肤数据
+    CSkinFile m_skin_data;		//skin data
 
-    void ShowPreview();		//显示皮肤预览
-    CRect CalculateViewRect();		//根据窗口大小计算预览视图的大小
+    void ShowPreview();		//Show skin preview
+    CRect CalculateViewRect();		//Calculate preview view size based on window size
 
     DECLARE_MESSAGE_MAP()
 public:

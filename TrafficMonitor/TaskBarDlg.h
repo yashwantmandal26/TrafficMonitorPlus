@@ -10,35 +10,35 @@
 #include "SupportedRenderEnums.h"
 #include <list>
 
-// CTaskBarDlg 对话框
-#define TASKBAR_WND_HEIGHT DPI(32)				//任务栏窗口的高度
-#define WM_TASKBAR_MENU_POPED_UP (WM_USER + 1004)		//定义任务栏窗口右键菜单弹出时发出的消息
-//#define TASKBAR_GRAPH_MAX_LEN 600						//历史数据存储最大长度
-#define TASKBAR_GRAPH_STEP 5							//几秒钟画一条线
+// CTaskBarDlg dialog box
+#define TASKBAR_WND_HEIGHT DPI(32)				//The height of the taskbar window
+#define WM_TASKBAR_MENU_POPED_UP (WM_USER + 1004)		//Define the message sent when the right-click menu of the taskbar window pops up
+//#define TASKBAR_GRAPH_MAX_LEN 600 //Maximum length of historical data storage
+#define TASKBAR_GRAPH_STEP 5							//Draw a line in seconds
 
 class CTaskBarDlg : public CDialogEx
 {
     DECLARE_DYNAMIC(CTaskBarDlg)
 
 public:
-    CTaskBarDlg(CWnd* pParent = NULL);   // 标准构造函数
+    CTaskBarDlg(CWnd* pParent = NULL);   // Standard constructor
     virtual ~CTaskBarDlg();
 
     CToolTipCtrl m_tool_tips;
 
-    void ShowInfo(CDC* pDC); 	//将信息绘制到控件上
-    void TryDrawStatusBar(IDrawCommon& drawer, const CRect& rect_bar, int usage_percent); //绘制CPU/内存状态条
+    void ShowInfo(CDC* pDC); 	//Draw information onto the control
+    void TryDrawStatusBar(IDrawCommon& drawer, const CRect& rect_bar, int usage_percent); //Draw CPU/memory status bar
 
-    void TryDrawGraph(IDrawCommon& drawer, const CRect& value_rect, CommonDisplayItem item_type);		// 绘制CPU/内存动态图
+    void TryDrawGraph(IDrawCommon& drawer, const CRect& value_rect, CommonDisplayItem item_type);		// Plot CPU/memory dynamics
 
-    bool AdjustWindowPos(bool force_adjust = false);	//设置窗口在任务栏中的位置（如果force_adjust为true，则会强制调整一次任务栏窗口的位置）
+    bool AdjustWindowPos(bool force_adjust = false);	//Set the position of the window in the taskbar (if force_adjust is true, the position of the taskbar window will be forcibly adjusted once)
     void ApplyWindowTransparentColor();
 
     //bool IsTaskbarChanged();
 
-    void WidthChanged();    //调用此函数通知任务栏窗口宽度改变以强制调整一次任务栏窗口位置
+    void WidthChanged();    //Call this function to notify the taskbar window width change to force the taskbar window position to be adjusted once
 
-    //获取用于检查DPI的矩形区域
+    //Get the rectangular area used to check DPI
     const CRect& GetRectForDpiCheck() const;
 
     UINT GetDPI() const;
@@ -48,8 +48,8 @@ public:
     LONG DPI(LONG pixel) const;
     void DPI(CRect& rect) const;
 
-    //下面的类定义可以看做函数定义，避免模板函数不同实例化导致静态变量不同。
-    // 近似函数声明
+    //The following class definition can be regarded as a function definition to avoid different static variables caused by different instantiations of template functions.
+    // Approximate function declaration
     // template <class HanlderFunc>
     // CheckWindowMonitorDPIAndHandle(CTaskBarDlg& ref_taskbar_window, HanlderFunc handler)
     static class ClassCheckWindowMonitorDPIAndHandle
@@ -59,13 +59,13 @@ public:
         void operator()(CTaskBarDlg& ref_taskbar_window, HandlerFunc handler)
         {
             bool rtn = theApp.DPIFromRect(ref_taskbar_window.GetRectForDpiCheck(), &dpi_x, &dpi_y);
-            //只取dpi_x作为程序dpi
+            //Only take dpi_x as program dpi
             if (rtn && (dpi_x != buffered_dpi_x || dpi_y != buffered_dpi_y))
             {
-                //更新缓存的数据
+                //Update cached data
                 buffered_dpi_x = dpi_x;
                 buffered_dpi_y = dpi_y;
-                //调用用户自定义处理方法
+                //Call user-defined processing method
                 handler(dpi_x, dpi_y);
             }
         }
@@ -75,7 +75,7 @@ public:
         static UINT dpi_x, dpi_y;
     } CheckWindowMonitorDPIAndHandle;
 
-    // 对话框数据
+    // Dialog data
 #ifdef AFX_DESIGN_TIME
     enum { IDD = IDD_TASK_BAR_DIALOG };
 #endif
@@ -84,40 +84,40 @@ protected:
     virtual void InitTaskbarWnd() = 0;
     virtual void AdjustTaskbarWndPos(bool force_adjust) = 0;
     virtual void ResetTaskbarPos() = 0;
-    virtual void CheckTaskbarOnTopOrBottom() = 0;		//检查任务栏是否在屏幕的顶部或底部，并将结果保存在m_taskbar_on_top_or_bottom中
+    virtual void CheckTaskbarOnTopOrBottom() = 0;		//Check if the taskbar is at the top or bottom of the screen and save the result in m_taskbar_on_top_or_bottom
     virtual HWND GetParentHwnd() = 0;
 
-    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
-    HWND m_hTaskbar;	//任务栏窗口句柄
-    CRect m_rcTaskbar;  //任务栏的矩形区域
-    CRect m_rect;		//当前窗口的矩形区域
-    int m_window_width{};   //保存计算得到的窗口宽度
-    int m_window_height{};  //保存计算得到的宽度高度
+    HWND m_hTaskbar;	//taskbar window handle
+    CRect m_rcTaskbar;  //The rectangular area of the taskbar
+    CRect m_rect;		//The rectangular area of the current window
+    int m_window_width{};   //Save calculated window width
+    int m_window_height{};  //Save calculated width and height
     CSupportedRenderEnums m_supported_render_enums{};
     DefaultCLazyConstructableWithInitializer<
         CTaskBarDlgDrawCommonWindowSupport,
         CTaskBarDlgDrawCommonSupport&>
         m_taskbar_draw_common_window_support{[]() -> std::tuple<CTaskBarDlgDrawCommonSupport&>
-                                             { return {theApp.m_d2d_taskbar_draw_common_support.Get()}; }}; //提供D2D1绘图支持
+                                             { return {theApp.m_d2d_taskbar_draw_common_support.Get()}; }}; //Provides D2D1 drawing support
     DefaultCLazyConstructableWithInitializer<
         CD2D1DeviceContextWindowSupport,
         CTaskBarDlgDrawCommonSupport&>
         m_d2d1_device_context_support{[]() -> std::tuple<CTaskBarDlgDrawCommonSupport&>
                                       { return {theApp.m_d2d_taskbar_draw_common_support.Get()}; }};
 
-    //任务栏各个部分的宽度
+    //The width of various parts of the taskbar
     struct ItemWidth
     {
-        int label_width{};      //标签部分宽度
-        int value_width{};      //数值部分宽度
+        int label_width{};      //Label section width
+        int value_width{};      //Numeric part width
 
-        int TotalWidth() const  //总宽度
+        int TotalWidth() const  //total width
         {
             return label_width + value_width;
         }
 
-        int MaxWidth() const	//最大宽度
+        int MaxWidth() const	//maximum width
         {
             return max(label_width, value_width);
         }
@@ -126,7 +126,7 @@ protected:
     struct ItemWidthInfo : public CommonDisplayItem
     {
         ItemWidth item_width;
-        bool is_double_line{};  //项目是否占两行
+        bool is_double_line{};  //Whether the project occupies two rows
 
         ItemWidthInfo()
         {}
@@ -136,52 +136,52 @@ protected:
         {}
     };
 
-    std::vector<ItemWidthInfo> m_item_widths;   //任务栏窗口实际显示的每个部分的宽度
-    std::map<CommonDisplayItem, CRect> m_item_rects;    //任务栏窗口每个部分的矩形区域
-    CommonDisplayItem m_clicked_item;           //鼠标点击的任务栏项目
+    std::vector<ItemWidthInfo> m_item_widths;   //The width of each portion of the taskbar window actually displayed
+    std::map<CommonDisplayItem, CRect> m_item_rects;    //Rectangular area for each part of the taskbar window
+    CommonDisplayItem m_clicked_item;           //Taskbar item clicked by mouse
 
-    std::map<CommonDisplayItem, std::list<int>> m_map_history_data;  //保存各项数据历史数据的链表，链表保存按照时间顺序，越靠近头部数据越新
-    std::map<CommonDisplayItem, int> m_history_data_count;            //统计添加到历史数据链表的次数
+    std::map<CommonDisplayItem, std::list<int>> m_map_history_data;  //A linked list that saves the historical data of each data. The linked list is saved in chronological order. The closer the data is to the head, the more recent it is.
+    std::map<CommonDisplayItem, int> m_history_data_count;            //Count the number of times added to the historical data linked list
 
-    bool m_connot_insert_to_task_bar{ false };	//如果窗口无法嵌入任务栏，则为true
-    bool m_taskbar_on_top_or_bottom{ true };		//如果任务栏在屏幕顶部或底部，则为ture
+    bool m_connot_insert_to_task_bar{ false };	//True if the window cannot be embedded in the taskbar
+    bool m_taskbar_on_top_or_bottom{ true };		//true if the taskbar is at the top or bottom of the screen
     int m_error_code{};
-    bool m_menu_popuped{ false };               //指示当前是否有菜单处于弹出状态
-    bool m_is_secondary_display{ false };       //是否显示在副显示器中
+    bool m_menu_popuped{ false };               //Indicates whether a menu is currently pop-up
+    bool m_is_secondary_display{ false };       //Whether to display in the secondary monitor
     bool m_is_width_changed{ false };
 
-    UINT m_taskbar_dpi{};//TaskBarDlg自身专用dpi
+    UINT m_taskbar_dpi{};//TaskBarDlg's own dedicated dpi
 
-    CFont m_font;			//字体
+    CFont m_font;			//font
 
-    CDC* m_pDC{};		//窗口的DC，用来计算窗口的宽度
+    CDC* m_pDC{};		//DC of the window, used to calculate the width of the window
 
-    //查找任务栏的句柄
-    //is_scendary_display：找到的是否为副显示器的任务栏
+    //Find the handle to the taskbar
+    //is_scendary_display: Whether the found taskbar is the secondary monitor's taskbar
     HWND FindTaskbarHandle(bool& is_scendary_display);
-    CString GetMouseTipsInfo();		//获取鼠标提示
+    CString GetMouseTipsInfo();		//Get mouse tips
 
-    void AddHisToList(CommonDisplayItem item_type, int current_usage_percent);		//将当前利用率数值添加进链表
+    void AddHisToList(CommonDisplayItem item_type, int current_usage_percent);		//Add the current utilization value to the linked list
 
-    int CalculateNetspeedPercent(unsigned __int64 net_speed);     //计算网速占网速占用图的最大值的百分比
+    int CalculateNetspeedPercent(unsigned __int64 net_speed);     //Calculate the network speed as a percentage of the maximum value of the network speed occupancy graph
 
-    //判断一个点在哪个显示项目的区域内，并保存到m_clicked_item。如果返回false，则该点不在任何一个项目的区域内，否则返回true
+    //Determine which display item area a point is in and save it to m_clicked_item. If false is returned, the point is not within the area of any project, otherwise true is returned
     bool CheckClickedItem(CPoint point);
 
-    //绘制任务栏窗口中的一个显示项目
-    //  drawer: 绘图类的对象
-    //  type: 项目的类型
-    //  rect: 绘制矩形区域
-    //  label_width: 标签区域的宽度
-    //  vertical: 如果为true，则标签和数值上下显示
+    //Draw a display item in the taskbar window
+    //  drawer: object of drawing class
+    //  type: type of project
+    //  rect: draw a rectangular area
+    //  label_width: width of label area
+    //  vertical: If true, labels and values are displayed up and down
     void DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect rect, int label_width, bool vertical = false);
 
-    //绘制任务栏窗口中的一个插件项目
-   //  drawer: 绘图类的对象
-   //  item: 插件显示项目的指针
-   //  rect: 绘制矩形区域
-   //  label_width: 标签区域的宽度
-   //  vertical: 如果为true，则标签和数值上下显示
+    //Draw a plug-in item in the taskbar window
+   //  drawer: object of drawing class
+   //  item: pointer to the item displayed by the plug-in
+   //  rect: draw a rectangular area
+   //  label_width: width of label area
+   //  vertical: If true, labels and values are displayed up and down
     void DrawPluginItem(IDrawCommon& drawer, IPluginItem* item, CRect rect, int label_width, bool vertical = false);
 
     void MoveWindow(CRect rect);
@@ -190,9 +190,9 @@ public:
     static void DisableRenderFeatureIfNecessary(CSupportedRenderEnums& ref_supported_render_enums);
     void SetTextFont();
     void ApplySettings();
-    void CalculateWindowSize();		//计算窗口每部分的大小，及各个部分的宽度。窗口大小保存到m_window_width和m_window_height中，各部分宽度保存到m_item_widths中，各部分的矩形区域保存到m_item_rects中
+    void CalculateWindowSize();		//Calculate the size of each part of the window, and the width of each part. The window size is saved in m_window_width and m_window_height, the width of each part is saved in m_item_widths, and the rectangular area of each part is saved in m_item_rects
 
-    void SetToolTipsTopMost();			//设置鼠标提示置顶
+    void SetToolTipsTopMost();			//Set mouse tip to stay on top
     void UpdateToolTips();
 
     bool GetCannotInsertToTaskBar() const { return m_connot_insert_to_task_bar; }
@@ -205,8 +205,8 @@ public:
 
     CommonDisplayItem GetClickedItem() const { return m_clicked_item; }
 
-    //是否允许“任务栏窗口靠近图标而不是任务栏的两侧”选项
-    //taskbar_wnd_on_left: 任务栏窗口是否在任务栏左侧
+    //Whether to allow the option "Move taskbar windows closer to icons instead of to the sides of the taskbar"
+    //taskbar_wnd_on_left: Whether the taskbar window is on the left side of the taskbar
     static bool IsTaskbarCloseToIconEnable(bool taskbar_wnd_on_left);
 
     DECLARE_MESSAGE_MAP()

@@ -1,4 +1,4 @@
-﻿// MainWndSettingsDlg.cpp : 实现文件
+﻿// MainWndSettingsDlg.cpp: implementation file
 //
 
 #include "stdafx.h"
@@ -11,7 +11,7 @@
 #include "TrafficMonitorDlg.h"
 #include "SkinManager.h"
 
-// CMainWndSettingsDlg 对话框
+// CMainWndSettingsDlg dialog box
 
 IMPLEMENT_DYNAMIC(CMainWndSettingsDlg, CTabDlg)
 
@@ -171,16 +171,16 @@ BEGIN_MESSAGE_MAP(CMainWndSettingsDlg, CTabDlg)
 END_MESSAGE_MAP()
 
 
-// CMainWndSettingsDlg 消息处理程序
+// CMainWndSettingsDlg message handler
 
 
 BOOL CMainWndSettingsDlg::OnInitDialog()
 {
     CTabDlg::OnInitDialog();
 
-    // TODO:  在此添加额外的初始化
+    // TODO: Add additional initialization here
 
-    //初始化各控件状态
+    //Initialize the status of each control
     SetDlgItemText(IDC_FONT_NAME_EDIT, m_data.font.name);
     //wchar_t buff[16];
     //swprintf_s(buff, L"%d", m_data.font_size);
@@ -250,7 +250,7 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
     SetDlgItemText(IDC_EXE_PATH_EDIT, m_data.double_click_exe.c_str());
     EnableControl();
 
-    //初始化内存显示方式下拉列表
+    //Initialize the memory display mode drop-down list
     m_memory_display_combo.AddString(CCommon::LoadText(IDS_USAGE_PERCENTAGE));
     m_memory_display_combo.AddString(CCommon::LoadText(IDS_MEMORY_USED));
     m_memory_display_combo.AddString(CCommon::LoadText(IDS_MEMORY_AVAILABLE));
@@ -261,23 +261,23 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
     CheckDlgButton(IDC_LOCK_WINDOW_POS_CHECK, m_data.m_lock_window_pos);
     CheckDlgButton(IDC_ALOW_OUT_OF_BORDER_CHECK, m_data.m_alow_out_of_border);
 
-    ////设置控件不响应鼠标滚轮消息
+    ////Set the control not to respond to mouse wheel messages
     //m_unit_combo.SetMouseWheelEnable(false);
     //m_double_click_combo.SetMouseWheelEnable(false);
 
     return TRUE;  // return TRUE unless you set the focus to a control
-                  // 异常: OCX 属性页应返回 FALSE
+                  // Exception: OCX property page should return FALSE
 }
 
 
 //void CMainWndSettingsDlg::OnEnChangeUploadEdit()
 //{
-//  // TODO:  如果该控件是 RICHEDIT 控件，它将不
-//  // 发送此通知，除非重写 CTabDlg::OnInitDialog()
-//  // 函数并调用 CRichEditCtrl().SetEventMask()，
-//  // 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+//  // TODO: If the control is a RICHEDIT control, it will not
+//  // Send this notification unless overriding CTabDlg::OnInitDialog()
+//  // function and call CRichEditCtrl().SetEventMask(),
+//  // Also OR's the ENM_CHANGE flag into the mask.
 //
-//  // TODO:  在此添加控件通知处理程序代码
+//  // TODO: Add control notification handler code here
 //  CString tmp;
 //  GetDlgItemText(IDC_UPLOAD_EDIT, tmp);
 //  m_data.disp_str.Get(TDI_UP) = tmp;
@@ -286,12 +286,12 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
 //
 //void CMainWndSettingsDlg::OnEnChangeDownloadEdit()
 //{
-//  // TODO:  如果该控件是 RICHEDIT 控件，它将不
-//  // 发送此通知，除非重写 CTabDlg::OnInitDialog()
-//  // 函数并调用 CRichEditCtrl().SetEventMask()，
-//  // 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+//  // TODO: If the control is a RICHEDIT control, it will not
+//  // Send this notification unless overriding CTabDlg::OnInitDialog()
+//  // function and call CRichEditCtrl().SetEventMask(),
+//  // Also OR's the ENM_CHANGE flag into the mask.
 //
-//  // TODO:  在此添加控件通知处理程序代码
+//  // TODO: Add control notification handler code here
 //  CString tmp;
 //  GetDlgItemText(IDC_DOWNLOAD_EDIT, tmp);
 //  m_data.disp_str.Get(TDI_DOWN) = tmp;
@@ -300,12 +300,12 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
 //
 //void CMainWndSettingsDlg::OnEnChangeCpuEdit()
 //{
-//  // TODO:  如果该控件是 RICHEDIT 控件，它将不
-//  // 发送此通知，除非重写 CTabDlg::OnInitDialog()
-//  // 函数并调用 CRichEditCtrl().SetEventMask()，
-//  // 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+//  // TODO: If the control is a RICHEDIT control, it will not
+//  // Send this notification unless overriding CTabDlg::OnInitDialog()
+//  // function and call CRichEditCtrl().SetEventMask(),
+//  // Also OR's the ENM_CHANGE flag into the mask.
 //
-//  // TODO:  在此添加控件通知处理程序代码
+//  // TODO: Add control notification handler code here
 //  CString tmp;
 //  GetDlgItemText(IDC_CPU_EDIT, tmp);
 //  m_data.disp_str.Get(TDI_CPU) = tmp;
@@ -314,12 +314,12 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
 //
 //void CMainWndSettingsDlg::OnEnChangeMemoryEdit()
 //{
-//  // TODO:  如果该控件是 RICHEDIT 控件，它将不
-//  // 发送此通知，除非重写 CTabDlg::OnInitDialog()
-//  // 函数并调用 CRichEditCtrl().SetEventMask()，
-//  // 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+//  // TODO: If the control is a RICHEDIT control, it will not
+//  // Send this notification unless overriding CTabDlg::OnInitDialog()
+//  // function and call CRichEditCtrl().SetEventMask(),
+//  // Also OR's the ENM_CHANGE flag into the mask.
 //
-//  // TODO:  在此添加控件通知处理程序代码
+//  // TODO: Add control notification handler code here
 //  CString tmp;
 //  GetDlgItemText(IDC_MEMORY_EDIT, tmp);
 //  m_data.disp_str.Get(TDI_MEMORY) = tmp;
@@ -328,7 +328,7 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
 
 //void CMainWndSettingsDlg::OnBnClickedSetDefaultButton()
 //{
-//  // TODO: 在此添加控件通知处理程序代码
+//  // TODO: Add control notification handler code here
 //  m_data.disp_str.Get(TDI_UP) = CCommon::LoadText(IDS_UPLOAD_DISP, _T(": "));
 //  m_data.disp_str.Get(TDI_DOWN) = CCommon::LoadText(IDS_DOWNLOAD_DISP, _T(": "));
 //  m_data.disp_str.Get(TDI_CPU) = L"CPU: ";
@@ -342,7 +342,7 @@ BOOL CMainWndSettingsDlg::OnInitDialog()
 
 void CMainWndSettingsDlg::OnBnClickedSetFontButton()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     LOGFONT lf{};
     lf.lfHeight = FontSizeToLfHeight(m_data.font.size);
     lf.lfWeight = (m_data.font.bold ? FW_BOLD : FW_NORMAL);
@@ -353,18 +353,18 @@ void CMainWndSettingsDlg::OnBnClickedSetFontButton()
     //wcsncpy_s(lf.lfFaceName, m_data.font.name.GetString(), 32);
     CCommon::WStringCopy(lf.lfFaceName, 32, m_data.font.name.GetString());
     CCommon::NormalizeFont(lf);
-    CFontDialog fontDlg(&lf);   //构造字体对话框，初始选择字体为之前字体
-    fontDlg.m_cf.Flags |= CF_NOVERTFONTS;   //过滤掉以 "@" 开头的竖排字体
-    if (IDOK == fontDlg.DoModal())     // 显示字体对话框
+    CFontDialog fontDlg(&lf);   //Construct the font dialog box, and the initial selected font is the previous font
+    fontDlg.m_cf.Flags |= CF_NOVERTFONTS;   //Filter out vertical fonts starting with "@"
+    if (IDOK == fontDlg.DoModal())     // Show font dialog
     {
-        //获取字体信息
+        //Get font information
         m_data.font.name = fontDlg.GetFaceName();
         m_data.font.size = fontDlg.GetSize() / 10;
         m_data.font.bold = (fontDlg.IsBold() != FALSE);
         m_data.font.italic = (fontDlg.IsItalic() != FALSE);
         m_data.font.underline = (fontDlg.IsUnderline() != FALSE);
         m_data.font.strike_out = (fontDlg.IsStrikeOut() != FALSE);
-        //将字体信息显示出来
+        //Display font information
         SetDlgItemText(IDC_FONT_NAME_EDIT, m_data.font.name);
         SetDlgItemText(IDC_FONT_SIZE_EDIT, std::to_wstring(m_data.font.size).c_str());
     }
@@ -373,28 +373,28 @@ void CMainWndSettingsDlg::OnBnClickedSetFontButton()
 
 void CMainWndSettingsDlg::OnBnClickedSwitchUpDownCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.swap_up_down = (((CButton*)GetDlgItem(IDC_SWITCH_UP_DOWN_CHECK))->GetCheck() != 0);
 }
 
 
 void CMainWndSettingsDlg::OnBnClickedFullscreenHideCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.hide_main_wnd_when_fullscreen = (((CButton*)GetDlgItem(IDC_FULLSCREEN_HIDE_CHECK))->GetCheck() != 0);
 }
 
 
 void CMainWndSettingsDlg::OnBnClickedSpeedShortModeCheck2()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.speed_short_mode = (((CButton*)GetDlgItem(IDC_SPEED_SHORT_MODE_CHECK2))->GetCheck() != 0);
 }
 
 
 void CMainWndSettingsDlg::OnCbnSelchangeUnitCombo()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.speed_unit = static_cast<SpeedUnit>(m_unit_combo.GetCurSel());
     if (m_data.speed_unit == SpeedUnit::AUTO)
     {
@@ -411,14 +411,14 @@ void CMainWndSettingsDlg::OnCbnSelchangeUnitCombo()
 
 void CMainWndSettingsDlg::OnBnClickedHideUnitCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.hide_unit = (m_hide_unit_chk.GetCheck() != 0);
 }
 
 
 BOOL CMainWndSettingsDlg::PreTranslateMessage(MSG* pMsg)
 {
-    // TODO: 在此添加专用代码和/或调用基类
+    // TODO: Add specialized code here and/or call the base class
     if (pMsg->message == WM_MOUSEMOVE)
         m_toolTip.RelayEvent(pMsg);
 
@@ -428,8 +428,8 @@ BOOL CMainWndSettingsDlg::PreTranslateMessage(MSG* pMsg)
 
 void CMainWndSettingsDlg::OnOK()
 {
-    // TODO: 在此添加专用代码和/或调用基类
-    //获取字体设置
+    // TODO: Add specialized code here and/or call the base class
+    //Get font settings
     int font_size;
     font_size = m_font_size_edit.GetValue();
     if (font_size > MAX_FONT_SIZE || font_size < MIN_FONT_SIZE)
@@ -450,7 +450,7 @@ void CMainWndSettingsDlg::OnOK()
 
 void CMainWndSettingsDlg::OnBnClickedHidePercentageCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.hide_percent = (((CButton*)GetDlgItem(IDC_HIDE_PERCENTAGE_CHECK))->GetCheck() != 0);
 }
 
@@ -461,7 +461,7 @@ afx_msg LRESULT CMainWndSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
     {
     case IDC_TEXT_COLOR_STATIC:
     {
-        //设置文本颜色
+        //Set text color
         if (m_data.specify_each_item_color)
         {
             CMainWndColorDlg colorDlg(m_data.text_colors);
@@ -491,7 +491,7 @@ afx_msg LRESULT CMainWndSettingsDlg::OnStaticClicked(WPARAM wParam, LPARAM lPara
 
 void CMainWndSettingsDlg::OnBnClickedSpecifyEachItemColorCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.specify_each_item_color = (((CButton*)GetDlgItem(IDC_SPECIFY_EACH_ITEM_COLOR_CHECK))->GetCheck() != 0);
     DrawStaticColor();
 }
@@ -499,7 +499,7 @@ void CMainWndSettingsDlg::OnBnClickedSpecifyEachItemColorCheck()
 
 void CMainWndSettingsDlg::OnCbnSelchangeDoubleClickCombo()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.double_click_action = static_cast<DoubleClickAction>(m_double_click_combo.GetCurSel());
     EnableControl();
 }
@@ -507,14 +507,14 @@ void CMainWndSettingsDlg::OnCbnSelchangeDoubleClickCombo()
 
 void CMainWndSettingsDlg::OnBnClickedSeparateValueUnitCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.separate_value_unit_with_space = (((CButton*)GetDlgItem(IDC_SEPARATE_VALUE_UNIT_CHECK))->GetCheck() != 0);
 }
 
 
 void CMainWndSettingsDlg::OnBnClickedUnitByteRadio()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.unit_byte = true;
     IniUnitCombo();
 }
@@ -522,7 +522,7 @@ void CMainWndSettingsDlg::OnBnClickedUnitByteRadio()
 
 void CMainWndSettingsDlg::OnBnClickedUnitBitRadio()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.unit_byte = false;
     IniUnitCombo();
 }
@@ -530,14 +530,14 @@ void CMainWndSettingsDlg::OnBnClickedUnitBitRadio()
 
 void CMainWndSettingsDlg::OnBnClickedShowToolTipChk()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.show_tool_tip = (((CButton*)GetDlgItem(IDC_SHOW_TOOL_TIP_CHK))->GetCheck() != 0);
 }
 
 
 void CMainWndSettingsDlg::OnBnClickedBrowseButton()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     CString szFilter = CCommon::LoadText(IDS_EXE_FILTER);
     CFileDialogEx fileDlg(TRUE, NULL, szFilter);
     if (IDOK == fileDlg.DoModal())
@@ -550,7 +550,7 @@ void CMainWndSettingsDlg::OnBnClickedBrowseButton()
 
 void CMainWndSettingsDlg::OnBnClickedDisplayTextSettingButton()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     CDisplayTextSettingDlg dlg(m_data.disp_str, true);
     dlg.DoModal();
 }
@@ -558,35 +558,35 @@ void CMainWndSettingsDlg::OnBnClickedDisplayTextSettingButton()
 
 void CMainWndSettingsDlg::OnCbnSelchangeMemoryDisplayCombo()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.memory_display = static_cast<MemoryDisplay>(m_memory_display_combo.GetCurSel());
 }
 
 
 void CMainWndSettingsDlg::OnBnClickedAlwaysOnTopCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.m_always_on_top = IsDlgButtonChecked(IDC_ALWAYS_ON_TOP_CHECK) != 0;
 }
 
 
 void CMainWndSettingsDlg::OnBnClickedMousePenetrateCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.m_mouse_penetrate = IsDlgButtonChecked(IDC_MOUSE_PENETRATE_CHECK) != 0;
 }
 
 
 void CMainWndSettingsDlg::OnBnClickedLockWindowPosCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.m_lock_window_pos = IsDlgButtonChecked(IDC_LOCK_WINDOW_POS_CHECK) != 0;
 }
 
 
 void CMainWndSettingsDlg::OnBnClickedAlowOutOfBorderCheck()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_data.m_alow_out_of_border = IsDlgButtonChecked(IDC_ALOW_OUT_OF_BORDER_CHECK) != 0;
 }
 

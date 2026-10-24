@@ -5,28 +5,28 @@
 CFileDialogEx::CFileDialogEx(BOOL bOpenFileDialog, LPCWSTR lpszDefExt, LPCWSTR lpszFilter)
     : pFileDialog(nullptr), m_bOpenFileDialog(bOpenFileDialog)
 {
-    // 创建 IFileDialog 实例
+    // Create an IFileDialog instance
     HRESULT hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pFileDialog));
 
     if (pFileDialog)
     {
-        // 设置对话框选项
+        // Set dialog options
         DWORD dwOptions;
         pFileDialog->GetOptions(&dwOptions);
-        pFileDialog->SetOptions(dwOptions | FOS_FORCEFILESYSTEM);  // 仅文件系统项
+        pFileDialog->SetOptions(dwOptions | FOS_FORCEFILESYSTEM);  // File system entries only
 
         if (bOpenFileDialog)
         {
-            pFileDialog->SetOptions(dwOptions | FOS_FILEMUSTEXIST); // 打开文件时文件必须存在
+            pFileDialog->SetOptions(dwOptions | FOS_FILEMUSTEXIST); // The file must exist when opening it
         }
 
-        // 设置默认扩展名
+        // Set default extension
         if (lpszDefExt)
         {
             pFileDialog->SetDefaultExtension(lpszDefExt);
         }
 
-        // 解析并设置过滤器
+        // Parse and set filters
         if (lpszFilter)
         {
             ParseFilter(lpszFilter);
@@ -52,12 +52,12 @@ int CFileDialogEx::DoModal(HWND hWndOwner)
 {
     if (!pFileDialog) return -1;
 
-    // 显示对话框
+    // show dialog
     HRESULT hr = pFileDialog->Show(hWndOwner);
     if (FAILED(hr))
         return -1;
 
-    // 获取选定的文件路径
+    // Get selected file path
     IShellItem* pItem = nullptr;
     hr = pFileDialog->GetResult(&pItem);
     if (SUCCEEDED(hr))
@@ -82,7 +82,7 @@ std::wstring CFileDialogEx::GetPathName() const
 
 std::wstring CFileDialogEx::GetFileName() const
 {
-    // 获取文件名
+    // Get file name
     size_t pos = m_filePath.find_last_of(L"\\");
     if (pos != std::wstring::npos) {
         return m_filePath.substr(pos + 1);
@@ -96,7 +96,7 @@ void CFileDialogEx::ParseFilter(LPCWSTR lpszFilter)
     m_filterDescriptions.clear();
     m_filterSpecsStrings.clear();
 
-    // 使用 | 分割过滤器字符串
+    // Split filter string using |
     std::wstringstream filterStream(lpszFilter);
     std::wstring description, spec;
 
@@ -104,7 +104,7 @@ void CFileDialogEx::ParseFilter(LPCWSTR lpszFilter)
     {
         if (std::getline(filterStream, spec, L'|'))
         {
-            // 将描述和模式存储在 m_filterDescriptions 和 m_filterSpecsStrings 中
+            // Store descriptions and patterns in m_filterDescriptions and m_filterSpecsStrings
             m_filterDescriptions.push_back(description);
             m_filterSpecsStrings.push_back(spec);
         }

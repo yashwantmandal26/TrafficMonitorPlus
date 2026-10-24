@@ -3,7 +3,7 @@
 #include "SkinFile.h"
 
 
-// CSkinPreviewView 视图
+// CSkinPreviewView view
 
 
 class CSkinPreviewView : public CScrollView
@@ -11,7 +11,7 @@ class CSkinPreviewView : public CScrollView
 	DECLARE_DYNCREATE(CSkinPreviewView)
 
 protected:
-	CSkinPreviewView();           // 动态创建所使用的受保护的构造函数
+	CSkinPreviewView();           // Protected constructor used by dynamic creation
 	virtual ~CSkinPreviewView();
 
 public:
@@ -22,22 +22,22 @@ public:
 //#endif
 //#endif
 
-//成员函数
+//member function
 public:
 	void InitialUpdate();
 	void SetSize(int width, int hight);
 	void SetSkinData(CSkinFile* skin_data) { m_skin_data = skin_data; }
 
-	//成员变量
+	//member variables
 protected:
 	CSize m_size;
-	CPoint m_start_point;			//绘图的起始位置
+	CPoint m_start_point;			//starting position of drawing
 
     CSkinFile* m_skin_data;
 
 protected:
-	virtual void OnDraw(CDC* pDC);      // 重写以绘制该视图
-	virtual void OnInitialUpdate();     // 构造后的第一次
+	virtual void OnDraw(CDC* pDC);      // Override to draw this view
+	virtual void OnInitialUpdate();     // first time after construction
 
 	DECLARE_MESSAGE_MAP()
 };

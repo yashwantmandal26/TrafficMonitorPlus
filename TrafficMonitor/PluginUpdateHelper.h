@@ -26,10 +26,10 @@ class CPluginUpdateHelper
 public:
     bool CheckForUpdate();
 
-    //获取一个插件的最新版本
+    //Get the latest version of a plugin
     const PluginVersion& GetPluginLatestVersions(const std::wstring& file_name) const;
 
 private:
-    std::map<std::wstring, PluginVersion> m_latest_versions;    //在线获取到的每个插件的最新版本信息
+    std::map<std::wstring, PluginVersion> m_latest_versions;    //The latest version information for each plug-in available online
 };
 

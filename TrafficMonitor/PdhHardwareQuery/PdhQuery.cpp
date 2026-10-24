@@ -9,7 +9,7 @@ CPdhQuery::CPdhQuery(LPCTSTR _fullCounterPath)
 
 CPdhQuery::~CPdhQuery()
 {
-    //关闭查询
+    //Close query
     PdhCloseQuery(query);
 }
 
@@ -19,14 +19,14 @@ bool CPdhQuery::Initialize()
         return true;
 
     PDH_STATUS status;
-    //打开查询
+    //Open query
     status = PdhOpenQuery(NULL, NULL, &query);
     if (status != ERROR_SUCCESS)
         return false;
 
-    //添加计数器
+    //Add counter
     status = PdhAddCounter(query, fullCounterPath.GetString(), NULL, &counter);
-    //先调用PdhAddCounter，如果失败使用PdhAddEnglishCounter再试一次
+    //Call PdhAddCounter first. If it fails, use PdhAddEnglishCounter and try again.
     if (status != ERROR_SUCCESS)
     {
         status = PdhAddEnglishCounter(query, fullCounterPath.GetString(), NULL, &counter);
@@ -38,7 +38,7 @@ bool CPdhQuery::Initialize()
         }
     }
 
-    //初始化计数器
+    //Initialize counter
     PdhCollectQueryData(query);
     isInitialized = true;
     return true;
@@ -49,7 +49,7 @@ bool CPdhQuery::QueryValue(double& value)
     if (!isInitialized)
         return false;
 
-    //更新数据
+    //Update data
     PdhCollectQueryData(query);
     PDH_FMT_COUNTERVALUE pdhValue;
     DWORD dwValue;
@@ -68,7 +68,7 @@ bool CPdhQuery::QueryValues(std::vector<CounterValueItem>& values)
     if (!isInitialized)
         return false;
 
-    //更新数据
+    //Update data
     PdhCollectQueryData(query);
     DWORD dwBufferSize = 0;         // Size of the pItems buffer
     DWORD dwItemCount = 0;          // Number of items in the pItems buffer

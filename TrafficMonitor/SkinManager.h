@@ -16,10 +16,10 @@ public:
 
     void Save();
 
-    //从一个皮肤文件获取SkinSettingData对象
+    //Get the SkinSettingData object from a skin file
     static void SkinSettingDataFronSkin(SkinSettingData& skin_setting_data, const CSkinFile& skin_file);
 
-    //去掉皮肤名称前面的斜杠
+    //Remove the slash in front of the skin name
     static void SkinNameNormalize(std::wstring& skin_name);
 
 private:
@@ -27,8 +27,8 @@ private:
     {}
 
 private:
-    vector<wstring> m_skins;    //储存皮肤文件的路径
-    std::map<std::wstring, SkinSettingData> m_skin_setting_data_map;    //保存每个皮肤的字体、显示文本设置
+    vector<wstring> m_skins;    //Path to store skin files
+    std::map<std::wstring, SkinSettingData> m_skin_setting_data_map;    //Save font and display text settings for each skin
 
     static CSkinManager m_instance;
     bool m_init{ false };

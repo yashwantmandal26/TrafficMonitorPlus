@@ -7,13 +7,13 @@
 static void VersionFromString(const std::string& version_str, std::vector<int>& versions)
 {
     versions.clear();
-    //拆分字符串
+    //split string
     std::vector<std::string> vec_version;
     CCommon::StringSplit(version_str, '.', vec_version);
-    //转换为整数保存
+    //Convert to integer and save
     for (const auto& str : vec_version)
     {
-        //去掉除数字以外的字符
+        //Remove characters other than numbers
         std::string str_ver;
         for (auto ch : str)
         {
@@ -90,21 +90,21 @@ bool CPluginUpdateHelper::CheckForUpdate()
 {
     m_latest_versions.clear();
     std::wstring url;
-    //更新源为Gitee
+    //Update source is Gitee
     if (theApp.m_general_data.update_source == 1)
         url = L"https://gitee.com/zhongyang219/TrafficMonitorPlugins/raw/main/plugins_version.xml";
-    //更新源为Github
+    //Update source is Github
     else
         url = L"https://raw.githubusercontent.com/zhongyang219/TrafficMonitorPlugins/main/plugins_version.xml";
 
-    //获取url内容
+    //Get url content
     std::string version_info;
     if (CCommon::GetURL(url, version_info))
     {
-        //解析xml，获取版本信息
+        //Parse xml and obtain version information
         tinyxml2::XMLDocument doc;
         doc.Parse(version_info.c_str(), version_info.size());
-        //遍历插件版本
+        //Traverse plugin versions
         CTinyXml2Helper::IterateChildNode(doc.RootElement(), [&](tinyxml2::XMLElement* ele) {
             std::wstring file_name = CCommon::StrToUnicode(CTinyXml2Helper::ElementAttribute(ele, "file_name"));
             std::string plugin_version(CTinyXml2Helper::ElementAttribute(ele, "version"));

@@ -8,15 +8,15 @@ CIniHelper::CIniHelper(const wstring& file_path, bool force_utf8)
     ifstream file_stream{ file_path };
     if (!file_stream.is_open())
         return;
-    // 获取文件大小
+    // Get file size
     file_stream.seekg(0, std::ios::end);
     size_t file_size = static_cast<size_t>(file_stream.tellg());
     file_stream.seekg(0, std::ios::beg);
-    // 读取文件内容
+    // Read file contents
     string ini_str;
     ini_str.resize(file_size + 1);
     file_stream.read(&ini_str[0], file_size);
-    // 检查并添加末尾的空行
+    // Check and add a blank line at the end
     if (!ini_str.empty() && ini_str.back() != L'\n')
         ini_str.push_back(L'\n');
     bool is_utf8;
@@ -26,10 +26,10 @@ CIniHelper::CIniHelper(const wstring& file_path, bool force_utf8)
     }
     else
     {
-        //判断文件是否是utf8编码
+        //Determine whether the file is utf8 encoded
         if (ini_str.size() >= 3 && ini_str[0] == -17 && ini_str[1] == -69 && ini_str[2] == -65)
         {
-            //如果有UTF8的BOM，则删除BOM
+            //If there is a UTF8 BOM, delete the BOM
             is_utf8 = true;
             ini_str = ini_str.substr(3);
         }
@@ -38,7 +38,7 @@ CIniHelper::CIniHelper(const wstring& file_path, bool force_utf8)
             is_utf8 = false;
         }
     }
-    //转换成Unicode
+    //Convert to Unicode
     m_ini_str = CCommon::StrToUnicode(ini_str.c_str(), is_utf8);
 }
 
@@ -69,7 +69,7 @@ void CIniHelper::SetSaveAsUTF8(bool utf8)
 void CIniHelper::WriteString(const wchar_t * AppName, const wchar_t * KeyName, const wstring& str)
 {
     wstring write_str{ str };
-    if (!write_str.empty() && (write_str[0] == L' ' || write_str.back() == L' '))       //如果字符串前后含有空格，则在字符串前后添加引号
+    if (!write_str.empty() && (write_str[0] == L' ' || write_str.back() == L' '))       //If there are spaces before and after the string, add quotation marks before and after the string.
     {
         write_str = DEF_CH + write_str;
         write_str.push_back(DEF_CH);
@@ -87,7 +87,7 @@ wstring CIniHelper::GetString(const wchar_t * AppName, const wchar_t * KeyName, 
 bool CIniHelper::GetString(const wchar_t* AppName, const wchar_t* KeyName, wstring& str) const
 {
     bool rtn = _GetString(AppName, KeyName, str);
-    //如果读取的字符串前后有指定的字符，则删除它
+    //If there are specified characters before and after the read string, delete it
     if (!str.empty() && (str.front() == L'$' || str.front() == DEF_CH))
         str = str.substr(1);
     if (!str.empty() && (str.back() == L'$' || str.back() == DEF_CH))
@@ -223,8 +223,8 @@ void CIniHelper::GetAllKeyValues(const wstring& AppName, std::map<wstring, wstri
     CCommon::StringSplit(app_str, L'\n', line);
     for (wstring str : line)
     {
-        // CCommon::StringSplit会跳过空字符串，str一定非空
-        if (str[0] == L';' || str[0] == L'#')   // 跳过注释行（只支持行首注释）
+        // CCommon::StringSplit will skip empty strings, str must be non-empty
+        if (str[0] == L';' || str[0] == L'#')   // Skip comment lines (only first line comments are supported)
             continue;
         size_t pos = str.find_first_of(L'=');
         if (pos == wstring::npos)
@@ -251,7 +251,7 @@ bool CIniHelper::RemoveSection(const wstring& AppName)
     app_str.append(AppName).append(L"]");
     size_t app_pos{}, app_end_pos{};
     app_pos = m_ini_str.find(app_str);
-    if (app_pos == wstring::npos)       //找不到AppName，返回默认字符串
+    if (app_pos == wstring::npos)       //AppName not found, returns default string
         return false;
 
     app_end_pos = m_ini_str.find(L"\n[", app_pos + 2);
@@ -271,7 +271,7 @@ bool CIniHelper::Save()
     if(file_stream.fail())
         return false;
     string ini_str{ CCommon::UnicodeToStr(m_ini_str.c_str(), m_save_as_utf8) };
-    if (m_save_as_utf8)     //如果以UTF8编码保存，先插入BOM
+    if (m_save_as_utf8)     //If saved in UTF8 encoding, insert BOM first
     {
         string utf8_bom;
         utf8_bom.push_back(-17);
@@ -309,7 +309,7 @@ void CIniHelper::UnEscapeString(wstring& str)
         }
         else if (ch == L'\\')
             escape = true;
-        else if (i > 0 && ch == '\"' && str[i - 1] == '\"')     //两个连续的引号只保留一个引号
+        else if (i > 0 && ch == '\"' && str[i - 1] == '\"')     //Two consecutive quotes keep only one quote
             continue;
         else
             result += ch;
@@ -323,7 +323,7 @@ void CIniHelper::_WriteString(const wchar_t * AppName, const wchar_t * KeyName, 
     app_str.append(AppName).append(L"]");
     size_t app_pos{}, app_end_pos, key_pos;
     app_pos = m_ini_str.find(app_str);
-    if (app_pos == wstring::npos)       //找不到AppName，则在最后面添加
+    if (app_pos == wstring::npos)       //If AppName cannot be found, add it at the end
     {
         if (!m_ini_str.empty() && m_ini_str.back() != L'\n')
             m_ini_str += L"\n";
@@ -335,10 +335,10 @@ void CIniHelper::_WriteString(const wchar_t * AppName, const wchar_t * KeyName, 
     if (app_end_pos != wstring::npos)
         app_end_pos++;
 
-    key_pos = m_ini_str.find(wstring(L"\n") + KeyName + L' ', app_pos);     //查找“\nkey_name ”
-    if (key_pos >= app_end_pos)     //如果找不到“\nkey_name ”，则查找“\nkey_name=”
+    key_pos = m_ini_str.find(wstring(L"\n") + KeyName + L' ', app_pos);     //Find "\nkey_name"
+    if (key_pos >= app_end_pos)     //If "\nkey_name " is not found, then look for "\nkey_name="
         key_pos = m_ini_str.find(wstring(L"\n") + KeyName + L'=', app_pos);
-    if (key_pos >= app_end_pos)             //找不到KeyName，则插入一个
+    if (key_pos >= app_end_pos)             //If KeyName is not found, insert one
     {
         //wchar_t buff[256];
         //swprintf_s(buff, L"%s = %s\n", KeyName, str.c_str());
@@ -351,12 +351,12 @@ void CIniHelper::_WriteString(const wchar_t * AppName, const wchar_t * KeyName, 
         else
             m_ini_str.insert(app_end_pos, str_temp);
     }
-    else    //找到了KeyName，将等号到换行符之间的文本替换
+    else    //KeyName is found, replace the text between the equal sign and the newline character
     {
         size_t str_pos;
         str_pos = m_ini_str.find(L'=', key_pos + 2);
         size_t line_end_pos = m_ini_str.find(L'\n', key_pos + 2);
-        if (str_pos > line_end_pos) //所在行没有等号，则插入一个等号
+        if (str_pos > line_end_pos) //If there is no equal sign on the line, insert an equal sign.
         {
             m_ini_str.insert(key_pos + wcslen(KeyName) + 1, L" =");
             str_pos = key_pos + wcslen(KeyName) + 2;
@@ -377,26 +377,26 @@ bool CIniHelper::_GetString(const wchar_t* AppName, const wchar_t* KeyName, wstr
     app_str.append(AppName).append(L"]");
     size_t app_pos{}, app_end_pos, key_pos;
     app_pos = m_ini_str.find(app_str);
-    if (app_pos == wstring::npos)       //找不到AppName，返回默认字符串
+    if (app_pos == wstring::npos)       //AppName not found, returns default string
         return false;
 
     app_end_pos = m_ini_str.find(L"\n[", app_pos + 2);
     if (app_end_pos != wstring::npos)
         app_end_pos++;
 
-    key_pos = m_ini_str.find(wstring(L"\n") + KeyName + L' ', app_pos);     //查找“\nkey_name ”
-    if (key_pos >= app_end_pos)     //如果找不到“\nkey_name ”，则查找“\nkey_name=”
+    key_pos = m_ini_str.find(wstring(L"\n") + KeyName + L' ', app_pos);     //Find "\nkey_name"
+    if (key_pos >= app_end_pos)     //If "\nkey_name " is not found, then look for "\nkey_name="
         key_pos = m_ini_str.find(wstring(L"\n") + KeyName + L'=', app_pos);
-    if (key_pos >= app_end_pos)             //找不到KeyName，返回默认字符串
+    if (key_pos >= app_end_pos)             //KeyName not found, returns default string
     {
         return false;
     }
-    else    //找到了KeyName，获取等号到换行符之间的文本
+    else    //KeyName is found, get the text between the equal sign and the newline character
     {
         size_t str_pos;
         str_pos = m_ini_str.find(L'=', key_pos + 2);
         size_t line_end_pos = m_ini_str.find(L'\n', key_pos + 2);
-        if (str_pos > line_end_pos) //所在行没有等号，返回默认字符串
+        if (str_pos > line_end_pos) //If there is no equal sign in the line, the default string is returned.
         {
             return false;
         }
@@ -406,9 +406,9 @@ bool CIniHelper::_GetString(const wchar_t* AppName, const wchar_t* KeyName, wstr
         }
         size_t str_end_pos;
         str_end_pos = m_ini_str.find(L"\n", str_pos);
-        //获取文本
+        //Get text
         wstring return_str{ m_ini_str.substr(str_pos, str_end_pos - str_pos) };
-        //如果前后有空格，则将其删除
+        //If there are spaces before and after, remove them
         CCommon::StringNormalize(return_str);
         str = return_str;
         return true;
@@ -419,7 +419,7 @@ wstring CIniHelper::MergeStringList(const vector<wstring>& values)
 {
     wstring str_merge;
     int index = 0;
-    //在每个字符串前后加上引号，再将它们用逗号连接起来
+    //Put quotes around each string and concatenate them with commas
     for (const wstring& str : values)
     {
         if (index > 0)
@@ -437,7 +437,7 @@ void CIniHelper::SplitStringList(vector<wstring>& values, const wstring& str_val
     CCommon::StringSplit(str_value, wstring(L"\",\""), values);
     if (!values.empty())
     {
-        //结果中第一项前面和最后一项的后面各还有一个引号，将它们删除
+        //There are quotation marks before the first item and after the last item in the result. Delete them.
         values.front() = values.front().substr(1);
         values.back().pop_back();
     }

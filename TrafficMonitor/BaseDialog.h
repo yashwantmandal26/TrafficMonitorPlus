@@ -1,78 +1,78 @@
 ﻿#pragma once
 #include <functional>
 
-// CBaseDialog 对话框
-//用于实现记住对话框大小
-//并将窗口初始大小设置为最小大小
+// CBaseDialog dialog box
+//Used to implement remembering the dialog box size
+//and set the window initial size to the minimum size
 
 class CBaseDialog : public CDialog
 {
     DECLARE_DYNAMIC(CBaseDialog)
 
 public:
-    CBaseDialog(UINT nIDTemplate, CWnd* pParent = NULL);   // 标准构造函数
+    CBaseDialog(UINT nIDTemplate, CWnd* pParent = NULL);   // Standard constructor
     virtual ~CBaseDialog();
 
-    // 复制自CDialogEx，与其功能相同（新增滑动条控件和超链接控件的处理）
+    // Copied from CDialogEx and has the same function (added processing of slider control and hyperlink control)
     void SetBackgroundColor(COLORREF color, BOOL bRepaint = TRUE);
 
-    // 对话框数据
+    // Dialog data
     //#ifdef AFX_DESIGN_TIME
     //	enum { IDD = IDD_BASEDIALOG };
     //#endif
 
-    void SetMinSize(int cx, int cy);		//设置窗口的最小大小，如果未设置，则使用窗口的初始大小作为最小大小
-    static HWND GetUniqueHandel(LPCTSTR dlg_name);          //获指定窗口唯一的句柄
-    static const std::map<CString, HWND>& AllUniqueHandels();   //获取所有窗口的句柄
+    void SetMinSize(int cx, int cy);		//Set the minimum size of the window, if not set, use the initial size of the window as the minimum size
+    static HWND GetUniqueHandel(LPCTSTR dlg_name);          //Get the unique handle of the specified window
+    static const std::map<CString, HWND>& AllUniqueHandels();   //Get handles of all windows
     static bool IsAllDialogClosed();
 
 private:
     void LoadConfig();
     void SaveConfig() const;
     void IterateControls(CWnd* pParent, std::function<void(CWnd*)> func);
-    // 重新应用布局管理器参数，这会使控件的基础大小/位置以当前为准
+    // Reapply the layout manager parameters, which will cause the control's base size/position to be based on the current one
     void ReLoadLayoutResource();
 
 private:
-    UINT m_nDialogID;                                   // 成员变量用于保存资源 ID
-    CSize m_min_size{};     //窗口的最小大小（以 96dpi 的大小保存）
+    UINT m_nDialogID;                                   // Member variables are used to store resource IDs
+    CSize m_min_size{};     //Minimum size of window (saved at 96dpi)
     CSize m_window_size{ -1, -1 };
     CBrush m_brBkgr;
-    CDC* m_pDC = nullptr;                               // InitializeControls期间有效，用于测量文本长度
-    static std::map<CString, HWND> m_unique_hwnd;       //针对每一个基类的唯一的窗口句柄
-    bool m_remember_dlg_size{ true };                   //是否记住窗口大小（当此标志为true且GetDialogName返回字符串不为空时会记住窗口大小）
+    CDC* m_pDC = nullptr;                               // Valid during InitializeControls, used to measure text length
+    static std::map<CString, HWND> m_unique_hwnd;       //Unique window handle for each base class
+    bool m_remember_dlg_size{ true };                   //Whether to remember the window size (the window size will be remembered when this flag is true and the string returned by GetDialogName is not empty)
     CFont m_dlg_font;
-    int m_dpi;              //窗口自己的DPI
+    int m_dpi;              //Window's own DPI
 
 protected:
     int DPI(int pixel) const;
 
-    // 仅在InitializeControls期间可用，测量控件文本长度
+    // Only available during InitializeControls, measures control text length
     CRect GetTextExtent(const CString& text);
 
     struct CtrlTextInfo
     {
-        // 这里的枚举作为能够类型检查的int使用
-        // Col具体值大小无意义，只表示列之间的相对顺序以及哪些控件同一列，实际上没有数量限制，需要的话可以增加
+        // The enumeration here is used as a type-checkable int
+        // The specific value of Col is meaningless. It only indicates the relative order between columns and which controls are in the same column. In fact, there is no limit on the number. You can increase it if necessary.
         enum Col { L4 = -4, L3 = -3, L2 = -2, L1 = -1, C0 = 0, R1 = 1, R2 = 2, R3 = 3, R4 = 4, UN_USE = 100 };
-        // 控件除去文本后剩余的宽度。
-        // Static静态文本推荐W0，按钮因为可能有图标推荐W32
+        // The remaining width of the control after removing the text.
+        // W0 is recommended for static text, and W32 is recommended for buttons because they may have icons.
         enum Width { W_50 = -50, W0 = 0, W16 = 16, W24 = 24, W32 = 32, W40 = 40, W60 = 60, W64 = 64, W96 = 96, W128 = 128, W256 = 256 };
 
-        Col col_index{ UN_USE };    // 指示控件的位置 ，从左向右递增，小于0左贴靠，大于0右贴靠，等于0使用剩余空间
-        UINT id{ 0 };               // 控件ID
-        Width ext_width{ W0 };      // 控件宽度至少需要“文字宽度+ext_width”（内部会执行DPI转换 theApp.DPI(ext_width)）
+        Col col_index{ UN_USE };    // Indicates the position of the control, increasing from left to right. If it is less than 0, it will stick to the left. If it is greater than 0, it will stick to the right. If it is equal to 0, it will use the remaining space.
+        UINT id{ 0 };               // Control ID
+        Width ext_width{ W0 };      // The width of the control needs to be at least "text width + ext_width" (DPI conversion theApp.DPI(ext_width) will be performed internally)
     };
-    // 仅在InitializeControls期间可用，根据文本长度重排控件，不会进行任何垂直方向调整，不会改变控件间距
-    // 只会增加控件宽度故推荐在资源中设置更小的宽度，使用此方法调整到合适的状态
-    // 优先保证中间的剩余宽度（或col_index为0的控件宽度）至少为center_min_width
-    // 空间不足时其他控件文字会无法完全显示（此时应重新设计窗口）（此方法仅适用于文字不可能太长的情况）
+    // Only available during InitializeControls. Rearranges controls according to text length. No vertical adjustments are made and control spacing is not changed.
+    // It will only increase the width of the control, so it is recommended to set a smaller width in the resource and use this method to adjust it to the appropriate state.
+    // Prioritize to ensure that the remaining width in the middle (or the width of the control with col_index 0) is at least center_min_width
+    // When there is insufficient space, the text of other controls will not be fully displayed (the window should be redesigned at this time) (this method is only applicable when the text cannot be too long)
     void RepositionTextBasedControls(const vector<CtrlTextInfo>& items, CtrlTextInfo::Width center_min_width = CtrlTextInfo::W16);
     
-    // 由CBaseDialog::OnInitDialog在还原配置中窗口大小前调用
-    // 派生类执行部分控件初始化，比如设置控件文本，重排控件RepositionTextBasedControls
-    // 返回true会重新应用布局管理器参数，这会使控件动态布局管理器的基础大小/位置以当前为准
-    // 与实际窗口大小相关的初始化（比如表格列宽）应在派生类的OnInitDialog进行
+    // Called by CBaseDialog::OnInitDialog before restoring the window size in the configuration
+    // Derived classes perform some control initialization, such as setting control text and rearranging controls RepositionTextBasedControls
+    // Returning true will re-apply the layout manager parameters, which will make the base size/position of the control's dynamic layout manager based on the current one.
+    // Initialization related to the actual window size (such as table column width) should be performed in OnInitDialog of the derived class
     virtual bool InitializeControls() { return false; };
 
     virtual CString GetDialogName() const { return CString(); }
@@ -82,10 +82,10 @@ protected:
     CRect GetControlRect(CWnd* pCtrl);
     CRect GetControlRect(UINT id);
 
-    //遍历所有子控件
+    //Traverse all child controls
     void IterateControls(std::function<void(CWnd*)> func);
 
-    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
     DECLARE_MESSAGE_MAP()
 public:

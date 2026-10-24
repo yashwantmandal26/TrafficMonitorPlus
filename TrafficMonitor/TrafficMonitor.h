@@ -1,5 +1,5 @@
 ﻿
-// TrafficMonitor.h : PROJECT_NAME 应用程序的主头文件
+// TrafficMonitor.h : Main header file for the PROJECT_NAME application
 //
 
 #pragma once
@@ -8,7 +8,7 @@
 #error "Include stdafx.h before this file for PCH"
 #endif
 
-#include "resource.h"       // 主符号
+#include "resource.h"       // main symbol
 #include "Common.h"
 #include "WinVersionHelper.h"
 #include "SimpleXML.h"
@@ -24,19 +24,19 @@
 #include "PluginInterface.h"
 
 // CTrafficMonitorApp:
-// 有关此类的实现，请参阅 TrafficMonitor.cpp
+// For an implementation of this class, see TrafficMonitor.cpp
 //
 
 
 class CTrafficMonitorApp : public CWinApp, public ITrafficMonitor
 {
 public:
-    //各种路径
+    //Various paths
     static CTrafficMonitorApp* self;
-    wstring m_module_dir;       //程序exe文件的目录
+    wstring m_module_dir;       //Directory of program exe file
     wstring m_appdata_dir;
-    wstring m_module_path;      //程序exe文件的路径
-    wstring m_module_path_reg;  //用于作为写入注册表开机自项的exe文件的路径（如果路径中有空格，加上引号）
+    wstring m_module_path;      //The path to the program exe file
+    wstring m_module_path_reg;  //The path to the exe file used as the startup entry to be written to the registry (if there are spaces in the path, add quotes)
     wstring m_config_path;
     wstring m_history_traffic_path;
     wstring m_log_path;
@@ -44,44 +44,44 @@ public:
     wstring m_system_dir;
     wstring m_config_dir;
 
-    //以下数据定义为App类中的公共成员，以便于在主对话框和任务栏窗口中都能访问
-    unsigned __int64 m_in_speed{};      //下载速度
-    unsigned __int64 m_out_speed{};     //上传速度
-    int m_cpu_usage{ -1 };      //CPU利用率
-    int m_memory_usage{ -1 };   //内存利用率
-    int m_used_memory{};    //可用物理内存（单位为KB）
-    int m_total_memory{};   //物理内存总量（单位为KB）
-    float m_cpu_temperature{ -1 };  //CPU温度
-    float m_cpu_freq{ -1 };  //CPU 频率
-    float m_gpu_temperature{ -1 };  //显卡温度
-    float m_hdd_temperature{ -1 };  //硬盘温度
-    float m_main_board_temperature{ -1 };    //主板温度
-    int m_gpu_usage{ -1 };      //显卡利用率
-    int m_hdd_usage{ -1 };      //硬盘利用率
+    //The following data is defined as public members in the App class so that it can be accessed in both the main dialog box and the taskbar window.
+    unsigned __int64 m_in_speed{};      //Download speed
+    unsigned __int64 m_out_speed{};     //upload speed
+    int m_cpu_usage{ -1 };      //CPU utilization
+    int m_memory_usage{ -1 };   //memory utilization
+    int m_used_memory{};    //Available physical memory (in KB)
+    int m_total_memory{};   //Total physical memory (unit: KB)
+    float m_cpu_temperature{ -1 };  //CPU temperature
+    float m_cpu_freq{ -1 };  //CPU frequency
+    float m_gpu_temperature{ -1 };  //Graphics card temperature
+    float m_hdd_temperature{ -1 };  //Hard drive temperature
+    float m_main_board_temperature{ -1 };    //Motherboard temperature
+    int m_gpu_usage{ -1 };      //Graphics card utilization
+    int m_hdd_usage{ -1 };      //Hard drive utilization
 
-    unsigned __int64 m_today_up_traffic{};  //今天已使用的上传流量
-    unsigned __int64 m_today_down_traffic{};    //今天已使用的下载流量
+    unsigned __int64 m_today_up_traffic{};  //Upload traffic used today
+    unsigned __int64 m_today_down_traffic{};    //Download traffic used today
 
-    bool m_cannot_save_config_warning{ true };  //指示是否会在无法保存设置时弹出提示框
-    bool m_cannot_save_global_config_warning{ true };   //指示是否会在无法保存设置时弹出提示框
+    bool m_cannot_save_config_warning{ true };  //Indicates whether a prompt box will pop up when settings cannot be saved
+    bool m_cannot_save_global_config_warning{ true };   //Indicates whether a prompt box will pop up when settings cannot be saved
 
-    bool m_module_dir_writable{ true };         //指示程序所在目录是否可写
+    bool m_module_dir_writable{ true };         //Indicates whether the directory where the program is located is writable
 
-    //选项设置数据
+    //option setting data
     MainWndSettingData m_main_wnd_data;
     TaskBarSettingData m_taskbar_data;
     GeneralSettingData m_general_data;
-    //其他设置数据
+    //Other setting data
     MainConfigData m_cfg_data;
-    int m_notify_interval;      //弹出通知消息的时间间隔
+    int m_notify_interval;      //The time interval between pop-up notification messages
     bool m_debug_log{};
     bool m_taksbar_transparent_color_enable{};
     bool m_last_light_mode{};
-    bool m_show_mouse_panetrate_tip{};  //是否显示开启“鼠标穿透”时的提示消息。
+    bool m_show_mouse_panetrate_tip{};  //Whether to display the prompt message when "mouse penetration" is turned on.
     bool m_show_dot_net_notinstalled_tip{};
 
     //bool m_is_windows10_fall_creator;
-    CWinVersionHelper m_win_version;        //当前Windows的版本
+    CWinVersionHelper m_win_version;        //Current version of Windows
 
     HICON m_notify_icons[MAX_NOTIFY_ICON];
 
@@ -91,21 +91,21 @@ public:
     CStrTable m_str_table;
     CPluginUpdateHelper m_plugin_update;
 
-    CMenu m_main_menu;          //主窗口右键菜单
-    CMenu m_main_menu_plugin;   //右击主窗口插件区域的右键菜单
+    CMenu m_main_menu;          //Main window right-click menu
+    CMenu m_main_menu_plugin;   //Right-click the right-click menu of the plug-in area of the main window
     CMenu m_main_menu_plugin_sub_menu;
-    CMenu m_taskbar_menu;       //任务栏窗口右键菜单
-    CMenu m_taskbar_menu_plugin;    //右击任务栏窗口插件区域的右键菜单
+    CMenu m_taskbar_menu;       //Taskbar window right-click menu
+    CMenu m_taskbar_menu_plugin;    //Right-click the context menu of the plug-in area of the taskbar window
     CMenu m_taskbar_menu_plugin_sub_menu;
 
 #ifndef WITHOUT_TEMPERATURE
-    //OpenHardwareMonitor 接口的指针
+    //Pointer to the OpenHardwareMonitor interface
     std::shared_ptr<OpenHardwareMonitorApi::IOpenHardwareMonitor> m_pMonitor{};
 #endif // !WITHOUT_TEMPERATURE
 
-    CCriticalSection m_minitor_lib_critical;        //用于访问OpenHardwareMonitor进行线程同步的临界区对象
-    //CCriticalSection m_lftable_critical;            //用于访问LfTable2进行线程同步的临界区对象
-    CLazyConstructable<class CTaskBarDlgDrawCommonSupport> m_d2d_taskbar_draw_common_support{}; // 当使用D2D渲染时自动初始化的全局依赖
+    CCriticalSection m_minitor_lib_critical;        //Critical section object used to access OpenHardwareMonitor for thread synchronization
+    //CCriticalSection m_lftable_critical; //Critical section object used to access LfTable2 for thread synchronization
+    CLazyConstructable<class CTaskBarDlgDrawCommonSupport> m_d2d_taskbar_draw_common_support{}; // Global dependencies automatically initialized when using D2D rendering
 
 public:
     CTrafficMonitorApp();
@@ -124,44 +124,44 @@ public:
     int GetDpi() const { return m_dpi; }
     void SetDPI(int dpi) { m_dpi = dpi; }
 
-    void CheckUpdate(bool message);     //检查更新，如果message为true，则在检查时弹出提示信息
-    void CheckUpdateInThread(bool message); //在后台线程中检查更新
-    //启动时检查更新线程函数
+    void CheckUpdate(bool message);     //Check for updates. If message is true, a prompt message will pop up during the check.
+    void CheckUpdateInThread(bool message); //Check for updates in background thread
+    //Check update thread function at startup
     static UINT CheckUpdateThreadFunc(LPVOID lpParam);
     static UINT InitOpenHardwareMonitorLibThreadFunc(LPVOID lpParam);
 
     bool SetAutoRun(bool auto_run, bool task_scheduler);
-    bool GetAutoRun(wstring* auto_run_path, bool task_scheduler);        //判断是否开机自动进行，如果是，将开机自动运行的路径写入auto_run_path
+    bool GetAutoRun(wstring* auto_run_path, bool task_scheduler);        //Determine whether it will run automatically at boot. If so, write the path to auto-run at boot into auto_run_path.
 
-    bool SetAutoRunByRegistry(bool auto_run);       //通过注册表实现开机自启动
-    bool SetAutoRunByTaskScheduler(bool auto_run);  //通过任务计划实现开机自启动
+    bool SetAutoRunByRegistry(bool auto_run);       //Auto-start at boot through registry
+    bool SetAutoRunByTaskScheduler(bool auto_run);  //Auto-start at boot via task schedule
 
-    //获取系统信息文本
+    //Get system information text
     CString GetSystemInfoString();
 
     void InitMenuResourse();
 
-    //获取一个图标资源，如果资源还未加载，会自动加载。
-    //由于本函数中使用了CTrafficMonitorApp::DPI函数，因此本函数必须确保在CTrafficMonitorApp::DPIFromWindow之后调用
+    //Get an icon resource. If the resource has not been loaded, it will be loaded automatically.
+    //Since the CTrafficMonitorApp::DPI function is used in this function, this function must be called after CTrafficMonitorApp::DPIFromWindow
     HICON GetMenuIcon(UINT id);
 
     void AutoSelectNotifyIcon();
 
-    bool IsCheckingForUpdate() const { return m_checking_update; }      //是否正在检查更新
+    bool IsCheckingForUpdate() const { return m_checking_update; }      //Checking for updates
 
-    void InitOpenHardwareLibInThread();     //开启一个后台线程初始化OpenHardwareMonitor
-    void UpdateOpenHardwareMonitorEnableState();    //更新硬件监控的启用/禁用状态
+    void InitOpenHardwareLibInThread();     //Start a background thread to initialize OpenHardwareMonitor
+    void UpdateOpenHardwareMonitorEnableState();    //Update enabled/disabled status of hardware monitoring
 
-    //void UpdateTaskbarWndMenu();      //更新任务栏窗口右键菜单
-    bool IsForceShowNotifyIcon();       //是否需要强制显示通知区图标
+    //void UpdateTaskbarWndMenu(); //Update the taskbar window right-click menu
+    bool IsForceShowNotifyIcon();       //Do you need to force the notification area icon to be displayed?
 
     std::wstring GetPlauginTooltipInfo() const;
     bool IsTaksbarItemDisplayed(CommonDisplayItem item) const;
 
-    void SendSettingsToPlugin();    //向所有插件发送当前的选项设置
+    void SendSettingsToPlugin();    //Send current options settings to all plugins
 
-    //更新插件子菜单
-    //plugin_cmd_start_index: 插件命令在菜单中的起始位置
+    //Update plugin submenu
+    //plugin_cmd_start_index: The starting position of the plug-in command in the menu
     static void UpdatePluginMenu(CMenu* pMenu, ITMPlugin* plugin, int plugin_cmd_start_index);
 
     void CheckWindows11Taskbar();
@@ -173,25 +173,25 @@ public:
     void SetThemeColor(COLORREF color);
 
 private:
-    //int m_no_multistart_warning_time{};       //用于设置在开机后多长时间内不弹出“已经有一个程序正在运行”的警告提示
-    bool m_no_multistart_warning{};         //如果为false，则永远都不会弹出“已经有一个程序正在运行”的警告提示
-    bool m_exit_when_start_by_restart_manager{ true };      //如果程序被Windows重启管理器重新启动，则退出程序
+    //int m_no_multistart_warning_time{}; //Used to set how long after booting the warning prompt "There is already a program running" will not pop up.
+    bool m_no_multistart_warning{};         //If false, the "There is already a program running" warning will never pop up.
+    bool m_exit_when_start_by_restart_manager{ true };      //Exit the program if it is restarted by Windows Restart Manager
     int m_dpi{ 96 };
 
-    bool m_checking_update{ false };        //是否正在检查更新
+    bool m_checking_update{ false };        //Checking for updates
 
-    std::map<UINT, HICON> m_menu_icons;      //菜单图标资源。key是图标资源的ID，vlaue是图标的句柄
+    std::map<UINT, HICON> m_menu_icons;      //Menu icon resource. key is the ID of the icon resource, vlaue is the handle of the icon
 
     ULONG_PTR m_gdiplusToken{};
 
-    bool m_is_windows11_taskbar{ false };  //是否为Windows11的任务栏
+    bool m_is_windows11_taskbar{ false };  //Is it the taskbar of Windows 11?
     COLORREF m_theme_color{};
 
-// 重写
+// rewrite
 public:
     virtual BOOL InitInstance();
 
-    // 实现
+    // realize
 
     DECLARE_MESSAGE_MAP()
     afx_msg void OnHelp();
@@ -199,7 +199,7 @@ public:
     afx_msg void OnUpdateLog();
     virtual int ExitInstance();
 
-    // 通过 ITrafficMonitor 继承
+    // Inherited through ITrafficMonitor
 private:
     virtual int GetAPIVersion() override;
     virtual const wchar_t* GetVersion() override;

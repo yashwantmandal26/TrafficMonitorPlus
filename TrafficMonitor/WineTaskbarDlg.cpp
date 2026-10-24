@@ -8,7 +8,7 @@ void CWineTaskbarDlg::InitTaskbarWnd()
 
 void CWineTaskbarDlg::AdjustTaskbarWndPos(bool force_adjust)
 {
-    //移动到桌面右下角
+    //Move to the lower right corner of the desktop
     int screen_width = GetSystemMetrics(SM_CXSCREEN);
     int screen_height = GetSystemMetrics(SM_CYSCREEN);
     CRect rect{ m_rect };

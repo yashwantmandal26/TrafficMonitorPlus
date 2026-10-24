@@ -6,30 +6,30 @@
 
 typedef ITMPlugin* (*pfTMPluginGetInstance)();
 
-//用于加载和管理插件
+//Used to load and manage plugins
 class CPluginManager
 {
 public:
-    //插件的状态
+    //Plug-in status
     enum class PluginState
     {
-        PS_SUCCEED,             //载入成功
-        PS_MUDULE_LOAD_FAILED,  //dll加载失败
-        PS_FUNCTION_GET_FAILED, //插件函数获取失败
-        PS_VERSION_NOT_SUPPORT, //插件版本不被支持
-        PS_DISABLE              //已禁用
+        PS_SUCCEED,             //Loading successfully
+        PS_MUDULE_LOAD_FAILED,  //dll loading failed
+        PS_FUNCTION_GET_FAILED, //Plug-in function acquisition failed
+        PS_VERSION_NOT_SUPPORT, //Plugin version is not supported
+        PS_DISABLE              //Disabled
     };
 
-    //插件信息
+    //Plug-in information
     struct PluginInfo
     {
-        wstring file_path;      //文件路径
+        wstring file_path;      //file path
         HMODULE plugin_module{};  //dll module
-        ITMPlugin* plugin{};      //插件对象
-        std::vector<IPluginItem*> plugin_items; //插件提供的所有显示项目
-        PluginState state{};    //插件的状态
-        DWORD error_code{};     //错误代码（GetLastError的返回值）
-        std::map<ITMPlugin::PluginInfoIndex, std::wstring> properties;    //插件属性
+        ITMPlugin* plugin{};      //plugin object
+        std::vector<IPluginItem*> plugin_items; //All display items provided by the plugin
+        PluginState state{};    //Plug-in status
+        DWORD error_code{};     //Error code (return value of GetLastError)
+        std::map<ITMPlugin::PluginInfoIndex, std::wstring> properties;    //Plugin properties
         std::wstring Property(ITMPlugin::PluginInfoIndex) const;
     };
 
@@ -45,12 +45,12 @@ public:
     ITMPlugin* GetPluginByItem(IPluginItem* pItem);
     int GetPluginIndex(ITMPlugin* plugin) const;
 
-    //遍历所有插件
-    //func: 参数为遍历到的ITMPlugin对象
+    //Iterate through all plugins
+    //func: The parameter is the traversed ITMPlugin object
     void EnumPlugin(std::function<void(ITMPlugin*)> func) const;
 
-    //遍历所有插件项目
-    //func: 参数为遍历到的IPluginItem对象
+    //Traverse all plug-in projects
+    //func: The parameter is the traversed IPluginItem object
     void EnumPluginItem(std::function<void(IPluginItem*)> func) const;
 
     const std::set<CommonDisplayItem>& AllDisplayItemsWithPlugins();
@@ -64,6 +64,6 @@ private:
 private:
     std::vector<IPluginItem*> m_plugins;
     std::vector<PluginInfo> m_modules;
-    std::set<CommonDisplayItem> m_all_display_items_with_plugins;   //包含插件在内的所有任务栏显示项目
-    std::map<IPluginItem*, ITMPlugin*> m_plguin_item_map;          //用于根据插件项目查找对应插件的map
+    std::set<CommonDisplayItem> m_all_display_items_with_plugins;   //All taskbar display items including plug-ins
+    std::map<IPluginItem*, ITMPlugin*> m_plguin_item_map;          //Map used to find the corresponding plug-in based on the plug-in project
 };

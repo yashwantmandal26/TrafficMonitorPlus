@@ -1,4 +1,4 @@
-﻿// SpinEdit.cpp: 实现文件
+﻿// SpinEdit.cpp: implementation file
 //
 
 #include "stdafx.h"
@@ -27,7 +27,7 @@ void CSpinEdit::SetRange(short lower, short upper, short step)
 
 void CSpinEdit::SetValue(int value)
 {
-    ASSERT(m_step != 0);    // 应当先设置Range
+    ASSERT(m_step != 0);    // Range should be set first
     if (m_spin.GetSafeHwnd() != NULL)
         m_spin.SetPos(value);
 }
@@ -57,27 +57,27 @@ END_MESSAGE_MAP()
 
 
 
-// CSpinEdit 消息处理程序
+// CSpinEdit message handler
 
 void CSpinEdit::PreSubclassWindow()
 {
-    // TODO: 在此添加专用代码和/或调用基类
+    // TODO: Add specialized code here and/or call the base class
 
-    // 要求文本左对齐，右侧会被spin控件覆盖
-    // WS_CLIPCHILDREN在绘制中排除子窗口区域，避免重叠的控件绘制闪烁
+    // The text is required to be aligned to the left, and the right side will be covered by the spin control.
+    // WS_CLIPCHILDREN excludes sub-window areas during drawing to avoid overlapping controls drawing flickering
     ModifyStyle(ES_CENTER | ES_RIGHT, ES_LEFT | WS_CLIPCHILDREN);
     m_spin.Create(WS_CHILD | WS_VISIBLE | UDS_ARROWKEYS | UDS_HOTTRACK | UDS_SETBUDDYINT, CRect(), this, SPIN_ID);
-    // 获取spin控件宽度
+    // Get the width of the spin control
     CRect rect;
     m_spin.GetWindowRect(&rect);
     m_spin_width = rect.Width();
-    // 设置spin控件区域（作为CEdit的子控件，ClientRect区域外的部分会被裁剪）
+    // Set the spin control area (as a child control of CEdit, the part outside the ClientRect area will be cropped)
     GetClientRect(&rect);
     rect.left = rect.right - m_spin_width;
     m_spin.MoveWindow(&rect);
-    // 设置Edit控件为关联控件
+    // Set the Edit control as an associated control
     m_spin.SetBuddy(this);
-    // 设置默认范围
+    // Set default scope
     m_spin.SetRange(0, 999);
     CEdit::PreSubclassWindow();
 }
@@ -85,12 +85,12 @@ void CSpinEdit::PreSubclassWindow()
 
 BOOL CSpinEdit::PreTranslateMessage(MSG* pMsg)
 {
-    // TODO: 在此添加专用代码和/或调用基类
+    // TODO: Add specialized code here and/or call the base class
 
-    //如果m_mouse_wheel_enable为false，则不响应鼠标滚轮消息
+    //If m_mouse_wheel_enable is false, mouse wheel messages will not be responded to
     if (pMsg->message == WM_MOUSEWHEEL && !m_mouse_wheel_enable)
     {
-        //将鼠标滚轮消息发送给父窗口
+        //Send mouse wheel message to parent window
         CWnd* pParent = GetParent();
         pParent->SendMessage(WM_MOUSEWHEEL, pMsg->wParam, pMsg->lParam);
         return true;
@@ -108,7 +108,7 @@ afx_msg LRESULT CSpinEdit::OnTabletQuerysystemgesturestatus(WPARAM wParam, LPARA
 
 void CSpinEdit::OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult)
 {
-    //这里响应微调按钮（spin button）点击上下按钮时的事件
+    //This responds to events when the spin button clicks the up and down buttons.
     LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
 
     int value = GetValue();
@@ -128,11 +128,11 @@ void CSpinEdit::OnKillFocus(CWnd* pNewWnd)
 {
     CEdit::OnKillFocus(pNewWnd);
 
-    // TODO: 在此处添加消息处理程序代码
+    // TODO: add message handler code here
     CString str;
     GetWindowTextW(str);
     int value = _ttoi(str.GetString());
-    SetValue(value);    // m_spin会检查并限制值范围以及更新CEdit控件文本
+    SetValue(value);    // m_spin will check and limit the value range and update the CEdit control text
 }
 
 

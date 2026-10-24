@@ -1,4 +1,4 @@
-﻿// 这是主 DLL 文件。
+﻿// This is the main DLL file.
 
 #include "stdafx.h"
 
@@ -9,7 +9,7 @@ namespace OpenHardwareMonitorApi
 {
     static std::wstring error_message;
 
-    //将CRL的String类型转换成C++的std::wstring类型
+    //Convert CRL's String type to C++'s std::wstring type
     static std::wstring ClrStringToStdWstring(System::String^ str)
     {
         if (str == nullptr)
@@ -179,12 +179,12 @@ namespace OpenHardwareMonitorApi
         }
         for (int i = 0; i < hardware->Sensors->Length; i++)
         {
-            //找到温度传感器
+            //Find the temperature sensor
             if (hardware->Sensors[i]->SensorType == SensorType::Temperature)
             {
                 float cur_temperture = Convert::ToDouble(hardware->Sensors[i]->Value);
                 all_temperature.push_back(cur_temperture);
-                if (hardware->Sensors[i]->Name == temperature_name) //如果找到了名称为temperature_name的温度传感器，则将温度保存到core_temperature里
+                if (hardware->Sensors[i]->Name == temperature_name) //If the temperature sensor named temperature_name is found, save the temperature to core_temperature.
                     core_temperature = cur_temperture;
             }
         }
@@ -195,14 +195,14 @@ namespace OpenHardwareMonitorApi
         }
         if (!all_temperature.empty())
         {
-            //如果有多个温度传感器，则取平均值
+            //If there are multiple temperature sensors, take the average
             float sum{};
             for (auto i : all_temperature)
                 sum += i;
             temperature = sum / all_temperature.size();
             return true;
         }
-        //如果没有找到温度传感器，则在SubHardware中寻找
+        //If the temperature sensor is not found, look for it in SubHardware
         for (int i = 0; i < hardware->SubHardware->Length; i++)
         {
             if (GetHardwareTemperature(hardware->SubHardware[i], temperature))
@@ -217,15 +217,15 @@ namespace OpenHardwareMonitorApi
         m_all_cpu_temperature.clear();
         for (int i = 0; i < hardware->Sensors->Length; i++)
         {
-            //找到温度传感器
+            //Find the temperature sensor
             if (hardware->Sensors[i]->SensorType == SensorType::Temperature)
             {
                 String^ name = hardware->Sensors[i]->Name;
-                //保存每个CPU传感器的温度
+                //Save the temperature of each CPU sensor
                 m_all_cpu_temperature[ClrStringToStdWstring(name)] = Convert::ToDouble(hardware->Sensors[i]->Value);
             }
         }
-        //计算平均温度
+        //Calculate average temperature
         if (!m_all_cpu_temperature.empty())
         {
             float sum{};
@@ -241,7 +241,7 @@ namespace OpenHardwareMonitorApi
         float usage_max = 0;
         for (int i = 0; i < hardware->Sensors->Length; i++)
         {
-            //找到负载
+            //find load
             if (hardware->Sensors[i]->SensorType == SensorType::Load)
             {
                 float cur_gpu_usage = Convert::ToDouble(hardware->Sensors[i]->Value);
@@ -251,7 +251,7 @@ namespace OpenHardwareMonitorApi
                     return true;
                 }
 
-                //计算最大值
+                //Calculate the maximum value
                 if (cur_gpu_usage > usage_max)
                     usage_max = cur_gpu_usage;
             }
@@ -264,7 +264,7 @@ namespace OpenHardwareMonitorApi
     {
         for (int i = 0; i < hardware->Sensors->Length; i++)
         {
-            //找到负载
+            //find load
             if (hardware->Sensors[i]->SensorType == SensorType::Load)
             {
                 if (hardware->Sensors[i]->Name == L"Total Activity")
@@ -314,16 +314,16 @@ namespace OpenHardwareMonitorApi
         else
         {
             std::wstring key_exist = iter->first;
-            size_t index = key_exist.rfind(L'#');   //查找字符串是否含有#号
+            size_t index = key_exist.rfind(L'#');   //Find whether a string contains the # sign
             if (index != std::wstring::npos)
             {
-                //取到#号后面的数字，将其加1
+                //Get the number after the # sign and add 1 to it
                 int num = _wtoi(key_exist.substr(index + 1).c_str());
                 num++;
                 key_exist = key_exist.substr(0, index + 1);
                 key_exist += std::to_wstring(num);
             }
-            else //没有#号则在末尾添加" #1"
+            else //If there is no # sign, add "#1" at the end
             {
                 key_exist += L" #1";
             }
@@ -341,7 +341,7 @@ namespace OpenHardwareMonitorApi
             computer->Accept(MonitorGlobal::Instance()->updateVisitor);
             for (int i = 0; i < computer->Hardware->Count; i++)
             {
-                //查找硬件类型
+                //Find hardware type
                 switch (computer->Hardware[i]->HardwareType)
                 {
                 case HardwareType::Cpu:

@@ -1001,8 +1001,6 @@
     <None Include="..\LICENSE" />
     <None Include="..\LICENSE_CN" />
     <None Include="language\English.ini" />
-    <None Include="language\Simplified_Chinese.ini" />
-    <None Include="language\Traditional_Chinese.ini" />
     <None Include="res\TrafficMonitor.rc2" />
   </ItemGroup>
   <ItemGroup>

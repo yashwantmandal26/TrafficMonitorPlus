@@ -10,7 +10,7 @@ class CComboBox2 : public CComboBox
 public:
 	CComboBox2();
 	virtual ~CComboBox2();
-    void SetMouseWheelEnable(bool enable);  //设置是否允许响应鼠标滚轮
+    void SetMouseWheelEnable(bool enable);  //Set whether to allow response to the mouse wheel
 
 private:
     bool m_mouse_wheel_enable{ true };

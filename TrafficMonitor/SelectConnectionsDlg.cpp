@@ -1,4 +1,4 @@
-﻿// SelectConnectionsDlg.cpp: 实现文件
+﻿// SelectConnectionsDlg.cpp: Implementation file
 //
 
 #include "stdafx.h"
@@ -7,7 +7,7 @@
 #include "afxdialogex.h"
 #include "AdapterCommon.h"
 
-// CSelectConnectionsDlg 对话框
+// CSelectConnectionsDlg dialog box
 
 IMPLEMENT_DYNAMIC(CSelectConnectionsDlg, CBaseDialog)
 
@@ -41,18 +41,18 @@ BEGIN_MESSAGE_MAP(CSelectConnectionsDlg, CBaseDialog)
 END_MESSAGE_MAP()
 
 
-// CSelectConnectionsDlg 消息处理程序
+// CSelectConnectionsDlg message handler
 
 
 BOOL CSelectConnectionsDlg::OnInitDialog()
 {
     CBaseDialog::OnInitDialog();
 
-    // TODO:  在此添加额外的初始化
+    // TODO: Add additional initialization here
     SetIcon(theApp.GetMenuIcon(IDI_CONNECTION), FALSE);
     m_list_ctrl.SetItemHeight(0, theApp.DPI(20));
 
-    //向列表中添加项目
+    //Add items to list
     for (const auto& connection_name : m_all_connection_names)
     {
         m_list_ctrl.AddString(connection_name.c_str());
@@ -64,14 +64,14 @@ BOOL CSelectConnectionsDlg::OnInitDialog()
 
 
     return TRUE;  // return TRUE unless you set the focus to a control
-                  // 异常: OCX 属性页应返回 FALSE
+                  // Exception: OCX property page should return FALSE
 }
 
 
 void CSelectConnectionsDlg::OnOK()
 {
-    // TODO: 在此添加专用代码和/或调用基类
-    //保存每个项目的勾选状态
+    // TODO: Add specialized code here and/or call the base class
+    //Save the check status of each item
     bool is_empty{ true };
     for (int i = 0; i < static_cast<int>(m_all_connection_names.size()); i++)
     {

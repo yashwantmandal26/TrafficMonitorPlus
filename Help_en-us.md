@@ -1,5 +1,3 @@
-**[简体中文](./Help.md) | English**
-
 # TrafficMonitor Frequently Asked Questions
 This is the page about the Frequently Asked Questions of TrafficMonitor. If you want to view the detailed introduction of the functions and usage of TrafficMonitor, please [click here](https://github.com/zhongyang219/TrafficMonitor/wiki) to go the the TraffinMonitor Wiki page.
 
@@ -139,7 +137,7 @@ At the same time, you may also check "Auto adapt to Windows 10 dark/light theme"
 
 ### The taskbar windows cannot be displayed when the HDR is turned on in Windows 10
 
-Some users have reported that turning on the HDR function in Windows 10 will cause the taskbar window to fail to display. If you encounter this problem, you can try turning off the "Background Transparent" option in ["Option Settings" - "Taskbar Window Settings"](https://github.com/zhongyang219/TrafficMonitor/wiki/选项设置#任务栏窗口设置).
+Some users have reported that turning on the HDR function in Windows 10 will cause the taskbar window to fail to display. If you encounter this problem, you can try turning off the "Background Transparent" option in ["Option Settings" - "Taskbar Window Settings"](https://github.com/zhongyang219/TrafficMonitor/wiki).
 
 Since version 1.85, this can be fixed by changing to Direct2D rendering in "Options Settings" - "Taskbar Window Settings" - "Rendering Settings".
 
@@ -149,7 +147,7 @@ Since Windows 10, if you want to make the CPU usage shown by TrafficMonitor cons
 
 ### About the temperature monitoring of TrafficMonitor
 
-Due to some problems occurred in some computers caused by the temperature monitoring function, the temperature monitoring function is turned off by default. If you want to use the temperature monitoring function of TrafficMonitor, please go to ["Option Settings"-"General Settings"-"Hardware Monitoring"](https://github.com/zhongyang219/TrafficMonitor/wiki/选项设置#硬件监控) to enable it. After it is turned on, temperature-related items will appear under the "Display Settings" submenu in the taskbar right-click menu.
+Due to some problems occurred in some computers caused by the temperature monitoring function, the temperature monitoring function is turned off by default. If you want to use the temperature monitoring function of TrafficMonitor, please go to ["Option Settings"-"General Settings"-"Hardware Monitoring"](https://github.com/zhongyang219/TrafficMonitor/wiki) to enable it. After it is turned on, temperature-related items will appear under the "Display Settings" submenu in the taskbar right-click menu.
 
 The temperature monitoring function of TrafficMonitor relies on a third-party open source library [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor). If you encounter the problem that the hardware temperature cannot be displayed, or the displayed temperature is incorrect, then  please download LibreHardwareMonitor first, and check whether LibreHardwareMonitor can display the corresponding temperature normally.
 

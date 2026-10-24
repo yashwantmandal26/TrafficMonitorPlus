@@ -1,4 +1,4 @@
-﻿// SkinDlg.cpp : 实现文件
+﻿// SkinDlg.cpp: implementation file
 //
 
 #include "stdafx.h"
@@ -9,7 +9,7 @@
 #include "SkinManager.h"
 
 
-// CSkinDlg 对话框
+// CSkinDlg dialog box
 
 IMPLEMENT_DYNAMIC(CSkinDlg, CBaseDialog)
 
@@ -57,22 +57,22 @@ void CSkinDlg::DoDataExchange(CDataExchange* pDX)
 
 void CSkinDlg::ShowPreview()
 {
-    //载入布局数据
+    //Load layout data
     m_skin_data.Load(CSkinManager::Instance().GetSkinName(m_skin_selected));
-    //获取当前皮肤中用户更改字体
+    //Get the font changed by the user in the current skin
     SkinSettingData cur_skin_data;
     if (CSkinManager::Instance().GetSkinSettingDataByIndex(m_skin_selected, cur_skin_data))
     {
         m_skin_data.SetSettingData(cur_skin_data);
     }
-    //获取预览区大小
+    //Get preview area size
     m_view->SetSize(m_skin_data.GetPreviewInfo().width, m_skin_data.GetPreviewInfo().height);
-    //刷新预览图
+    //Refresh preview
     m_view->Invalidate();
 
-    //显示皮肤作者
+    //Show skin author
     SetDlgItemText(IDC_SKIN_INFO, CCommon::LoadText(IDS_SKIN_AUTHOUR, m_skin_data.GetSkinInfo().skin_author.c_str()));
-    ////设置提示信息
+    ////Set prompt information
     //bool cover_font_setting{ !m_skin_data.GetSkinInfo().font_info.name.IsEmpty() || (m_skin_data.GetSkinInfo().font_info.size >= MIN_FONT_SIZE && m_skin_data.GetSkinInfo().font_info.size <= MAX_FONT_SIZE) };
     //bool cover_str_setting{ !m_skin_data.GetSkinInfo().display_text.IsInvalid() };
     //cover_font_setting = cover_font_setting && theApp.m_general_data.allow_skin_cover_font;
@@ -91,7 +91,7 @@ void CSkinDlg::ShowPreview()
 CRect CSkinDlg::CalculateViewRect()
 {
     CRect rect;
-    m_preview_static.GetWindowRect(rect);		//获取“预览” group box 的位置
+    m_preview_static.GetWindowRect(rect);		//Get the position of the "preview" group box
     ScreenToClient(&rect);
     CRect scroll_view_rect{ rect };
     scroll_view_rect.DeflateRect(DPI(12), DPI(40));
@@ -109,50 +109,50 @@ BEGIN_MESSAGE_MAP(CSkinDlg, CBaseDialog)
 END_MESSAGE_MAP()
 
 
-// CSkinDlg 消息处理程序
+// CSkinDlg message handler
 
 BOOL CSkinDlg::OnInitDialog()
 {
     CBaseDialog::OnInitDialog();
 
-    // TODO:  在此添加额外的初始化
-    SetIcon(theApp.GetMenuIcon(IDI_SKIN), FALSE);		// 设置小图标
-    //初始化选择框
+    // TODO: Add additional initialization here
+    SetIcon(theApp.GetMenuIcon(IDI_SKIN), FALSE);		// Set small icon
+    //Initialize selection box
     m_skin_list_box.SetItemHeight(0, DPI(18));
     for (const auto& skin_name : CSkinManager::Instance().GetSkinNames())
     {
         m_skin_list_box.AddString(skin_name.c_str());
     }
     m_skin_list_box.SetCurSel(m_skin_selected);
-    //初始化预览视图
+    //Initialize preview view
     m_view = (CSkinPreviewView*)RUNTIME_CLASS(CSkinPreviewView)->CreateObject();
     m_view->Create(NULL, NULL, WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL, CalculateViewRect(), this, 3000);
     m_view->InitialUpdate();
     m_view->SetSkinData(&m_skin_data);
     m_view->ShowWindow(SW_SHOW);
 
-    //设置提示信息
+    //Set prompt information
     m_notify_static.SetTextColor(RGB(252, 128, 45));
     m_notify_static.SetBackColor(GetSysColor(COLOR_BTNFACE));
     m_notify_static.SetWindowTextEx(_T(""));
 
-    //显示预览图片
+    //Show preview image
     ShowPreview();
 
-    //初始化控件
+    //Initialize controls
     CheckDlgButton(IDC_SKIN_AUTO_ADAPT_CHECK, theApp.m_cfg_data.skin_auto_adapt);
     EnableDlgCtrl(IDC_SKIN_AUTO_ADAPT_BUTTON, theApp.m_cfg_data.skin_auto_adapt);
 
-    //设置超链接
-    m_skin_course.SetURL(_T("https://github.com/zhongyang219/TrafficMonitor/wiki/%E7%9A%AE%E8%82%A4%E5%88%B6%E4%BD%9C%E6%95%99%E7%A8%8B"));
+    //Set up hyperlink
+    m_skin_course.SetURL(_T("https://github.com/zhongyang219/TrafficMonitor/wiki"));
     if (theApp.m_general_data.update_source == 1)
-        m_skin_download.SetURL(_T("https://gitee.com/zhongyang219/TrafficMonitorSkin/blob/master/%E7%9A%AE%E8%82%A4%E4%B8%8B%E8%BD%BD.md"));
+        m_skin_download.SetURL(_T("https://github.com/zhongyang219/TrafficMonitorSkin"));
     else
-        m_skin_download.SetURL(_T("https://github.com/zhongyang219/TrafficMonitorSkin/blob/master/皮肤下载.md"));
+        m_skin_download.SetURL(_T("https://github.com/zhongyang219/TrafficMonitorSkin"));
     m_open_skin_dir_lnk.SetLinkIsURL(false);
 
     return TRUE;  // return TRUE unless you set the focus to a control
-                  // 异常: OCX 属性页应返回 FALSE
+                  // Exception: OCX property page should return FALSE
 }
 
 
@@ -167,7 +167,7 @@ void CSkinDlg::OnSize(UINT nType, int cx, int cy)
 {
     CBaseDialog::OnSize(nType, cx, cy);
 
-    // TODO: 在此处添加消息处理程序代码
+    // TODO: add message handler code here
     if (m_preview_static.m_hWnd != NULL && nType != SIZE_MINIMIZED && m_view != nullptr)
         m_view->MoveWindow(CalculateViewRect());
 }
@@ -176,10 +176,10 @@ void CSkinDlg::OnSize(UINT nType, int cx, int cy)
 afx_msg LRESULT CSkinDlg::OnLinkClicked(WPARAM wParam, LPARAM lParam)
 {
     CWnd* pCtrl = (CWnd*)wParam;
-    //点击了“打开皮肤目录”
+    //Clicked "Open Skin Catalog"
     if (pCtrl == &m_open_skin_dir_lnk)
     {
-        CreateDirectory(theApp.m_skin_path.c_str(), NULL);       //如果皮肤目录不存在，则创建它
+        CreateDirectory(theApp.m_skin_path.c_str(), NULL);       //If the skin directory does not exist, create it
         ShellExecute(NULL, _T("open"), _T("explorer"), theApp.m_skin_path.c_str(), NULL, SW_SHOWNORMAL);
     }
     return 0;

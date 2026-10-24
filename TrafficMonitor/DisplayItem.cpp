@@ -198,7 +198,7 @@ CString CommonDisplayItem::GetItemValueText(bool is_main_window) const
         CString str_value;
         switch (item_type)
         {
-        //上传、下载、总网速
+        //Upload, download, total network speed
         case TDI_UP:
         case TDI_DOWN:
         case TDI_TOTAL_SPEED:
@@ -212,7 +212,7 @@ CString CommonDisplayItem::GetItemValueText(bool is_main_window) const
                 str_out_speed += _T("/s");
                 str_total_speed += _T("/s");
             }
-            //交换上传和下载位置
+            //Swap upload and download locations
             if (is_main_window && theApp.m_main_wnd_data.swap_up_down)
                 std::swap(str_in_speed, str_out_speed);
             if (item_type == TDI_UP)
@@ -223,11 +223,11 @@ CString CommonDisplayItem::GetItemValueText(bool is_main_window) const
                 str_value = str_total_speed;
         }
             break;
-        //CPU利用率
+        //CPU utilization
         case TDI_CPU:
             str_value = CCommon::UsageToString(theApp.m_cpu_usage, *cfg_data);
             break;
-        //内存利用率
+        //memory utilization
         case TDI_MEMORY:
             if (cfg_data->memory_display == MemoryDisplay::MEMORY_USED)
                 str_value = CCommon::DataSizeToString(static_cast<unsigned long long>(theApp.m_used_memory) * 1024, cfg_data->separate_value_unit_with_space);
@@ -236,35 +236,35 @@ CString CommonDisplayItem::GetItemValueText(bool is_main_window) const
             else
                 str_value = CCommon::UsageToString(theApp.m_memory_usage, *cfg_data);
             break;
-        //显卡利用率
+        //Graphics card utilization
         case TDI_GPU_USAGE:
             str_value = CCommon::UsageToString(theApp.m_gpu_usage, *cfg_data);
             break;
-        //硬盘利用率
+        //Hard drive utilization
         case TDI_HDD_USAGE:
             str_value = CCommon::UsageToString(theApp.m_hdd_usage, *cfg_data);
             break;
-        //CPU温度
+        //CPU temperature
         case TDI_CPU_TEMP:
             str_value = CCommon::TemperatureToString(theApp.m_cpu_temperature, *cfg_data);
             break;
-        //显卡温度
+        //Graphics card temperature
         case TDI_GPU_TEMP:
             str_value = CCommon::TemperatureToString(theApp.m_gpu_temperature, *cfg_data);
             break;
-        //硬盘温度
+        //Hard drive temperature
         case TDI_HDD_TEMP:
             str_value = CCommon::TemperatureToString(theApp.m_hdd_temperature, *cfg_data);
             break;
-        //主板温度
+        //Motherboard temperature
         case TDI_MAIN_BOARD_TEMP:
             str_value = CCommon::TemperatureToString(theApp.m_main_board_temperature, *cfg_data);
             break;
-        //CPU频率
+        //CPU frequency
         case TDI_CPU_FREQ:
             str_value = CCommon::FreqToString(theApp.m_cpu_freq, *cfg_data);
             break;
-        //总流量
+        //total traffic
         case TDI_TODAY_TRAFFIC:
             str_value = CCommon::KBytesToString((theApp.m_today_up_traffic + theApp.m_today_down_traffic) / 1024u);
             break;
@@ -281,7 +281,7 @@ CString CommonDisplayItem::GetItemValueSampleText(bool is_main_window) const
     {
         return plugin_item->GetItemValueSampleText();
     }
-    //主窗口（用于绘制预览图）
+    //Main window (used to draw preview images)
     else if (is_main_window)
     {
         CString sample_str;
@@ -317,18 +317,18 @@ CString CommonDisplayItem::GetItemValueSampleText(bool is_main_window) const
         }
         return sample_str;
     }
-    //任务栏窗口（用于计算任务栏窗口宽度）
+    //Taskbar window (used to calculate taskbar window width)
     else
     {
         CString sample_str;
         switch (item_type)
         {
-        //网速
+        //Internet speed
         case TDI_UP:
         case TDI_DOWN:
         case TDI_TOTAL_SPEED:
         {
-            wstring digits(theApp.m_taskbar_data.digits_number, L'8');      //根据数据位数生成指定个数的“8”
+            wstring digits(theApp.m_taskbar_data.digits_number, L'8');      //Generate a specified number of "8"s based on the number of data bits
             bool hide_unit{ theApp.m_taskbar_data.hide_unit && theApp.m_taskbar_data.speed_unit != SpeedUnit::AUTO };
             if (theApp.m_taskbar_data.speed_short_mode)
             {
@@ -350,7 +350,7 @@ CString CommonDisplayItem::GetItemValueSampleText(bool is_main_window) const
                 sample_str += _T('b');
         }
             break;
-        //占用率百分比
+        //Occupancy percentage
         case TDI_CPU:
         case TDI_MEMORY:
         case TDI_GPU_USAGE:
@@ -364,18 +364,18 @@ CString CommonDisplayItem::GetItemValueSampleText(bool is_main_window) const
                 else
                     sample_str += _T("%");
             }
-            //内存显示不为已使用百分比时
+            //When memory is not displayed as percentage used
             if (item_type == TDI_MEMORY)
             {
                 if (theApp.m_taskbar_data.memory_display == MemoryDisplay::MEMORY_USED || theApp.m_taskbar_data.memory_display == MemoryDisplay::MEMORY_AVAILABLE)
                 {
-                    //宽度为总内存的宽度
+                    //The width is the width of the total memory
                     sample_str = CCommon::DataSizeToString(static_cast<unsigned long long>(theApp.m_total_memory) * 1024, theApp.m_taskbar_data.separate_value_unit_with_space);
                 }
             }
         }
             break;
-        //温度
+        //temperature
         case TDI_CPU_TEMP:
         case TDI_GPU_TEMP:
         case TDI_HDD_TEMP:
@@ -387,7 +387,7 @@ CString CommonDisplayItem::GetItemValueSampleText(bool is_main_window) const
                 sample_str = _T("99°C");
         }
             break;
-        //CPU频率
+        //CPU frequency
         case TDI_CPU_FREQ:
         {
             if (theApp.m_taskbar_data.separate_value_unit_with_space)
@@ -396,7 +396,7 @@ CString CommonDisplayItem::GetItemValueSampleText(bool is_main_window) const
                 sample_str = _T("1.00GHz");
         }
             break;
-        //流量
+        //traffic
         case TDI_TODAY_TRAFFIC:
         {
             if (theApp.m_taskbar_data.separate_value_unit_with_space)
@@ -448,10 +448,10 @@ bool DisplayItemSet::Contains(DisplayItem item) const
 int DisplayItemSet::ToInt() const
 {
     int value = 0;
-    //将set中的枚举值转换成int的每个bit位
+    //Convert the enumeration value in set to each bit of int
     for (const auto& item : data)
     {
-        if (item <= 31)     //int左移不超过31位
+        if (item <= 31)     //int left shift no more than 31 bits
             value |= (1 << item);
     }
     return value;
@@ -460,7 +460,7 @@ int DisplayItemSet::ToInt() const
 void DisplayItemSet::FromInt(int value)
 {
     data.clear();
-    //将int的每个bit位转换成set中的枚举值
+    //Convert each bit of int to an enumeration value in set
     for (const auto& item : AllDisplayItems)
     {
         if (item <= 31 && (value & (1 << item)))

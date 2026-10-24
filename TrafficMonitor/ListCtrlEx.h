@@ -12,16 +12,16 @@ public:
 	CListCtrlEx();
 	~CListCtrlEx();
 
-    void Edit(int row, int col);			//编辑指定单元格
+    void Edit(int row, int col);			//Edit specified cell
 
-    enum eEditColMethod       //要编辑的列的方式
+    enum eEditColMethod       //Column to be edited
     {
-        EC_NONE,        //无
-        EC_ALL,         //全部
-        EC_SPECIFIED    //指定的列
+        EC_NONE,        //None
+        EC_ALL,         //All
+        EC_SPECIFIED    //specified column
     };
     void SetEditColMethod(eEditColMethod method);
-    void SetEditableCol(const std::initializer_list<int>& paras);   //设置允许编辑的列
+    void SetEditableCol(const std::initializer_list<int>& paras);   //Set the columns that are allowed to be edited
 
 private:
     CEdit m_item_edit;

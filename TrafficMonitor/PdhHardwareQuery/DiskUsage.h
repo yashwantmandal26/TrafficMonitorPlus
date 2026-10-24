@@ -7,28 +7,28 @@ public:
     CPdhDiskUsage();
     ~CPdhDiskUsage();
 
-    // 获取指定物理磁盘的利用率（0-100）
-    // diskIndex: 0=第一个物理磁盘, 1=第二个...
-    // 返回值: true=成功, false=失败（首次调用通常失败，需间隔200ms+重试）
+    // Get the utilization of the specified physical disk (0-100)
+    // diskIndex: 0=first physical disk, 1=second...
+    // Return value: true=success, false=failure (the first call usually fails and requires an interval of 200ms+ to retry)
     bool GetDiskUsage(int diskIndex, /*out*/ int& usage);
 
-    // 获取物理磁盘名称列表
+    // Get a list of physical disk names
     const std::vector<CString>& GetDiskNames() const { return m_diskNames; }
 
-    //根据名称查找一个硬盘的序号
+    //Find the serial number of a hard drive based on its name
     int FindDiskIndex(const std::wstring diskName);
 
-    // 检查磁盘监控是否可用
+    // Check if disk monitoring is available
     bool IsAvailable() const { return m_isAvailable; }
 
 private:
-    // 从计数器实例提取磁盘名称
+    // Extract disk name from counter instance
     void ExtractDiskNames();
 
-    // 处理空闲时间
+    // Deal with idle time
     int CalculateUtilization(double idleTime) const;
 
 private:
     bool m_isAvailable{ false };
-    std::vector<CString> m_diskNames;  // 磁盘名称列表，按PDH返回顺序
+    std::vector<CString> m_diskNames;  // List of disk names, in order returned by PDH
 };

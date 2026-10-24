@@ -84,11 +84,11 @@ const wstring& CFilePathHelper::ReplaceFileExtension(const wchar_t * new_extensi
 	size_t index, index1;
 	index = m_file_path.rfind('.');
 	index1 = m_file_path.rfind('\\');
-	if (index == wstring::npos || (index1 != wstring::npos && index < index1))		//如果没有找到“.”，或者“.”在反斜杠的左边，则在末尾添加一个“.”
+	if (index == wstring::npos || (index1 != wstring::npos && index < index1))		//If "." is not found, or "." is to the left of the backslash, add a "." at the end.
 	{
 		m_file_path.push_back(L'.');
 	}
-	else if (index != m_file_path.size() - 1)	//如果“.”不在最后的位置，则删除“.”后面的字符串
+	else if (index != m_file_path.size() - 1)	//If "." is not at the last position, delete the string after "."
 	{
 		m_file_path.erase(index + 1);
 	}
@@ -99,7 +99,7 @@ const wstring& CFilePathHelper::ReplaceFileExtension(const wchar_t * new_extensi
     }
     else
     {
-        m_file_path.append(new_extension);		//在末尾添加扩展名
+        m_file_path.append(new_extension);		//Add extension at the end
     }
 	return m_file_path;
 }

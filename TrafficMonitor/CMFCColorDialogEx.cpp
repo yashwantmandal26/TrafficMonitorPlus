@@ -1,4 +1,4 @@
-﻿// CMFCColorDialogEx.cpp: 实现文件
+﻿// CMFCColorDialogEx.cpp: implementation file
 //
 
 #include "stdafx.h"
@@ -26,15 +26,15 @@ END_MESSAGE_MAP()
 
 
 
-// CMFCColorDialogEx 消息处理程序
+// CMFCColorDialogEx message handler
 
 BOOL CMFCColorDialogEx::OnInitDialog()
 {
 	CMFCColorDialog::OnInitDialog();
 
-	// TODO:  在此添加额外的初始化
+	// TODO: Add additional initialization here
 
-	//初始化字体
+	//Initialize font
 	CRect rect;
 	GetWindowRect(rect);
 	FontInfo font_info;
@@ -53,6 +53,6 @@ BOOL CMFCColorDialogEx::OnInitDialog()
 		CCommon::SetDialogFont(pPropSheet, &m_dlg_font);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
-				  // 异常: OCX 属性页应返回 FALSE
+				  // Exception: OCX property page should return FALSE
 }
 

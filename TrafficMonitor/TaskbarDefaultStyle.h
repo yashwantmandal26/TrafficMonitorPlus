@@ -23,13 +23,13 @@ public:
 	void LoadConfig();
 	void SaveConfig() const;
 
-	void ApplyDefaultStyle(int index, TaskBarSettingData& data) const;		//应用一个颜色预设
-	//static void ApplyDefaultLightStyle(TaskBarSettingData& data);		//应用默认的浅色模式预设
-	void ModifyDefaultStyle(int index, TaskBarSettingData& data);     //将当前颜色设置保存到一个预设方案
+	void ApplyDefaultStyle(int index, TaskBarSettingData& data) const;		//Apply a color preset
+	//static void ApplyDefaultLightStyle(TaskBarSettingData& data); //Apply the default light mode preset
+	void ModifyDefaultStyle(int index, TaskBarSettingData& data);     //Save current color settings to a preset
 
-    static bool IsTaskBarStyleDataValid(const TaskBarStyleData& data);     //判断一个颜色模式是否有效
+    static bool IsTaskBarStyleDataValid(const TaskBarStyleData& data);     //Determine whether a color mode is valid
 
 private:
-	TaskBarStyleData m_default_style[TASKBAR_DEFAULT_STYLE_NUM];    //预设样式
+	TaskBarStyleData m_default_style[TASKBAR_DEFAULT_STYLE_NUM];    //Default style
 
 };

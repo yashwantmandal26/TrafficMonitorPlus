@@ -18,7 +18,7 @@ CWinVersionHelper::CWinVersionHelper()
 			dwBuildNumber &= 0x0ffff;
 		}
 
-		//判断是否在Wine环境中
+		//Determine whether it is in the Wine environment
 		FARPROC pProc = GetProcAddress(hModNtdll, "wine_get_version");
 		if (pProc != NULL)
 		{

@@ -1,4 +1,4 @@
-﻿// HistoryTrafficList.cpp: 实现文件
+﻿// HistoryTrafficList.cpp: implementation file
 //
 
 #include "stdafx.h"
@@ -8,7 +8,7 @@
 #include "CalendarHelper.h"
 
 
-// CHistoryTrafficListDlgDlg 对话框
+// CHistoryTrafficListDlgDlg dialog box
 
 IMPLEMENT_DYNAMIC(CHistoryTrafficListDlg, CTabDlg)
 
@@ -32,9 +32,9 @@ bool CHistoryTrafficListDlg::CalculateColumeWidth(std::vector<int>& widths)
     if (rect.Width() <= 0)
         return false;
     const int MAX_COLUME{ 5 };
-	int width_date;		//“日期”列的宽度
-    int width0;			//“上传”、“下载”、“总流量”列的宽度
-    int width1;			//“图表”列的宽度
+	int width_date;		//"Date" column width
+    int width0;			//The width of the "Upload", "Download" and "Total Traffic" columns
+    int width1;			//Chart column width
 	width_date = rect.Width() * 3 / 11;
     width0 = rect.Width() * 2 / 11;
     if (width_date > theApp.DPI(150))
@@ -68,15 +68,15 @@ void CHistoryTrafficListDlg::AddListRow(const ListRowData& data, unsigned __int6
 
     double range = static_cast<double>(total_kbytes) * 1000 / max_traffic;
     COLORREF color;
-    if (total_kbytes < 1024 * 1024)		//流量小于1GB时绘制蓝色
+    if (total_kbytes < 1024 * 1024)		//Draw blue when traffic is less than 1GB
         color = TRAFFIC_COLOR_BLUE;
-    else if (total_kbytes < 10 * 1024 * 1024)	//流量小于10GB时绘制绿色
+    else if (total_kbytes < 10 * 1024 * 1024)	//Draw green when traffic is less than 10GB
         color = TRAFFIC_COLOR_GREEN;
-    else if (total_kbytes < 100 * 1024 * 1024)	//流量小于100GB时绘制黄色
+    else if (total_kbytes < 100 * 1024 * 1024)	//Draw yellow when traffic is less than 100GB
         color = TRAFFIC_COLOR_YELLOE;
-    else if (total_kbytes < 1024 * 1024 * 1024)	//流量小于1TB时绘制红色
+    else if (total_kbytes < 1024 * 1024 * 1024)	//Draw red when traffic is less than 1TB
         color = TRAFFIC_COLOR_RED;
-    else		//流量超过1TB时显示深红色
+    else		//Displays dark red when traffic exceeds 1TB
         color = TRAFFIC_COLOR_DARK_RED;
     m_history_list.SetDrawItemRangeData(index, range, color);
 }
@@ -85,10 +85,10 @@ void CHistoryTrafficListDlg::ShowListData()
 {
     m_history_list.DeleteAllItems();
 
-    //显示日视图
+    //Show day view
     if(theApp.m_cfg_data.m_view_type == HistoryTrafficViewType::HV_DAY)
     {
-        //获取历史流量列表中流量的最大值
+        //Get the maximum value of traffic in the historical traffic list
         unsigned __int64 max_traffic{};
         for (const auto& traffic : m_history_traffics)
         {
@@ -140,7 +140,7 @@ void CHistoryTrafficListDlg::ShowListData()
         }
     }
 
-    //显示月/季/年视图
+    //Show month/quarter/year view
     else
     {
         std::vector<ListRowData> list_data;
@@ -153,11 +153,11 @@ void CHistoryTrafficListDlg::ShowListData()
                 date_str.Format(_T("%.4d/"), traffic.year);
                 date_str += CCommon::LoadTextFormat(IDS_WEEK_NUM, { traffic.week() });
             }
-            else if (theApp.m_cfg_data.m_view_type == HistoryTrafficViewType::HV_MONTH)      //月视图
+            else if (theApp.m_cfg_data.m_view_type == HistoryTrafficViewType::HV_MONTH)      //month view
             {
                 date_str.Format(_T("%.4d/%.2d"), traffic.year, traffic.month);
             }
-            else if (theApp.m_cfg_data.m_view_type == HistoryTrafficViewType::HV_QUARTER)   //季视图
+            else if (theApp.m_cfg_data.m_view_type == HistoryTrafficViewType::HV_QUARTER)   //quarter view
             {
                 date_str.Format(_T("%.4d/"), traffic.year);
                 if (traffic.month <= 3)
@@ -169,7 +169,7 @@ void CHistoryTrafficListDlg::ShowListData()
                 else
                     date_str += _T("Q4");
             }
-            else    //年视图
+            else    //year view
             {
                 date_str.Format(_T("%.4d"), traffic.year);
             }
@@ -220,16 +220,16 @@ BEGIN_MESSAGE_MAP(CHistoryTrafficListDlg, CTabDlg)
 END_MESSAGE_MAP()
 
 
-// CHistoryTrafficListDlgDlg 消息处理程序
+// CHistoryTrafficListDlgDlg message handler
 
 
 BOOL CHistoryTrafficListDlg::OnInitDialog()
 {
 	CTabDlg::OnInitDialog();
 
-	// TODO:  在此添加额外的初始化
+	// TODO: Add additional initialization here
 
-	//初始化列表控件
+	//Initialize list control
 	m_history_list.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_LABELTIP);
     std::vector<int> widths;
     CalculateColumeWidth(widths);
@@ -244,7 +244,7 @@ BOOL CHistoryTrafficListDlg::OnInitDialog()
     m_history_list.SetDrawItemRangMargin(theApp.DPI(4));
     m_history_list.SetDrawItemRangInLogScale(theApp.m_cfg_data.m_use_log_scale);
 
-    //初始化控件
+    //Initialize controls
     m_view_type_combo.AddString(CCommon::LoadText(IDS_DAY_VIEW));
     m_view_type_combo.AddString(CCommon::LoadText(IDS_WEEK_VIEW));
     m_view_type_combo.AddString(CCommon::LoadText(IDS_MONTH_VIEW));
@@ -256,30 +256,30 @@ BOOL CHistoryTrafficListDlg::OnInitDialog()
     m_view_scale_combo.AddString(CCommon::LoadText(IDS_LOG_SCALE));
     m_view_scale_combo.SetCurSel(theApp.m_cfg_data.m_use_log_scale ? 1 : 0);
 
-    //显示列表数据
+    //Show list data
     ShowListData();
 
     CCommon::LoadMenuResource(m_menu, IDR_HISTORY_TRAFFIC_MENU);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
-				  // 异常: OCX 属性页应返回 FALSE
+				  // Exception: OCX property page should return FALSE
 }
 
 
 BOOL CHistoryTrafficListDlg::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 {
-	// TODO: 在此添加专用代码和/或调用基类
+	// TODO: Add specialized code here and/or call the base class
 
 	LPNMHDR lpnmhdr = (LPNMHDR)lParam;
 	if (lpnmhdr->code == NM_RCLICK)
 	{
 		CPoint point;
-		GetCursorPos(&point);//获得光标的位置
-		m_history_list.ScreenToClient(&point);//获得list控件在窗口上的坐标
+		GetCursorPos(&point);//Get the cursor position
+		m_history_list.ScreenToClient(&point);//Get the coordinates of the list control on the window
 		CWnd* pWnd = m_history_list.ChildWindowFromPoint(point);
-		CHeaderCtrl* pHeader = m_history_list.GetHeaderCtrl();//获取列表视图控件的标题控件
+		CHeaderCtrl* pHeader = m_history_list.GetHeaderCtrl();//Get the title control of the list view control
 		CRect item_rect;
-		pHeader->GetItemRect(4, item_rect);		//获取列表标题控件第2列的矩形区域，只有光标在第4列点击时才弹出右键菜单
+		pHeader->GetItemRect(4, item_rect);		//Get the rectangular area in column 2 of the list title control. The right-click menu will pop up only when the cursor is clicked in column 4.
 		if (pWnd && (pWnd->GetSafeHwnd() == pHeader->GetSafeHwnd()) && item_rect.PtInRect(point))
 		{
 			HDHITTESTINFO info{};
@@ -298,7 +298,7 @@ void CHistoryTrafficListDlg::OnInitMenu(CMenu* pMenu)
 {
 	CTabDlg::OnInitMenu(pMenu);
 
-	// TODO: 在此处添加消息处理程序代码
+	// TODO: add message handler code here
 	if (theApp.m_cfg_data.m_use_log_scale)
 		pMenu->CheckMenuRadioItem(ID_USE_LINEAR_SCALE, ID_USE_LOG_SCALE, ID_USE_LOG_SCALE, MF_BYCOMMAND | MF_CHECKED);
 	else
@@ -308,7 +308,7 @@ void CHistoryTrafficListDlg::OnInitMenu(CMenu* pMenu)
 
 void CHistoryTrafficListDlg::OnUseLinearScale()
 {
-	// TODO: 在此添加命令处理程序代码
+	// TODO: Add command handler code here
 	theApp.m_cfg_data.m_use_log_scale = false;
 	m_history_list.SetDrawItemRangInLogScale(theApp.m_cfg_data.m_use_log_scale);
 }
@@ -316,7 +316,7 @@ void CHistoryTrafficListDlg::OnUseLinearScale()
 
 void CHistoryTrafficListDlg::OnUseLogScale()
 {
-	// TODO: 在此添加命令处理程序代码
+	// TODO: Add command handler code here
 	theApp.m_cfg_data.m_use_log_scale = true;
 	m_history_list.SetDrawItemRangInLogScale(theApp.m_cfg_data.m_use_log_scale);
 }
@@ -326,7 +326,7 @@ void CHistoryTrafficListDlg::OnSize(UINT nType, int cx, int cy)
 {
     CTabDlg::OnSize(nType, cx, cy);
 
-    // TODO: 在此处添加消息处理程序代码
+    // TODO: add message handler code here
     if (nType != SIZE_MINIMIZED)
     {
         std::vector<int> widths;
@@ -343,7 +343,7 @@ void CHistoryTrafficListDlg::OnSize(UINT nType, int cx, int cy)
 
 void CHistoryTrafficListDlg::OnCbnSelchangeViewTypeCombo()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     theApp.m_cfg_data.m_view_type = static_cast<HistoryTrafficViewType>(m_view_type_combo.GetCurSel());
     ShowListData();
 }
@@ -351,7 +351,7 @@ void CHistoryTrafficListDlg::OnCbnSelchangeViewTypeCombo()
 
 void CHistoryTrafficListDlg::OnCbnSelchangeViewScaleCombo()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     theApp.m_cfg_data.m_use_log_scale = (m_view_scale_combo.GetCurSel() != 0);
     m_history_list.SetDrawItemRangInLogScale(theApp.m_cfg_data.m_use_log_scale);
 }

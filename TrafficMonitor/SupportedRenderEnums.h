@@ -17,15 +17,15 @@ public:
     void EnableDefaultOnly() noexcept;
     void DisableD2D1() noexcept;
     /**
-     * @brief 根据D2D1 > D2D1_WITH_DCOMPOSITION > DEFAULT的顺序返回枚举
+     * @brief Returns the enumeration in the order of D2D1 > D2D1_WITH_DCOMPOSITION > DEFAULT
      *
      * @return DrawCommonHelper::RenderType
      */
     auto GetAutoFitEnum() const noexcept
         -> DrawCommonHelper::RenderType;
     /**
-     * @brief （已弃用）
-        根据D2D1_WITH_DCOMPOSITION > D2D1 > DEFAULT的顺序返回枚举
+     * @brief (deprecated)
+        Return enumerations in the order D2D1_WITH_DCOMPOSITION > D2D1 > DEFAULT
      *
      * @return DrawCommonHelper::RenderType
      */

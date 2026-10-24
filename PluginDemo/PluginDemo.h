@@ -16,7 +16,7 @@ public:
     HICON GetIcon(UINT id);
     int DPI(int x, ITrafficMonitor::DPIType type = ITrafficMonitor::DPI_MAIN_WND);
 
-    // 通过 ITMPlugin 继承
+    // Inherited via ITMPlugin
     virtual IPluginItem* GetItem(int index) override;
     virtual void DataRequired() override;
     virtual const wchar_t* GetInfo(PluginInfoIndex index) override;

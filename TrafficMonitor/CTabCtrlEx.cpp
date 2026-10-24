@@ -1,4 +1,4 @@
-﻿// CTabCtrlEx.cpp: 实现文件
+﻿// CTabCtrlEx.cpp: implementation file
 //
 
 #include "stdafx.h"
@@ -93,14 +93,14 @@ END_MESSAGE_MAP()
 
 
 
-// CTabCtrlEx 消息处理程序
+// CTabCtrlEx message handler
 
 
 
 
 void CTabCtrlEx::OnTcnSelchange(NMHDR *pNMHDR, LRESULT *pResult)
 {
-	// TODO: 在此添加控件通知处理程序代码
+	// TODO: Add control notification handler code here
 	int tab_selected = GetCurSel();
 	SetCurTab(tab_selected);
 
@@ -110,9 +110,9 @@ void CTabCtrlEx::OnTcnSelchange(NMHDR *pNMHDR, LRESULT *pResult)
 
 void CTabCtrlEx::PreSubclassWindow()
 {
-	// TODO: 在此添加专用代码和/或调用基类
+	// TODO: Add specialized code here and/or call the base class
 
-	//计算子窗口的位置
+	//Calculate the position of the child window
     CalSubWindowSize();
 
 	CTabCtrl::PreSubclassWindow();
@@ -123,6 +123,6 @@ void CTabCtrlEx::OnSize(UINT nType, int cx, int cy)
 {
     CTabCtrl::OnSize(nType, cx, cy);
 
-    // TODO: 在此处添加消息处理程序代码
+    // TODO: add message handler code here
     AdjustTabWindowSize();
 }

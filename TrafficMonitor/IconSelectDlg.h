@@ -3,14 +3,14 @@
 #include "PictureStatic.h"
 #include "BaseDialog.h"
 
-// CIconSelectDlg 对话框
+// CIconSelectDlg dialog box
 
 class CIconSelectDlg : public CBaseDialog
 {
     DECLARE_DYNAMIC(CIconSelectDlg)
 
 public:
-    CIconSelectDlg(int icon_selected, CWnd* pParent = NULL);   // 标准构造函数
+    CIconSelectDlg(int icon_selected, CWnd* pParent = NULL);   // Standard constructor
     virtual ~CIconSelectDlg();
 
     int GetIconSelected() const;
@@ -18,15 +18,15 @@ public:
     void SetAutoAdaptNotifyIcon(bool val);
     bool AutoAdaptNotifyIcon() const;
 
-    // 对话框数据
+    // Dialog data
 #ifdef AFX_DESIGN_TIME
     enum { IDD = IDD_ICON_SELECT_DIALOG };
 #endif
 
-#define PREVIEW_WIDTH theApp.DPI(200)		//预览图的宽高
+#define PREVIEW_WIDTH theApp.DPI(200)		//The width and height of the preview image
 #define PREVIEW_HEIGHT theApp.DPI(40)
 
-#define ICON_X theApp.DPI(46)		//预览图中图标的位置
+#define ICON_X theApp.DPI(46)		//The position of the icon in the preview image
 #define ICON_Y theApp.DPI(12)
 
 protected:
@@ -39,7 +39,7 @@ protected:
     bool m_atuo_adapt_notify_icon;
 
 protected:
-    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
     virtual CString GetDialogName() const override;
     virtual bool InitializeControls() override;
 

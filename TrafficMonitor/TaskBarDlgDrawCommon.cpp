@@ -10,7 +10,7 @@
 
 using Microsoft::WRL::ComPtr;
 
-// 其实可以把Verify方法作为构造函数
+// In fact, you can use the Verify method as a constructor
 template <class T, T FAILED_VALUE>
 struct ReturnValueVerifier
 {
@@ -63,7 +63,7 @@ using Win32HGDIOBJVerifier = ReturnValueVerifier<HGDIOBJ, nullptr>;
 
 void LogWin32ApiErrorMessage(DWORD error_code) noexcept
 {
-    // 写入系统格式化后的错误信息
+    // Write error message after system formatting
     if (error_code != 0)
     {
         LPTSTR fomat_error = nullptr;
@@ -140,7 +140,7 @@ void DrawCommonHelper::DefaultD2DDrawCommonExceptionHandler::HandleErrorCountInc
     if (m_error_count > DrawCommonHelper::MAX_D2D1_RENDER_ERROR_COUNT)
     {
         m_error_count = 0;
-        // 禁用D2D绘图
+        // Disable D2D drawing
         theApp.m_taskbar_data.disable_d2d = true;
         ::MessageBox(NULL, CCommon::LoadText(IDS_D2DDRAWCOMMON_ERROR_TIP), NULL, MB_OK | MB_ICONWARNING);
     }
@@ -1165,7 +1165,7 @@ namespace TaskBarDlgUser32DrawTextHook
             ::BITMAPINFO result;
             memset(&result, 0, sizeof(BITMAPINFO));
             result.bmiHeader.biSize = sizeof(result.bmiHeader);
-            // 保证是自上而下
+            // Guaranteed to be top-down
             result.bmiHeader.biWidth = static_cast<LONG>(width);
             result.bmiHeader.biHeight = -static_cast<LONG>(height);
             result.bmiHeader.biPlanes = 1;
@@ -1308,7 +1308,7 @@ namespace TaskBarDlgUser32DrawTextHook
                 {
                     return 0;
                 }
-                // 切换显示器时可能引发越界访问（未证实）
+                // Possible out-of-bounds access when switching monitors (unconfirmed)
                 // __try
                 for (std::size_t y = 0; y < height; ++y)
                 {
@@ -1499,7 +1499,7 @@ auto CTaskBarDlgDrawCommon::Convert(CRect rect) noexcept
 
 CTaskBarDlgDrawCommon::~CTaskBarDlgDrawCommon()
 {
-    // Create的时候抛异常了
+    // An exception was thrown when creating
     if (!m_p_window_support)
     {
         return;
@@ -1543,7 +1543,7 @@ CTaskBarDlgDrawCommon::~CTaskBarDlgDrawCommon()
                 TRAFFICMONITOR_ERROR_STR("Create ID2D1Bitmap from IDXGISurface1 failed."));
             m_p_device_context->DrawBitmap(p_gdi_interop_bitmap.Get());
         }
-        // ! 注意：保证正常时EndDraw在不起用插件时仍然可以被调用，否则会导致D2D Begin/End调用不匹配，已经是第二次出错了。
+        // ! Note: Ensure that EndDraw can still be called when the plug-in is not used normally, otherwise it will cause a mismatch in D2D Begin/End calls. This is the second time an error has occurred.
         ThrowIfFailed<CD2D1Exception>(
             m_p_device_context->EndDraw(),
             TRAFFICMONITOR_ERROR_STR("Call ID2D1RenderTarget::EndDraw() failed."));
@@ -1569,11 +1569,11 @@ void CTaskBarDlgDrawCommon::DrawWindowText(CRect rect, LPCTSTR lpszString, COLOR
     auto length = ::wcslen(lpszString);
     auto length_u = static_cast<UINT>(length);
     auto p_text_format = m_p_window_support->GetTextFormat();
-    // 备份状态
+    // Backup status
     auto old_vertical_align = p_text_format->GetParagraphAlignment();
     auto old_horizontal_align = p_text_format->GetTextAlignment();
     auto old_word_warpping = p_text_format->GetWordWrapping();
-    // GDI版本的DrawWindowText文字对齐处理没看明白
+    // I don’t understand the text alignment processing of the GDI version of DrawWindowText
     if (multi_line)
     {
         // DT_EDITCONTROL | DT_WORDBREAK | DT_NOPREFIX
@@ -1583,7 +1583,7 @@ void CTaskBarDlgDrawCommon::DrawWindowText(CRect rect, LPCTSTR lpszString, COLOR
     {
         // DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX
         p_text_format->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);            // DT_SINGLELINE
-        p_text_format->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER); // 此处仅设置竖直方向的中间对齐
+        p_text_format->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER); // Only vertical center alignment is set here
     }
     switch (align)
     {
@@ -1628,7 +1628,7 @@ void CTaskBarDlgDrawCommon::DrawWindowText(CRect rect, LPCTSTR lpszString, COLOR
     }
 
     m_p_d2d1_device_context_support->SetForeColor(color, alpha);
-    D2D1_DRAW_TEXT_OPTIONS options = D2D1_DRAW_TEXT_OPTIONS_NO_SNAP | D2D1_DRAW_TEXT_OPTIONS_CLIP; // 不允许文字超出边界
+    D2D1_DRAW_TEXT_OPTIONS options = D2D1_DRAW_TEXT_OPTIONS_NO_SNAP | D2D1_DRAW_TEXT_OPTIONS_CLIP; // Don't allow text to go outside the boundaries
     if (theApp.m_taskbar_data.enable_colorful_emoji)
         options |= D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT;
     m_p_device_context->DrawTextLayout(
@@ -1636,7 +1636,7 @@ void CTaskBarDlgDrawCommon::DrawWindowText(CRect rect, LPCTSTR lpszString, COLOR
         p_text_layout.Get(),
         m_p_d2d1_device_context_support->GetRawForeSolidColorBruch(),
         options);
-    // 恢复状态
+    // restore state
     p_text_format->SetParagraphAlignment(old_vertical_align);
     p_text_format->SetTextAlignment(old_horizontal_align);
     p_text_format->SetWordWrapping(old_word_warpping);
@@ -1663,13 +1663,13 @@ void CTaskBarDlgDrawCommon::FillRect(CRect rect, COLORREF color, BYTE alpha)
 
 void CTaskBarDlgDrawCommon::DrawRectOutLine(CRect rect, COLORREF color, int width, bool dot_line, BYTE alpha, int radius)
 {
-    // 缩进矩形，使边框居中绘制
+    // Indent the rectangle so that the border is drawn centered
     rect.DeflateRect(width / 2, width / 2);
     auto rect_f = Convert(rect);
     m_p_d2d1_device_context_support->SetForeColor(color, alpha);
     auto width_f = static_cast<float>(width);
 
-    // 构造圆角矩形结构（半径相等）
+    // Construct a rounded rectangular structure (equal radii)
     D2D1_ROUNDED_RECT rounded_rect = {
         rect_f,
         static_cast<float>(radius),
@@ -1747,19 +1747,19 @@ void CTaskBarDlgDrawCommon::DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSiz
         SetDrawRect(CRect(start_point, draw_size));
 
         auto bitmap_size = p_d2d1_bitmap->GetPixelSize();
-        float bitmap_aspect_ratio, draw_rect_acpect_ratio; // 图像的宽高比、绘制大小的宽高比
+        float bitmap_aspect_ratio, draw_rect_acpect_ratio; // The aspect ratio of the image, the aspect ratio of the draw size
         bitmap_aspect_ratio = static_cast<float>(bitmap_size.width) / static_cast<float>(bitmap_size.height);
         draw_rect_acpect_ratio = static_cast<float>(size.cx) / size.cy;
-        if (bitmap_aspect_ratio > draw_rect_acpect_ratio) // 如果图像的宽高比大于绘制区域的宽高比，则需要裁剪两边的图像
+        if (bitmap_aspect_ratio > draw_rect_acpect_ratio) // If the aspect ratio of the image is greater than the aspect ratio of the drawing area, you need to crop the image on both sides
         {
-            int image_width; // 按比例缩放后的宽度
+            int image_width; // scaled width
             image_width = bitmap_size.width * draw_size.cy / bitmap_size.height;
             start_point.x -= ((image_width - draw_size.cx) / 2);
             draw_size.cx = image_width;
         }
         else
         {
-            int image_height; // 按比例缩放后的高度
+            int image_height; // scaled height
             image_height = bitmap_size.height * draw_size.cx / bitmap_size.width;
             start_point.y -= ((image_height - draw_size.cy) / 2);
             draw_size.cy = image_height;
@@ -1770,10 +1770,10 @@ void CTaskBarDlgDrawCommon::DrawBitmap(HBITMAP hbitmap, CPoint start_point, CSiz
     case StretchMode::FIT:
     {
         auto draw_size = p_d2d1_bitmap->GetPixelSize();
-        // 图像宽高比
+        // Image aspect ratio
         float bitmap_aspect_ratio = static_cast<float>(draw_size.width) / static_cast<float>(draw_size.height);
         float draw_rect_acpect_ratio = static_cast<float>(size.cx) / static_cast<float>(size.cy);
-        if (bitmap_aspect_ratio > draw_rect_acpect_ratio) // 如果图像的宽高比大于绘制区域的宽高比
+        if (bitmap_aspect_ratio > draw_rect_acpect_ratio) // If the aspect ratio of the image is greater than the aspect ratio of the drawing area
         {
             draw_size.height = draw_size.height * size.cx / draw_size.width;
             draw_size.width = size.cx;
@@ -1801,7 +1801,7 @@ void CTaskBarDlgDrawCommon::DrawIcon(HICON hIcon, CPoint start_point, CSize size
 {
     auto p_d2d1_bitmap = sp_icon_cache->GetCachedIcon(hIcon);
     if (!p_d2d1_bitmap) {
-        // 如果缓存获取失败（极少发生），直接创建
+        // If the cache acquisition fails (rarely happens), create it directly
         p_d2d1_bitmap = ResourceBitmapCreator<HICON>::Create(m_p_device_context, hIcon);
     }
     D2D1_RECT_F draw_rect_f{};
@@ -1847,7 +1847,7 @@ CTaskBarDlgDrawBuffer::CTaskBarDlgDrawBuffer(
 
 CTaskBarDlgDrawBuffer::~CTaskBarDlgDrawBuffer()
 {
-    // 类在初始化之前就被抛异常了
+    // An exception was thrown before the class was initialized
     if (!m_p_gdi_surface)
     {
         return;
@@ -1865,7 +1865,7 @@ CTaskBarDlgDrawBuffer::~CTaskBarDlgDrawBuffer()
         ::memset(&update_window_info, 0, sizeof(update_window_info));
         update_window_info.cbSize = sizeof(update_window_info);
         // update_window_info.hdcDst = NULL;
-        // update_window_info.pptDst = NULL; 不更新窗口位置
+        // update_window_info.pptDst = NULL; Do not update window position
         update_window_info.psize = &m_size;
         update_window_info.hdcSrc = gdi_dc;
         update_window_info.pptSrc = &start_location;

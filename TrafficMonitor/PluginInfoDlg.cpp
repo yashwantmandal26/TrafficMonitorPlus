@@ -1,4 +1,4 @@
-﻿// PluginInfoDlg.cpp: 实现文件
+﻿// PluginInfoDlg.cpp: implementation file
 //
 
 #include "stdafx.h"
@@ -7,7 +7,7 @@
 #include "FilePathHelper.h"
 
 
-// CPluginInfoDlg 对话框
+// CPluginInfoDlg dialog box
 
 IMPLEMENT_DYNAMIC(CPluginInfoDlg, CBaseDialog)
 
@@ -64,7 +64,7 @@ void CPluginInfoDlg::ShowInfo()
         m_info_list.SetItemText(RI_API_VERSION, 1, api_version.c_str());
     }
 
-    //显示当前选择指示
+    //Show current selection indication
     CString str;
     str.Format(_T("%d/%d"), m_cur_index + 1, theApp.m_plugins.GetPlugins().size());
     SetDlgItemText(IDC_INDEX_STATIC, str);
@@ -80,18 +80,18 @@ BEGIN_MESSAGE_MAP(CPluginInfoDlg, CBaseDialog)
 END_MESSAGE_MAP()
 
 
-// CPluginInfoDlg 消息处理程序
+// CPluginInfoDlg message handler
 
 
 BOOL CPluginInfoDlg::OnInitDialog()
 {
     CBaseDialog::OnInitDialog();
 
-    // TODO:  在此添加额外的初始化
+    // TODO: Add additional initialization here
     SetWindowText(CCommon::LoadText(IDS_PLUGIN_INFO));
-    SetIcon(theApp.GetMenuIcon(IDI_PLUGINS), FALSE);		// 设置小图标
+    SetIcon(theApp.GetMenuIcon(IDI_PLUGINS), FALSE);		// Set small icon
 
-    //初始化列表控件
+    //Initialize list control
     CRect rect;
     m_info_list.GetClientRect(rect);
     m_info_list.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_LABELTIP);
@@ -101,21 +101,21 @@ BOOL CPluginInfoDlg::OnInitDialog()
     m_info_list.InsertColumn(0, CCommon::LoadText(IDS_ITEM), LVCFMT_LEFT, width0);
     m_info_list.InsertColumn(1, CCommon::LoadText(IDS_VALUE), LVCFMT_LEFT, width1);
 
-    //向列表中插入行
+    //Insert row into list
     for (int i = 0; i < RI_MAX; i++)
     {
         m_info_list.InsertItem(i, GetRowName(i));
     }
 
-    //显示列表中的信息
+    //Show information in list
     ShowInfo();
 
     m_info_list.GetToolTips()->SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
 
-    CCommon::LoadMenuResource(m_menu, IDR_INFO_MENU); //装载右键菜单
+    CCommon::LoadMenuResource(m_menu, IDR_INFO_MENU); //Load right-click menu
 
     return TRUE;  // return TRUE unless you set the focus to a control
-                  // 异常: OCX 属性页应返回 FALSE
+                  // Exception: OCX property page should return FALSE
 }
 
 CString CPluginInfoDlg::GetDialogName() const
@@ -132,19 +132,19 @@ void CPluginInfoDlg::OnCopyText()
 void CPluginInfoDlg::OnNMRClickInfoList1(NMHDR* pNMHDR, LRESULT* pResult)
 {
     LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
 
-    //获取鼠标点击处的文本
+    //Get the text at the mouse click
     int item, sub_item;
     item = pNMItemActivate->iItem;
     sub_item = pNMItemActivate->iSubItem;
     m_selected_string = m_info_list.GetItemText(item, sub_item);
 
-    //弹出右键菜单
-    CMenu* pContextMenu = m_menu.GetSubMenu(0);	//获取第一个弹出菜单
-    CPoint point1;	//定义一个用于确定光标位置的位置
-    GetCursorPos(&point1);	//获取当前光标的位置，以便使得菜单可以跟随光标
-    pContextMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //在指定位置显示弹出菜单
+    //Pop up right-click menu
+    CMenu* pContextMenu = m_menu.GetSubMenu(0);	//Get the first popup menu
+    CPoint point1;	//Define a position used to determine the cursor position
+    GetCursorPos(&point1);	//Get the current cursor position so that the menu can follow the cursor
+    pContextMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this); //Show popup menu at specified location
 
     *pResult = 0;
 }
@@ -189,7 +189,7 @@ BOOL CPluginInfoDlg::PreTranslateMessage(MSG* pMsg)
 
 BOOL CPluginInfoDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
-    //通过鼠标滚轮翻页
+    //Turn pages with mouse wheel
     if (zDelta > 0)
     {
         OnBnClickedPreviousButton();

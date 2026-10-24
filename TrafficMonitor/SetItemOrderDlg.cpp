@@ -1,4 +1,4 @@
-﻿// SetItemOrderDlg.cpp: 实现文件
+﻿// SetItemOrderDlg.cpp: implementation file
 //
 
 #include "stdafx.h"
@@ -7,7 +7,7 @@
 #include "afxdialogex.h"
 
 
-// CSetItemOrderDlg 对话框
+// CSetItemOrderDlg dialog box
 
 IMPLEMENT_DYNAMIC(CSetItemOrderDlg, CBaseDialog)
 
@@ -67,27 +67,27 @@ BEGIN_MESSAGE_MAP(CSetItemOrderDlg, CBaseDialog)
 END_MESSAGE_MAP()
 
 
-// CSetItemOrderDlg 消息处理程序
+// CSetItemOrderDlg message handler
 
 
 BOOL CSetItemOrderDlg::OnInitDialog()
 {
     CBaseDialog::OnInitDialog();
 
-    // TODO:  在此添加额外的初始化
-    SetIcon(theApp.GetMenuIcon(IDI_ITEM), FALSE);		// 设置小图标
+    // TODO: Add additional initialization here
+    SetIcon(theApp.GetMenuIcon(IDI_ITEM), FALSE);		// Set small icon
 
     m_list_ctrl.SetItemHeight(0, DPI(20));
     EnableCtrl(-1);
     ShowItem();
 
     return TRUE;  // return TRUE unless you set the focus to a control
-                  // 异常: OCX 属性页应返回 FALSE
+                  // Exception: OCX property page should return FALSE
 }
 
 void CSetItemOrderDlg::ShowItem()
 {
-    //向列表中添加项目
+    //Add items to list
     m_list_ctrl.ResetContent();
     m_all_displayed_item = m_item_order.GetAllDisplayItemsWithOrder();
     for (const auto& item : m_all_displayed_item)
@@ -146,7 +146,7 @@ void CSetItemOrderDlg::SaveItemChecked(CommonDisplayItem item, bool checked)
 
 void CSetItemOrderDlg::OnBnClickedMoveUpButton()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     auto& item_list{ m_item_order.GetItemOrder() };
     int cur_index{ m_list_ctrl.GetCurSel() };
     int item_count{ static_cast<int>(item_list.size()) };
@@ -162,7 +162,7 @@ void CSetItemOrderDlg::OnBnClickedMoveUpButton()
 
 void CSetItemOrderDlg::OnBnClickedMoveDownButton()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     auto& item_list{ m_item_order.GetItemOrder() };
     int cur_index{ m_list_ctrl.GetCurSel() };
     int item_count{ static_cast<int>(item_list.size()) };
@@ -178,7 +178,7 @@ void CSetItemOrderDlg::OnBnClickedMoveDownButton()
 
 void CSetItemOrderDlg::OnBnClickedRestoreDefaultButton()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     auto item_list{ m_item_order.GetItemOrder() };
     std::sort(item_list.begin(), item_list.end());
     m_item_order.SetOrder(item_list);
@@ -193,7 +193,7 @@ CString CSetItemOrderDlg::GetDialogName() const
 
 void CSetItemOrderDlg::OnLbnSelchangeList1()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     int cur_index{ m_list_ctrl.GetCurSel() };
     EnableCtrl(cur_index);
 }
@@ -201,7 +201,7 @@ void CSetItemOrderDlg::OnLbnSelchangeList1()
 
 void CSetItemOrderDlg::OnCheckChanged()
 {
-    //当用户点击项目前面的复选框时保存该项目的勾选状态
+    //Save the checked status of the item when the user clicks the checkbox in front of the item
     int cur_index{ m_list_ctrl.GetCurSel() };
     if (cur_index >= 0 && cur_index < static_cast<int>(m_all_displayed_item.size()))
     {
@@ -213,9 +213,9 @@ void CSetItemOrderDlg::OnCheckChanged()
 
 void CSetItemOrderDlg::OnOK()
 {
-    // TODO: 在此添加专用代码和/或调用基类
+    // TODO: Add specialized code here and/or call the base class
 
-    //保存每个项目的勾选状态
+    //Save the check status of each item
     //auto item_list = m_item_order.GetAllDisplayItemsWithOrder();
     //int i = 0;
     //for (; i < static_cast<int>(item_list.size()); i++)

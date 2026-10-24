@@ -1,4 +1,4 @@
-﻿// Win11TaskbarSettingDlg.cpp: 实现文件
+﻿// Win11TaskbarSettingDlg.cpp: implementation file
 //
 
 #include "stdafx.h"
@@ -9,7 +9,7 @@
 #include "WindowsSettingHelper.h"
 
 
-// CWin11TaskbarSettingDlg 对话框
+// CWin11TaskbarSettingDlg dialog box
 
 IMPLEMENT_DYNAMIC(CWin11TaskbarSettingDlg, CBaseDialog)
 
@@ -69,7 +69,7 @@ BEGIN_MESSAGE_MAP(CWin11TaskbarSettingDlg, CBaseDialog)
 END_MESSAGE_MAP()
 
 
-// CWin11TaskbarSettingDlg 消息处理程序
+// CWin11TaskbarSettingDlg message handler
 
 
 BOOL CWin11TaskbarSettingDlg::OnInitDialog()
@@ -90,7 +90,7 @@ BOOL CWin11TaskbarSettingDlg::OnInitDialog()
     //m_widgets_width_edit.EnableWindow(CWindowsSettingHelper::IsTaskbarWidgetsBtnShown());
 
     return TRUE;  // return TRUE unless you set the focus to a control
-    // 异常: OCX 属性页应返回 FALSE
+    // Exception: OCX property page should return FALSE
 }
 
 

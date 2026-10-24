@@ -17,9 +17,9 @@ CTabDlg::~CTabDlg()
 
 BOOL CTabDlg::PreTranslateMessage(MSG* pMsg)
 {
-    // TODO: 在此添加专用代码和/或调用基类
-    //由于这是tab标签中的子对话框，因此用户按回车或ESC后不应该响应当前对话框的IDOK或IDCANCEL，
-    //而应该响应tab标签的父窗口的IDOK或IDCANCEL命令
+    // TODO: Add specialized code here and/or call the base class
+    //Since this is a sub-dialog box in the tab tag, the user should not respond to the IDOK or IDCANCEL of the current dialog box after pressing Enter or ESC.
+    //Instead, it should respond to the IDOK or IDCANCEL command of the tab tag's parent window.
     if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_ESCAPE)
     {
         if (m_pParent != nullptr)
@@ -41,15 +41,15 @@ BOOL CTabDlg::OnInitDialog()
 {
     CBaseDialog::OnInitDialog();
 
-    // TODO:  在此添加额外的初始化
-    //将窗口背景设置成白色
+    // TODO: Add additional initialization here
+    //Set window background to white
     if (theApp.m_win_version.IsWindows11OrLater())
         SetBackgroundColor(RGB(249, 249, 249));
     else
         SetBackgroundColor(RGB(255, 255, 255));
 
     return TRUE;  // return TRUE unless you set the focus to a control
-                  // 异常: OCX 属性页应返回 FALSE
+                  // Exception: OCX property page should return FALSE
 }
 
 CWnd* CTabDlg::GetParentWindow()
@@ -64,30 +64,30 @@ CWnd* CTabDlg::GetParentWindow()
 
 void CTabDlg::SetScrollbarInfo(int nPage, int nMax)
 {
-    // 获取滚动条状态
+    // Get scroll bar status
     SCROLLINFO scrollinfo;
     GetScrollInfo(SB_VERT, &scrollinfo, SIF_ALL);
     if (m_scroll_enable)
-        m_last_pos = scrollinfo.nPos - scrollinfo.nMin;     // 如果已启用滚动则记录当前滚动位置
+        m_last_pos = scrollinfo.nPos - scrollinfo.nMin;     // If scrolling is enabled, record the current scroll position
     else
-        m_scroll_enable = true;                             // 否则启用滚动
+        m_scroll_enable = true;                             // Otherwise enable scrolling
     int reset_pos = m_last_pos;
-    // 父窗口OnSize后的新滚动状态边界检查
+    // New scroll state bounds check after parent window OnSize
     if (nMax < 0) nMax = 0;
     if (m_last_pos > nMax - nPage) m_last_pos = nMax - nPage;
     if (m_last_pos < 0) m_last_pos = 0;
-    // 设置滚动条状态
-    scrollinfo.nMin = 0;                // 设置滚动内容起点在窗口中的pos
-    scrollinfo.nMax = nMax;             // 设置滚动内容终点在窗口中的pos
-    scrollinfo.nPage = nPage;           // 设置实际显示内容区域高度
-    scrollinfo.nPos = m_last_pos;       // 设置当前实际显示内容区域顶端pos
+    // Set scroll bar state
+    scrollinfo.nMin = 0;                // Set the starting point of scrolling content at pos in the window
+    scrollinfo.nMax = nMax;             // Set the end point of the scrolling content to pos in the window
+    scrollinfo.nPage = nPage;           // Set the actual display content area height
+    scrollinfo.nPos = m_last_pos;       // Set the top pos of the currently displayed content area
     SetScrollInfo(SB_VERT, &scrollinfo, SIF_ALL);
-    // 复位滚动
+    // Reset scrolling
     if (reset_pos != 0)
         ScrollWindow(0, reset_pos);
-    // 代替框架做出OnSize的响应 (在SetScrollInfo决定并设置滚动条是否在新状态下显示之后)
-    CBaseDialog::ResizeDynamicLayout(); // 这个方法会无视滚动更新控件位置导致控件错位，在滚动为0时调用避开这个问题
-    // 执行滚动
+    // Instead of the framework responding to OnSize (after SetScrollInfo determines and sets whether the scrollbar is displayed in the new state)
+    CBaseDialog::ResizeDynamicLayout(); // This method will ignore the scrolling and update the position of the control, causing the control to be misaligned. Call it when the scroll is 0 to avoid this problem.
+    // perform scrolling
     if (m_last_pos != 0)
         ScrollWindow(0, -m_last_pos);
 }
@@ -101,23 +101,23 @@ void CTabDlg::ScrollWindowSimple(int step, bool absolute)
     if (step == INT_MIN)
         step = -static_cast<int>(scrollinfo.nPage);
     int offset_diff = scrollinfo.nMax - static_cast<int>(scrollinfo.nPage);
-    if (offset_diff < 0)    //nMax应该总是大于或等于nPage，当nMax等于nPage时没有滚动条
+    if (offset_diff < 0)    //nMax should always be greater than or equal to nPage, there is no scroll bar when nMax is equal to nPage
         offset_diff = 0;
     if (!absolute)
         scrollinfo.nPos -= step;
     else
     {
-        if (step < 0)               // 绝对位置时step为-1表示滚动到底部
+        if (step < 0)               // In absolute position, step is -1, which means scrolling to the bottom.
             step = offset_diff;
-        scrollinfo.nPos = step;     // 此时的stpe为目标绝对位置
-        step = m_last_pos - step;   // 将参数的绝对位置转换为偏移量继续处理
+        scrollinfo.nPos = step;     // At this time, stpe is the target absolute position.
+        step = m_last_pos - step;   // Convert the absolute position of the parameter to an offset to continue processing
     }
-    if (scrollinfo.nPos < scrollinfo.nMin)                                          // 限制nPos不小于最小值nMin
+    if (scrollinfo.nPos < scrollinfo.nMin)                                          // Limit nPos to not be less than the minimum value nMin
     {
         step -= scrollinfo.nMin - scrollinfo.nPos;
         scrollinfo.nPos = scrollinfo.nMin;
     }
-    if (scrollinfo.nPos > offset_diff)     // 限制nPos不大于最大值nMax - nPage
+    if (scrollinfo.nPos > offset_diff)     // Limit nPos to not be greater than the maximum value nMax - nPage
     {
         step += scrollinfo.nPos - offset_diff;
         scrollinfo.nPos = offset_diff;
@@ -150,19 +150,19 @@ END_MESSAGE_MAP()
 
 void CTabDlg::ResizeDynamicLayout()
 {
-    // m_pDynamicLayout->Adjust()会无视窗口滚动更新控件位置
-    // 之前在父窗口OnSize后重置不可靠（进入退出最大化和贴靠时没能正常工作），也没找到检出这两种特殊OnSize的方法
-    // 框架内部调用ResizeDynamicLayout太早，来不及先复位滚动，故覆写此虚方法介入
+    // m_pDynamicLayout->Adjust() will update the control position regardless of window scrolling
+    // Previously, the reset after OnSize of the parent window was unreliable (it did not work properly when entering, exiting, maximizing, or snapping), and I did not find a way to check out these two special OnSizes.
+    // It is too early to call ResizeDynamicLayout inside the framework, and there is no time to reset the scrolling first, so overwrite this virtual method to intervene.
 
-    // 如果已启用滚动那么此处不调用基类使框架的处理无效，改为在父窗口的OnSize后自行调用
+    // If scrolling is enabled, then the base class is not called here to invalidate the processing of the frame. Instead, it is called by itself after the OnSize of the parent window.
     if (!m_scroll_enable)
         CBaseDialog::ResizeDynamicLayout();
 }
 
 void CTabDlg::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
-    // TODO: 在此添加消息处理程序代码和/或调用默认值
-    //参考资料：https://www.cnblogs.com/ranjiewen/p/6013922.html
+    // TODO: Add message handler code and/or call defaults here
+    //Reference: https://www.cnblogs.com/ranjiewen/p/6013922.html
 
     if (m_scroll_enable)
     {
@@ -186,10 +186,10 @@ void CTabDlg::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
         case SB_THUMBTRACK:                     //Drag scroll box to specified position. The current position is provided in nPos
             ScrollWindowSimple(nPos, true);
             break;
-        case SB_TOP:                            // 顶部
+        case SB_TOP:                            // top
             ScrollWindowSimple(0, true);
             break;
-        case SB_BOTTOM:                         // 底部
+        case SB_BOTTOM:                         // bottom
             ScrollWindowSimple(-1, true);
             break;
         case SB_ENDSCROLL:                      //End scroll
@@ -204,7 +204,7 @@ void CTabDlg::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 BOOL CTabDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
-    // TODO: 在此添加消息处理程序代码和/或调用默认值
+    // TODO: Add message handler code and/or call defaults here
     if (m_scroll_enable)
     {
         int step = theApp.DPI(64) * zDelta / 120;
@@ -220,7 +220,7 @@ BOOL CTabDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 
 void CTabDlg::OnOK()
 {
-    // TODO: 在此添加专用代码和/或调用基类
+    // TODO: Add specialized code here and/or call the base class
 
     CBaseDialog::OnOK();
 }
@@ -238,6 +238,6 @@ void CTabDlg::OnSize(UINT nType, int cx, int cy)
 {
     CBaseDialog::OnSize(nType, cx, cy);
 
-    // TODO: 在此处添加消息处理程序代码
-    SetControlMouseWheelEnable(!IsScrollBarVisible());      //如果显示了滚动条，则禁止控件响应鼠标滚轮，此时鼠标滚轮用于滚动窗口
+    // TODO: add message handler code here
+    SetControlMouseWheelEnable(!IsScrollBarVisible());      //If scroll bars are displayed, disables the control from responding to the mouse wheel, which is used to scroll the window
 }

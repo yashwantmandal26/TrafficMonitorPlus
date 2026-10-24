@@ -1,4 +1,4 @@
-﻿// HistoryTrafficCalendarDlg.cpp: 实现文件
+﻿// HistoryTrafficCalendarDlg.cpp: implementation file
 //
 
 #include "stdafx.h"
@@ -8,7 +8,7 @@
 #include "DrawCommonHelper.h"
 
 
-// CHistoryTrafficCalendarDlg 对话框
+// CHistoryTrafficCalendarDlg dialog box
 
 IMPLEMENT_DYNAMIC(CHistoryTrafficCalendarDlg, CTabDlg)
 
@@ -32,7 +32,7 @@ void CHistoryTrafficCalendarDlg::SetDayTraffic()
             history_traffic.year = m_year;
             history_traffic.month = m_month;
             history_traffic.day = m_calendar[i][j].day;
-            //使用二分法查找日历中每一个日期的流量
+            //Find the traffic for each date in the calendar using bisection method
             if (history_traffic.day > 0)
             {
                 if (std::binary_search(m_history_traffics.begin(), m_history_traffics.end(), history_traffic, HistoryTraffic::DateGreater))
@@ -147,21 +147,21 @@ BEGIN_MESSAGE_MAP(CHistoryTrafficCalendarDlg, CTabDlg)
 END_MESSAGE_MAP()
 
 
-// CHistoryTrafficCalendarDlg 消息处理程序
+// CHistoryTrafficCalendarDlg message handler
 
 
 BOOL CHistoryTrafficCalendarDlg::OnInitDialog()
 {
     CTabDlg::OnInitDialog();
 
-    // TODO:  在此添加额外的初始化
+    // TODO: Add additional initialization here
     m_year = m_history_traffics[0].year;
     m_month = m_history_traffics[0].month;
     CCalendarHelper::GetCalendar(m_year, m_month, m_calendar, theApp.m_cfg_data.m_sunday_first);
     SetDayTraffic();
     CalculateMonthTotalTraffic();
 
-    //初始化Combo Box
+    //Initialize Combo Box
     m_year_max = m_history_traffics[0].year;
     m_year_min = m_history_traffics.back().year;
     for (int i{ m_year_max }; i >= m_year_min; i--)
@@ -175,46 +175,46 @@ BOOL CHistoryTrafficCalendarDlg::OnInitDialog()
     }
     m_month_combo.SetCurSel(m_month - 1);
 
-    //初始化鼠标提示
+    //Initialize mouse tips
     m_tool_tips.Create(this, TTS_ALWAYSTIP | TTS_NOPREFIX);
-    m_tool_tips.SetMaxTipWidth(800);        //为鼠标提示设置一个最大宽度，以允许其换行
+    m_tool_tips.SetMaxTipWidth(800);        //Set a maximum width for the mouse tip to allow it to wrap
     m_tool_tips.AddTool(this, _T(""));
 
     CCommon::LoadMenuResource(m_menu, IDR_HISTORY_TRAFFIC_MENU);
 
     return TRUE;  // return TRUE unless you set the focus to a control
-                  // 异常: OCX 属性页应返回 FALSE
+                  // Exception: OCX property page should return FALSE
 }
 
 
 void CHistoryTrafficCalendarDlg::OnPaint()
 {
     CPaintDC dc(this); // device context for painting
-                       // TODO: 在此处添加消息处理程序代码
-                       // 不为绘图消息调用 CTabDlg::OnPaint()
+                       // TODO: add message handler code here
+                       // CTabDlg::OnPaint() is not called for drawing messages
     CRect wndRect;
     GetWindowRect(wndRect);
-    const int width = theApp.DPI(40);       //日历中每一个格子的宽度
-    const int height = theApp.DPI(30);      //日历中第一个格子的高度
+    const int width = theApp.DPI(40);       //The width of each grid in the calendar
+    const int height = theApp.DPI(30);      //The height of the first grid in the calendar
     m_draw_rect.left = m_start_x;
     m_draw_rect.top = m_start_y;
     //m_draw_rect.right = m_draw_rect.left + (CALENDAR_WIDTH*width);
     m_draw_rect.right = wndRect.Width() - m_start_x;
     m_draw_rect.bottom = m_draw_rect.top + ((CALENDAR_HEIGHT + 2) * height) + theApp.DPI(20);
 
-    //使用双缓冲绘图
+    //Drawing using double buffering
     CDrawDoubleBuffer draw_double_buffer(&dc, m_draw_rect);
 
-    //绘图
+    //Drawing
     CDrawCommon draw;
     draw.Create(draw_double_buffer.GetMemDC(), this);
-    draw.FillRect(CRect(0, 0, m_draw_rect.Width(), m_draw_rect.Height()), RGB(255, 255, 255));      //填充白色背景色
+    draw.FillRect(CRect(0, 0, m_draw_rect.Width(), m_draw_rect.Height()), RGB(255, 255, 255));      //Fill white background color
     CRect rect{};
     rect.left = 0;
     rect.top = 0;
     rect.right = rect.left + width;
     rect.bottom = rect.top + height;
-    //画星期的行
+    //Draw lines of the week
     for (int i{}; i < CALENDAR_WIDTH; i++)
     {
         rect.MoveToX(i * width);
@@ -229,18 +229,18 @@ void CHistoryTrafficCalendarDlg::OnPaint()
         draw.DrawWindowText(rect, str, RGB(255, 255, 255), IDrawCommon::Alignment::CENTER, true);
     }
 
-    //绘制日历
+    //draw calendar
     for (int i{}; i < CALENDAR_HEIGHT; i++)
     {
         for (int j{}; j < CALENDAR_WIDTH; j++)
         {
-            //设置日历中每一天的矩形的位置
+            //Set the position of the rectangle for each day in the calendar
             rect.MoveToXY(j * width, height + theApp.DPI(2) + i * height);
-            //保存矩形的位置
+            //Save the position of the rectangle
             m_calendar[i][j].rect = rect;
-            //绘制日期的数据
-            //绘制格子的背景颜色
-            if (IsWeekend(j))       //是周末时
+            //Plot date data
+            //Draw the background color of the grid
+            if (IsWeekend(j))       //It's the weekend
             {
                 if ((i + j) % 2 == 0)
                     draw.SetBackColor(RGB(250, 234, 234));
@@ -255,7 +255,7 @@ void CHistoryTrafficCalendarDlg::OnPaint()
                     draw.SetBackColor(RGB(236, 246, 254));
             }
             draw.FillRectWithBackColor(rect);
-            //绘制格子上的日期的数字
+            //Draw the numbers of the date on the grid
             CRect day_rect{ rect };
             day_rect.bottom -= (rect.Height() / 2);
             COLORREF text_color;
@@ -265,7 +265,7 @@ void CHistoryTrafficCalendarDlg::OnPaint()
                 text_color = RGB(0, 57, 107);
             if (m_calendar[i][j].day != 0)
                 draw.DrawWindowText(day_rect, CCommon::IntToString(m_calendar[i][j].day), text_color, IDrawCommon::Alignment::CENTER, true);
-            //在今天的日期上画一个矩形框
+            //Draw a rectangular box around today's date
             COLORREF frame_color;
             if (IsWeekend(j))
                 frame_color = RGB(218, 91, 91);
@@ -274,17 +274,17 @@ void CHistoryTrafficCalendarDlg::OnPaint()
             if (m_year == m_history_traffics[0].year && m_month == m_history_traffics[0].month && m_calendar[i][j].day == m_history_traffics[0].day)
                 draw.DrawRectOutLine(rect, frame_color, theApp.DPI(2));
 
-            //绘制指示流量大小的矩形
+            //Draw a rectangle indicating the size of the flow
             COLORREF color;
-            if (m_calendar[i][j].traffic() < 1024 * 1024)       //流量小于1GB时绘制蓝色
+            if (m_calendar[i][j].traffic() < 1024 * 1024)       //Draw blue when traffic is less than 1GB
                 color = TRAFFIC_COLOR_BLUE;
-            else if (m_calendar[i][j].traffic() < 10 * 1024 * 1024) //流量小于10GB时绘制绿色
+            else if (m_calendar[i][j].traffic() < 10 * 1024 * 1024) //Draw green when traffic is less than 10GB
                 color = TRAFFIC_COLOR_GREEN;
-            else if (m_calendar[i][j].traffic() < 100 * 1024 * 1024)    //流量小于100GB时绘制黄色
+            else if (m_calendar[i][j].traffic() < 100 * 1024 * 1024)    //Draw yellow when traffic is less than 100GB
                 color = TRAFFIC_COLOR_YELLOE;
-            else if (m_calendar[i][j].traffic() < 1024 * 1024 * 1024)   //流量小于1TB时绘制红色
+            else if (m_calendar[i][j].traffic() < 1024 * 1024 * 1024)   //Draw red when traffic is less than 1TB
                 color = TRAFFIC_COLOR_RED;
-            else        //流量超过1TB时显示深红色
+            else        //Displays dark red when traffic exceeds 1TB
                 color = TRAFFIC_COLOR_DARK_RED;
             if (m_calendar[i][j].traffic() > 0)
             {
@@ -299,7 +299,7 @@ void CHistoryTrafficCalendarDlg::OnPaint()
     }
 
     const COLORREF text_color{ RGB(0, 57, 107) };
-    //画当前月总流量
+    //Draw the total traffic of the current month
     CString info;
     info.Format(_T("%s %s (%s: %s, %s: %s)"), CCommon::LoadText(IDS_CURRENT_MONTH_TOTAL_TRAFFIC),
         CCommon::KBytesToString(m_month_total_upload + m_month_total_download),
@@ -314,7 +314,7 @@ void CHistoryTrafficCalendarDlg::OnPaint()
     draw.SetBackColor(RGB(255, 255, 255));
     draw.DrawWindowText(info_rect, info, text_color, IDrawCommon::Alignment::LEFT, true, true);
 
-    //画图例
+    //Draw a legend
     CRect rc_legend{ info_rect };
     rc_legend.MoveToXY(CALENDAR_WIDTH * width + theApp.DPI(32), theApp.DPI(16));
     rc_legend.right = m_draw_rect.Width();
@@ -329,25 +329,25 @@ void CHistoryTrafficCalendarDlg::OnPaint()
     rc_legend_box.bottom = rc_legend_box.top + box_side;
     rc_legend_box.right = rc_legend_box.left + box_side;
     rc_legend.left = rc_legend_box.right + theApp.DPI(4);
-    //蓝色图例
+    //blue legend
     draw.FillRect(rc_legend_box, TRAFFIC_COLOR_BLUE);
     draw.DrawWindowText(rc_legend, _T("0~1GB"), text_color);
-    //绿色图例
+    //green legend
     rc_legend.MoveToY(rc_legend.bottom + line_gap);
     rc_legend_box.MoveToY(rc_legend.top + (rc_legend.Height() - box_side) / 2);
     draw.FillRect(rc_legend_box, TRAFFIC_COLOR_GREEN);
     draw.DrawWindowText(rc_legend, _T("1GB~10GB"), text_color);
-    //黄色图例
+    //yellow legend
     rc_legend.MoveToY(rc_legend.bottom + line_gap);
     rc_legend_box.MoveToY(rc_legend.top + (rc_legend.Height() - box_side) / 2);
     draw.FillRect(rc_legend_box, TRAFFIC_COLOR_YELLOE);
     draw.DrawWindowText(rc_legend, _T("10GB~100GB"), text_color);
-    //红色图例
+    //red legend
     rc_legend.MoveToY(rc_legend.bottom + line_gap);
     rc_legend_box.MoveToY(rc_legend.top + (rc_legend.Height() - box_side) / 2);
     draw.FillRect(rc_legend_box, TRAFFIC_COLOR_RED);
     draw.DrawWindowText(rc_legend, _T("100GB~1TB"), text_color);
-    //深红色图例
+    //Dark red legend
     rc_legend.MoveToY(rc_legend.bottom + line_gap);
     rc_legend_box.MoveToY(rc_legend.top + (rc_legend.Height() - box_side) / 2);
     draw.FillRect(rc_legend_box, TRAFFIC_COLOR_DARK_RED);
@@ -357,7 +357,7 @@ void CHistoryTrafficCalendarDlg::OnPaint()
 
 void CHistoryTrafficCalendarDlg::OnCbnSelchangeYearCombo()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     int index = m_year_combo.GetCurSel();
     CString str;
     m_year_combo.GetLBText(index, str);
@@ -368,7 +368,7 @@ void CHistoryTrafficCalendarDlg::OnCbnSelchangeYearCombo()
 
 void CHistoryTrafficCalendarDlg::OnCbnSelchangeMonthCombo()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     m_month = m_month_combo.GetCurSel() + 1;
     MonthSelectChanged();
 }
@@ -376,11 +376,11 @@ void CHistoryTrafficCalendarDlg::OnCbnSelchangeMonthCombo()
 
 void CHistoryTrafficCalendarDlg::OnMouseMove(UINT nFlags, CPoint point)
 {
-    // TODO: 在此添加消息处理程序代码和/或调用默认值
-    int tip_day{};      //要显示鼠标提示的日期
+    // TODO: Add message handler code and/or call defaults here
+    int tip_day{};      //The date to display the mouse tip
     DayTraffic tip_traffic{};
     static int last_tip_day{};
-    //查找鼠标指针在哪个日期的矩形内
+    //Find which date the mouse pointer is within the rectangle
     for (int i{}; i < CALENDAR_HEIGHT; i++)
     {
         for (int j{}; j < CALENDAR_WIDTH; j++)
@@ -428,7 +428,7 @@ void CHistoryTrafficCalendarDlg::OnMouseMove(UINT nFlags, CPoint point)
 
 BOOL CHistoryTrafficCalendarDlg::PreTranslateMessage(MSG* pMsg)
 {
-    // TODO: 在此添加专用代码和/或调用基类
+    // TODO: Add specialized code here and/or call the base class
     if (m_tool_tips.GetSafeHwnd() != 0)
     {
         m_tool_tips.RelayEvent(pMsg);
@@ -454,7 +454,7 @@ BOOL CHistoryTrafficCalendarDlg::PreTranslateMessage(MSG* pMsg)
 
 void CHistoryTrafficCalendarDlg::OnBnClickedPreviousButton()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     if (m_year == m_year_min && m_month == 1)
         return;
     m_month--;
@@ -470,7 +470,7 @@ void CHistoryTrafficCalendarDlg::OnBnClickedPreviousButton()
 
 void CHistoryTrafficCalendarDlg::OnBnClickedNextButton()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     if (m_year == m_year_max && m_month == 12)
         return;
     m_month++;
@@ -486,8 +486,8 @@ void CHistoryTrafficCalendarDlg::OnBnClickedNextButton()
 
 BOOL CHistoryTrafficCalendarDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
-    // TODO: 在此添加消息处理程序代码和/或调用默认值
-    //通过鼠标滚轮翻页
+    // TODO: Add message handler code and/or call defaults here
+    //Turn pages with mouse wheel
     if (zDelta > 0)
     {
         OnBnClickedPreviousButton();
@@ -503,7 +503,7 @@ BOOL CHistoryTrafficCalendarDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint 
 
 void CHistoryTrafficCalendarDlg::OnBnClickedMenuButton()
 {
-    // TODO: 在此添加控件通知处理程序代码
+    // TODO: Add control notification handler code here
     CWnd* pBtn = GetDlgItem(IDC_MENU_BUTTON);
     if (pBtn != nullptr)
     {
@@ -523,7 +523,7 @@ void CHistoryTrafficCalendarDlg::OnInitMenu(CMenu* pMenu)
 {
     CTabDlg::OnInitMenu(pMenu);
 
-    // TODO: 在此处添加消息处理程序代码
+    // TODO: add message handler code here
     if (theApp.m_cfg_data.m_sunday_first)
         pMenu->CheckMenuRadioItem(ID_FIRST_DAY_OF_WEEK_SUNDAY, ID_FIRST_DAY_OF_WEEK_MONDAY, ID_FIRST_DAY_OF_WEEK_SUNDAY, MF_BYCOMMAND | MF_CHECKED);
     else
@@ -534,7 +534,7 @@ void CHistoryTrafficCalendarDlg::OnInitMenu(CMenu* pMenu)
 
 void CHistoryTrafficCalendarDlg::OnFirstDayOfWeekSunday()
 {
-    // TODO: 在此添加命令处理程序代码
+    // TODO: Add command handler code here
     theApp.m_cfg_data.m_sunday_first = true;
     MonthSelectChanged();
 }
@@ -542,7 +542,7 @@ void CHistoryTrafficCalendarDlg::OnFirstDayOfWeekSunday()
 
 void CHistoryTrafficCalendarDlg::OnFirstDayOfWeekMonday()
 {
-    // TODO: 在此添加命令处理程序代码
+    // TODO: Add command handler code here
     theApp.m_cfg_data.m_sunday_first = false;
     MonthSelectChanged();
 }
@@ -550,7 +550,7 @@ void CHistoryTrafficCalendarDlg::OnFirstDayOfWeekMonday()
 
 void CHistoryTrafficCalendarDlg::OnCalendarJumpToToday()
 {
-    // TODO: 在此添加命令处理程序代码
+    // TODO: Add command handler code here
     m_year = m_history_traffics[0].year;
     m_month = m_history_traffics[0].month;
     SetComboSel();

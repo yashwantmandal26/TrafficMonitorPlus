@@ -1,4 +1,4 @@
-﻿// SkinAutoAdaptSettingDlg.cpp: 实现文件
+﻿// SkinAutoAdaptSettingDlg.cpp: implementation file
 //
 
 #include "stdafx.h"
@@ -8,7 +8,7 @@
 #include "SkinManager.h"
 
 
-// CSkinAutoAdaptSettingDlg 对话框
+// CSkinAutoAdaptSettingDlg dialog box
 
 IMPLEMENT_DYNAMIC(CSkinAutoAdaptSettingDlg, CBaseDialog)
 
@@ -50,14 +50,14 @@ BEGIN_MESSAGE_MAP(CSkinAutoAdaptSettingDlg, CBaseDialog)
 END_MESSAGE_MAP()
 
 
-// CSkinAutoAdaptSettingDlg 消息处理程序
+// CSkinAutoAdaptSettingDlg message handler
 
 
 BOOL CSkinAutoAdaptSettingDlg::OnInitDialog()
 {
     CBaseDialog::OnInitDialog();
 
-    //初始化下拉列表
+    //Initialize drop-down list
     for (const auto& skin_name : CSkinManager::Instance().GetSkinNames())
     {
         m_dark_mode_skin_combo.AddString(skin_name.c_str());
@@ -70,7 +70,7 @@ BOOL CSkinAutoAdaptSettingDlg::OnInitDialog()
     m_light_mode_skin_combo.SetCurSel(light_mode_skin);
 
     return TRUE;  // return TRUE unless you set the focus to a control
-    // 异常: OCX 属性页应返回 FALSE
+    // Exception: OCX property page should return FALSE
 }
 
 

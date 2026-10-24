@@ -1,17 +1,17 @@
 ﻿#pragma once
 #include "BaseDialog.h"
 
-// CAutoAdaptSettingsDlg 对话框
+// CAutoAdaptSettingsDlg dialog box
 
 class CAutoAdaptSettingsDlg : public CBaseDialog
 {
 	DECLARE_DYNAMIC(CAutoAdaptSettingsDlg)
 
 public:
-	CAutoAdaptSettingsDlg(TaskBarSettingData& data, CWnd* pParent = nullptr);   // 标准构造函数
+	CAutoAdaptSettingsDlg(TaskBarSettingData& data, CWnd* pParent = nullptr);   // Standard constructor
 	virtual ~CAutoAdaptSettingsDlg();
 
-// 对话框数据
+// Dialog data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_ATUO_ADAPT_SETTING_DIALOG };
 #endif
@@ -27,7 +27,7 @@ private:
 	int GetComboBoxSel(const CComboBox& combo_box);
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
     virtual CString GetDialogName() const override;
     virtual bool InitializeControls() override;
 

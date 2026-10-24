@@ -1,16 +1,16 @@
 ﻿#pragma once
 #include "PdhQuery.h"
 
-// GPU利用率监控类
+// GPU utilization monitoring class
 class CPdhGPUUsage : public CPdhQuery
 {
 public:
     CPdhGPUUsage();
     ~CPdhGPUUsage();
 
-    // 获取GPU利用率（0-100）
-    // 返回值: true=成功, false=失败
-    // 注意：首次调用通常返回false（PDH需要预热），建议间隔200ms以上再次调用
+    // Get GPU utilization (0-100)
+    // Return value: true=success, false=failure
+    // Note: The first call usually returns false (PDH needs to be warmed up). It is recommended to call again at an interval of more than 200ms.
     bool GetGpuUsage(/*out*/ int& usage);
 
 };

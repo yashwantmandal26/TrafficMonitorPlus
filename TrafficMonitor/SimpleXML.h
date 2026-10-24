@@ -1,4 +1,4 @@
-//一个简易的XML解析的类
+//A simple XML parsing class
 #pragma once
 #include "Common.h"
 
