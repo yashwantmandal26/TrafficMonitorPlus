@@ -280,45 +280,38 @@ void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect r
     {
         if (type == TDI_CPU)
         {
-            COLORREF dyn_color = GetDynamicUsageColor(theApp.m_cpu_usage);
-            label_color = dyn_color;
-            text_color = dyn_color;
+            label_color = RGB(255, 255, 255); // Keep label ("CPU:") in white
+            text_color = GetDynamicUsageColor(theApp.m_cpu_usage); // Only the value (e.g. "100%") changes color
         }
         else if (type == TDI_GPU_USAGE)
         {
-            COLORREF dyn_color = GetDynamicUsageColor(theApp.m_gpu_usage);
-            label_color = dyn_color;
-            text_color = dyn_color;
+            label_color = RGB(255, 255, 255); // Keep label ("GPU:") in white
+            text_color = GetDynamicUsageColor(theApp.m_gpu_usage); // Only the value changes color
         }
         else if (type == TDI_MEMORY)
         {
-            COLORREF dyn_color = GetDynamicUsageColor(theApp.m_memory_usage);
-            label_color = dyn_color;
-            text_color = dyn_color;
+            label_color = RGB(255, 255, 255);
+            text_color = GetDynamicUsageColor(theApp.m_memory_usage);
         }
         else if (type == TDI_CPU_TEMP)
         {
-            COLORREF dyn_color = GetDynamicTempColor(theApp.m_cpu_temperature);
-            label_color = dyn_color;
-            text_color = dyn_color;
+            label_color = RGB(255, 255, 255);
+            text_color = GetDynamicTempColor(theApp.m_cpu_temperature);
         }
         else if (type == TDI_GPU_TEMP)
         {
-            COLORREF dyn_color = GetDynamicTempColor(theApp.m_gpu_temperature);
-            label_color = dyn_color;
-            text_color = dyn_color;
+            label_color = RGB(255, 255, 255);
+            text_color = GetDynamicTempColor(theApp.m_gpu_temperature);
         }
         else if (type == TDI_HDD_TEMP)
         {
-            COLORREF dyn_color = GetDynamicTempColor(theApp.m_hdd_temperature);
-            label_color = dyn_color;
-            text_color = dyn_color;
+            label_color = RGB(255, 255, 255);
+            text_color = GetDynamicTempColor(theApp.m_hdd_temperature);
         }
         else if (type == TDI_MAIN_BOARD_TEMP)
         {
-            COLORREF dyn_color = GetDynamicTempColor(theApp.m_main_board_temperature);
-            label_color = dyn_color;
-            text_color = dyn_color;
+            label_color = RGB(255, 255, 255);
+            text_color = GetDynamicTempColor(theApp.m_main_board_temperature);
         }
     }
 
