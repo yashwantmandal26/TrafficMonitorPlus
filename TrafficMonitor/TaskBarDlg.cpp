@@ -204,59 +204,46 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 #endif
 }
 
-// Dynamic color calculation for hardware usage (Green -> Yellow -> Red)
+// 4-Stage Color Definitions: Green -> Yellow -> Orange -> Red (in increasing order)
+const COLORREF COLOR_STAGE_GREEN  = RGB(76, 217, 100);  // Green (Normal / Low)
+const COLORREF COLOR_STAGE_YELLOW = RGB(255, 214, 10);  // Yellow (Moderate)
+const COLORREF COLOR_STAGE_ORANGE = RGB(255, 149, 0);   // Orange (High)
+const COLORREF COLOR_STAGE_RED    = RGB(255, 59, 48);   // Red (Critical / Alert)
+
+// Dynamic color calculation for hardware usage with specific values:
+// < 50%       : Green
+// 50% - 69%   : Yellow
+// 70% - 84%   : Orange
+// >= 85%      : Red
 static COLORREF GetDynamicUsageColor(int usage)
 {
-    if (usage < 0) usage = 0;
-    if (usage > 100) usage = 100;
     if (usage < 50)
-    {
-        // 0% to 50%: Smooth transition from Green RGB(76, 217, 100) to Yellow RGB(255, 204, 0)
-        float t = static_cast<float>(usage) / 50.0f;
-        int r = static_cast<int>(76 + t * (255 - 76));
-        int g = static_cast<int>(217 + t * (204 - 217));
-        int b = static_cast<int>(100 + t * (0 - 100));
-        return RGB(r, g, b);
-    }
+        return COLOR_STAGE_GREEN;
+    else if (usage < 70)
+        return COLOR_STAGE_YELLOW;
+    else if (usage < 85)
+        return COLOR_STAGE_ORANGE;
     else
-    {
-        // 50% to 85%+: Smooth transition from Yellow RGB(255, 204, 0) to Red RGB(255, 59, 48)
-        float t = static_cast<float>(usage - 50) / 35.0f;
-        if (t > 1.0f) t = 1.0f;
-        int r = 255;
-        int g = static_cast<int>(204 + t * (59 - 204));
-        int b = static_cast<int>(0 + t * (48 - 0));
-        return RGB(r, g, b);
-    }
+        return COLOR_STAGE_RED;
 }
 
-// Dynamic color calculation for hardware temperature (Green -> Yellow -> Red)
+// Dynamic color calculation for hardware temperature with specific values:
+// < 55 deg C       : Green
+// 55 - 69 deg C    : Yellow
+// 70 - 79 deg C    : Orange
+// >= 80 deg C      : Red
 static COLORREF GetDynamicTempColor(int temp)
 {
-    if (temp <= 0) return RGB(255, 255, 255); // Fallback if no sensor data
-    if (temp <= 45)
-    {
-        return RGB(76, 217, 100); // Cool / normal green
-    }
-    else if (temp < 65)
-    {
-        // 45 deg C to 65 deg C: Smooth transition from Green RGB(76, 217, 100) to Yellow RGB(255, 204, 0)
-        float t = static_cast<float>(temp - 45) / 20.0f;
-        int r = static_cast<int>(76 + t * (255 - 76));
-        int g = static_cast<int>(217 + t * (204 - 217));
-        int b = static_cast<int>(100 + t * (0 - 100));
-        return RGB(r, g, b);
-    }
+    if (temp <= 0)
+        return RGB(255, 255, 255); // White if no valid sensor data
+    if (temp < 55)
+        return COLOR_STAGE_GREEN;
+    else if (temp < 70)
+        return COLOR_STAGE_YELLOW;
+    else if (temp < 80)
+        return COLOR_STAGE_ORANGE;
     else
-    {
-        // 65 deg C to 85 deg C+: Smooth transition from Yellow RGB(255, 204, 0) to Red RGB(255, 59, 48)
-        float t = static_cast<float>(temp - 65) / 20.0f;
-        if (t > 1.0f) t = 1.0f;
-        int r = 255;
-        int g = static_cast<int>(204 + t * (59 - 204));
-        int b = static_cast<int>(0 + t * (48 - 0));
-        return RGB(r, g, b);
-    }
+        return COLOR_STAGE_RED;
 }
 
 void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect rect, int label_width, bool vertical)
