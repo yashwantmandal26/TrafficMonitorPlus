@@ -23,8 +23,23 @@ CAutoAdaptSettingsDlg::~CAutoAdaptSettingsDlg()
 
 void CAutoAdaptSettingsDlg::InitComboBox(CComboBox& combo_box, int style_sel)
 {
+    const wchar_t* taskbar_style_names[TASKBAR_DEFAULT_STYLE_NUM] = {
+        _T("1: Stealth Minimal Dark"),
+        _T("2: 🌸 Pastel Sakura (Cute)"),
+        _T("3: ⚡ Cyberpunk Neon (Funky)"),
+        _T("4: 🍵 Matcha Mint & Boba (Cute)"),
+        _T("5: 🌅 Sunset Peach (Funky)"),
+        _T("6: 🌌 Retro Synthwave (Funky)"),
+        _T("7: ❄️ Arctic Glacial (Cute)"),
+        _T("8: ☀️ Clean Modern Light")
+    };
 	for (int i = 0; i < TASKBAR_DEFAULT_STYLE_NUM; i++)
-		combo_box.AddString(CCommon::LoadText(IDS_PRESET, std::to_wstring(i + 1).c_str()));
+    {
+        if (i < _countof(taskbar_style_names))
+            combo_box.AddString(taskbar_style_names[i]);
+        else
+		    combo_box.AddString(CCommon::LoadText(IDS_PRESET, std::to_wstring(i + 1).c_str()));
+    }
 	if (style_sel >= 0 && style_sel < TASKBAR_DEFAULT_STYLE_NUM)
 		combo_box.SetCurSel(style_sel);
 	else

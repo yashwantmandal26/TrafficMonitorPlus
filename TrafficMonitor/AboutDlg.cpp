@@ -129,7 +129,7 @@ BOOL CAboutDlg::OnInitDialog()
 
     m_tool_tip.Create(this, TTS_ALWAYSTIP | TTS_NOPREFIX);
     m_tool_tip.AddTool(&m_mail, CCommon::LoadText(IDS_SEND_EMAIL_TO_ATHOUR, _T("\r\nmailto:zhongyang219@hotmail.com")));
-    //m_tool_tip.AddTool(&m_check_update, _T("到百度网盘链接查看是否有更新\r\nhttp://pan.baidu.com/s/1c1LkPQ4"));
+    //m_tool_tip.AddTool(&m_check_update, _T("Check GitHub releases for updates:\r\nhttps://github.com/zhongyang219/TrafficMonitor/releases"));
     m_tool_tip.AddTool(&m_github, CCommon::LoadText(IDS_GOTO_GITHUB, _T("\r\nhttps://github.com/zhongyang219/TrafficMonitor")));
     m_tool_tip.AddTool(&m_gitee, CCommon::LoadText(IDS_GOTO_GITEE, _T("\r\nhttps://gitee.com/zhongyang219/TrafficMonitor")));
     m_tool_tip.AddTool(&m_openhardwaremonitor_link, m_openhardwaremonitor_link.GetURL());

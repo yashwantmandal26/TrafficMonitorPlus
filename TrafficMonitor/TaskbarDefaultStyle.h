@@ -1,9 +1,9 @@
 ﻿#pragma once
 #include "CommonData.h"
 
-#define TASKBAR_DEFAULT_STYLE_NUM 4
-#define TASKBAR_DEFAULT_LIGHT_STYLE_INDEX 3
-#define TASKBAR_DEFAULT_LIGHT_STYLE(i) (i == 2 || i == 3)       //定义预设3和预设4为浅色模式的预设
+#define TASKBAR_DEFAULT_STYLE_NUM 8
+#define TASKBAR_DEFAULT_LIGHT_STYLE_INDEX 7
+#define TASKBAR_DEFAULT_LIGHT_STYLE(i) (i == 7)
 
 class CTaskbarDefaultStyle
 {

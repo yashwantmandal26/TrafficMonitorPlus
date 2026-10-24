@@ -411,10 +411,21 @@ BOOL CTaskBarSettingsDlg::OnInitDialog()
     //初始化“预设方案”菜单
     m_default_style_menu.CreatePopupMenu();
     m_modify_default_style_menu.CreatePopupMenu();
+    const wchar_t* taskbar_style_names[TASKBAR_DEFAULT_STYLE_NUM] = {
+        _T("1: Stealth Minimal Dark"),
+        _T("2: Pastel Sakura (Cute)"),
+        _T("3: Cyberpunk Neon (Funky)"),
+        _T("4: Matcha Mint & Boba (Cute)"),
+        _T("5: Sunset Peach (Funky)"),
+        _T("6: Retro Synthwave (Funky)"),
+        _T("7: Arctic Glacial (Cute)"),
+        _T("8: Clean Modern Light")
+    };
     for (int i{ 0 }; i < TASKBAR_DEFAULT_STYLE_NUM; i++)
     {
-        CString item_name;
-        item_name.Format(_T("%s %d"), CCommon::LoadText(IDS_PRESET).GetString(), i + 1);
+        CString item_name = (i < _countof(taskbar_style_names)) ? taskbar_style_names[i] : _T("");
+        if (item_name.IsEmpty())
+            item_name.Format(_T("%s %d"), CCommon::LoadText(IDS_PRESET).GetString(), i + 1);
         m_default_style_menu.AppendMenu(MF_STRING | MF_ENABLED, ID_DEFAULT_STYLE1 + i, item_name);
         m_modify_default_style_menu.AppendMenu(MF_STRING | MF_ENABLED, ID_MODIFY_DEFAULT_STYLE1 + i, item_name);
     }

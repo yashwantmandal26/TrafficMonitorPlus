@@ -437,8 +437,8 @@ void CTrafficMonitorDlg::IniConnection()
     if (theApp.m_debug_log)
     {
         CString log_str;
-        log_str += _T("正在初始化网络连接...\n");
-        log_str += _T("连接列表：\n");
+        log_str += _T("Initializing network connection...\n");
+        log_str += _T("Connection list:\n");
         for (size_t i{}; i < m_connections.size(); i++)
         {
             log_str += m_connections[i].description.c_str();
@@ -1382,7 +1382,7 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
             if (theApp.m_debug_log)
             {
                 CString log_str;
-                log_str = _T("连接名称不匹配：\r\n");
+                log_str = _T("Connection name does not match:\r\n");
                 log_str += _T("IfTable description: ");
                 log_str += descr.c_str();
                 log_str += _T("\r\nm_connection_name: ");
@@ -1873,7 +1873,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
                 if (theApp.m_debug_log)
                 {
                     CString log_str;
-                    log_str += _T("检测到 Windows10 深浅色变化。\n");
+                    log_str += _T("Detected Windows dark/light theme change.\n");
                     log_str += _T("IsWindows10LightTheme: ");
                     log_str += std::to_wstring(light_mode).c_str();
                     log_str += _T("\n");
@@ -1959,7 +1959,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             if (!erro_log_write)
             {
                 CString log_str;
-                log_str.Format(_T("检查到背景色和文字颜色都为黑色。IsWindows10LightTheme: %d, 系统启动时间：%d/%.2d/%.2d %.2d:%.2d:%.2d"),
+                log_str.Format(_T("Both background and text color are black. IsWindows10LightTheme: %d, System uptime: %d/%.2d/%.2d %.2d:%.2d:%.2d"),
                     light_mode, m_start_time.wYear, m_start_time.wMonth, m_start_time.wDay, m_start_time.wHour, m_start_time.wMinute, m_start_time.wSecond);
                 CCommon::WriteLog(log_str, theApp.m_log_path.c_str());
                 erro_log_write = true;
@@ -2239,7 +2239,7 @@ BOOL CTrafficMonitorDlg::OnCommand(WPARAM wParam, LPARAM lParam)
     if (uMsg == ID_CMD_TEST)
     {
         CTest::TestCommand();
-        //ShowNotifyTip(CCommon::LoadText(_T("TrafficMonitor "), IDS_NOTIFY, _T("")), _T("测试通知"));
+        //ShowNotifyTip(CCommon::LoadText(_T("TrafficMonitor "), IDS_NOTIFY, _T("")), _T("Test Notification"));
 
     }
 #endif // DEBUG
@@ -2814,7 +2814,7 @@ BOOL CTrafficMonitorDlg::OnQueryEndSession()
 
     if (theApp.m_debug_log)
     {
-        CCommon::WriteLog(_T("TrafficMonitor进程已被终止，设置已保存。"), (theApp.m_config_dir + L".\\debug.log").c_str());
+        CCommon::WriteLog(_T("TrafficMonitor process terminated, settings saved."), (theApp.m_config_dir + L".\\debug.log").c_str());
     }
 
     return TRUE;

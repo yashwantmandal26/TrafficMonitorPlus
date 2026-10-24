@@ -33,7 +33,7 @@ static void TestGetLicense()
 static void TestSkin()
 {
     CSkinFile skin;
-    skin.Load(L"0默认皮肤");
+    skin.Load(L"0_Default_Skin");
     int a = 0;
 }
 

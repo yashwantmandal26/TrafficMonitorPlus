@@ -59,7 +59,18 @@ CTrafficMonitorApp::CTrafficMonitorApp()
 void CTrafficMonitorApp::LoadLanguageConfig()
 {
     CIniHelper ini{ m_config_path };
-    m_general_data.language.fromConfigString(ini.GetString(_T("general"), _T("language"), L""));
+    wstring lang_str = ini.GetString(_T("general"), _T("language"), L"");
+    if (lang_str.empty() || lang_str == L"0")
+    {
+        m_general_data.language.bcp_47 = L"en-US";
+        m_general_data.language.display_name = L"English";
+        m_general_data.language.default_font_name = L"Segoe UI";
+        m_general_data.language.language_id = LocaleNameToLCID(L"en-US", 0);
+    }
+    else
+    {
+        m_general_data.language.fromConfigString(lang_str);
+    }
 }
 
 void CTrafficMonitorApp::LoadConfig()
@@ -72,7 +83,7 @@ void CTrafficMonitorApp::LoadConfig()
     //m_general_data.allow_skin_cover_text = ini.GetBool(_T("general"), _T("allow_skin_cover_text"), true);
     m_general_data.show_all_interface = ini.GetBool(L"general", L"show_all_interface", false);
     bool is_chinese_language{ m_str_table.IsSimplifiedChinese() };     //当前语言是否为简体中文
-    m_general_data.update_source = ini.GetInt(L"general", L"update_source", is_chinese_language ? 1 : 0);   //如果当前语言为简体，则默认更新源为Gitee，否则为GitHub
+    m_general_data.update_source = ini.GetInt(L"general", L"update_source", 0);   //如果当前语言为简体，则默认更新源为Gitee，否则为GitHub
     m_general_data.cpu_usage_acquire_method = static_cast<GeneralSettingData::CpuUsageAcquireMethod>(ini.GetInt(L"general", L"cpu_usage_acquire_method", GeneralSettingData::CA_PDH));
     m_general_data.monitor_time_span = ini.GetInt(L"general", L"monitor_time_span", 1000);
     if (m_general_data.monitor_time_span < MONITOR_TIME_SPAN_MIN || m_general_data.monitor_time_span > MONITOR_TIME_SPAN_MAX)
@@ -1061,7 +1072,7 @@ BOOL CTrafficMonitorApp::InitInstance()
     // 更改用于存储设置的注册表项
     // TODO: 应适当修改该字符串，
     // 例如修改为公司或组织名
-    //SetRegistryKey(_T("应用程序向导生成的本地应用程序"));        //暂不使用注册表保存数据
+    //SetRegistryKey(_T("TrafficMonitor Application"));        //暂不使用注册表保存数据
 
     //启动时检查更新
     if (m_general_data.check_update_when_start)
@@ -1116,8 +1127,8 @@ BOOL CTrafficMonitorApp::InitInstance()
     }
     else if (nResponse == -1)
     {
-        TRACE(traceAppMsg, 0, "警告: 对话框创建失败，应用程序将意外终止。\n");
-        TRACE(traceAppMsg, 0, "警告: 如果您在对话框上使用 MFC 控件，则无法 #define _AFX_NO_MFC_CONTROLS_IN_DIALOGS。\n");
+        TRACE(traceAppMsg, 0, "Warning: Dialog creation failed; the application will terminate.\n");
+        TRACE(traceAppMsg, 0, "Warning: If using MFC controls in dialogs, cannot #define _AFX_NO_MFC_CONTROLS_IN_DIALOGS.\n");
     }
 
     // 删除上面创建的 shell 管理器。

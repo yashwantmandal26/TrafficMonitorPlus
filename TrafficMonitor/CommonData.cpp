@@ -309,6 +309,14 @@ wstring LanguageInfo::toConfigString() const
 
 void LanguageInfo::fromConfigString(const wstring& config_str)
 {
+    if (config_str.empty() || config_str == L"0")
+    {
+        bcp_47 = L"en-US";
+        display_name = L"English";
+        default_font_name = L"Segoe UI";
+        language_id = LocaleNameToLCID(L"en-US", 0);
+        return;
+    }
     std::vector<wstring> parts;
     CCommon::StringSplit(config_str, L'|', parts, false);
     if (parts.size() >= 1)

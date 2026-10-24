@@ -103,6 +103,8 @@ void CStrTable::Init()
         {
             if (cur_system_language_id == language_info.language_id)
                 is_current_language = true;
+            else if (language_info.bcp_47 == L"en-US")
+                is_current_language = true;
         }
         else
         {
