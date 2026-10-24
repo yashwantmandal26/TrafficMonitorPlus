@@ -312,6 +312,7 @@ struct TaskBarSettingData : public PublicSettingData
     bool show_taskbar_wnd_in_secondary_display{ false };    //Whether to display the taskbar window on the secondary monitor
     int secondary_display_index{};      //Display the taskbar window on which secondary monitor
     bool value_right_align{ false };    //Whether the value is right aligned
+    bool dynamic_color{ true };         //Dynamic text color for hardware usage and temperature (Green -> Yellow -> Red)
     int digits_number{ 4 };             //Number of data bits
     bool horizontal_arrange{ true };    //Arrange horizontally
     bool show_status_bar{ true };       //Display CPU/memory status bar

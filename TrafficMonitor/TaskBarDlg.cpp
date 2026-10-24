@@ -204,6 +204,61 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 #endif
 }
 
+// Dynamic color calculation for hardware usage (Green -> Yellow -> Red)
+static COLORREF GetDynamicUsageColor(int usage)
+{
+    if (usage < 0) usage = 0;
+    if (usage > 100) usage = 100;
+    if (usage < 50)
+    {
+        // 0% to 50%: Smooth transition from Green RGB(76, 217, 100) to Yellow RGB(255, 204, 0)
+        float t = static_cast<float>(usage) / 50.0f;
+        int r = static_cast<int>(76 + t * (255 - 76));
+        int g = static_cast<int>(217 + t * (204 - 217));
+        int b = static_cast<int>(100 + t * (0 - 100));
+        return RGB(r, g, b);
+    }
+    else
+    {
+        // 50% to 85%+: Smooth transition from Yellow RGB(255, 204, 0) to Red RGB(255, 59, 48)
+        float t = static_cast<float>(usage - 50) / 35.0f;
+        if (t > 1.0f) t = 1.0f;
+        int r = 255;
+        int g = static_cast<int>(204 + t * (59 - 204));
+        int b = static_cast<int>(0 + t * (48 - 0));
+        return RGB(r, g, b);
+    }
+}
+
+// Dynamic color calculation for hardware temperature (Green -> Yellow -> Red)
+static COLORREF GetDynamicTempColor(int temp)
+{
+    if (temp <= 0) return RGB(255, 255, 255); // Fallback if no sensor data
+    if (temp <= 45)
+    {
+        return RGB(76, 217, 100); // Cool / normal green
+    }
+    else if (temp < 65)
+    {
+        // 45 deg C to 65 deg C: Smooth transition from Green RGB(76, 217, 100) to Yellow RGB(255, 204, 0)
+        float t = static_cast<float>(temp - 45) / 20.0f;
+        int r = static_cast<int>(76 + t * (255 - 76));
+        int g = static_cast<int>(217 + t * (204 - 217));
+        int b = static_cast<int>(100 + t * (0 - 100));
+        return RGB(r, g, b);
+    }
+    else
+    {
+        // 65 deg C to 85 deg C+: Smooth transition from Yellow RGB(255, 204, 0) to Red RGB(255, 59, 48)
+        float t = static_cast<float>(temp - 65) / 20.0f;
+        if (t > 1.0f) t = 1.0f;
+        int r = 255;
+        int g = static_cast<int>(204 + t * (59 - 204));
+        int b = static_cast<int>(0 + t * (48 - 0));
+        return RGB(r, g, b);
+    }
+}
+
 void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect rect, int label_width, bool vertical)
 {
     //Set the text color to be drawn
@@ -218,6 +273,53 @@ void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect r
     {
         label_color = theApp.m_taskbar_data.text_colors.begin()->second.label;
         text_color = theApp.m_taskbar_data.text_colors.begin()->second.label;
+    }
+
+    // Dynamic color based on usage and temperature (Green -> Yellow -> Red)
+    if (theApp.m_taskbar_data.dynamic_color)
+    {
+        if (type == TDI_CPU)
+        {
+            COLORREF dyn_color = GetDynamicUsageColor(theApp.m_cpu_usage);
+            label_color = dyn_color;
+            text_color = dyn_color;
+        }
+        else if (type == TDI_GPU_USAGE)
+        {
+            COLORREF dyn_color = GetDynamicUsageColor(theApp.m_gpu_usage);
+            label_color = dyn_color;
+            text_color = dyn_color;
+        }
+        else if (type == TDI_MEMORY)
+        {
+            COLORREF dyn_color = GetDynamicUsageColor(theApp.m_memory_usage);
+            label_color = dyn_color;
+            text_color = dyn_color;
+        }
+        else if (type == TDI_CPU_TEMP)
+        {
+            COLORREF dyn_color = GetDynamicTempColor(theApp.m_cpu_temperature);
+            label_color = dyn_color;
+            text_color = dyn_color;
+        }
+        else if (type == TDI_GPU_TEMP)
+        {
+            COLORREF dyn_color = GetDynamicTempColor(theApp.m_gpu_temperature);
+            label_color = dyn_color;
+            text_color = dyn_color;
+        }
+        else if (type == TDI_HDD_TEMP)
+        {
+            COLORREF dyn_color = GetDynamicTempColor(theApp.m_hdd_temperature);
+            label_color = dyn_color;
+            text_color = dyn_color;
+        }
+        else if (type == TDI_MAIN_BOARD_TEMP)
+        {
+            COLORREF dyn_color = GetDynamicTempColor(theApp.m_main_board_temperature);
+            label_color = dyn_color;
+            text_color = dyn_color;
+        }
     }
 
     //Set a rectangular area for labels and values
