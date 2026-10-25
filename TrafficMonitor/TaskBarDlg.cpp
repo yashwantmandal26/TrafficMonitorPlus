@@ -1,4 +1,4 @@
-﻿// TaskBarDlg.cpp: implementation file
+// TaskBarDlg.cpp: implementation file
 //
 
 #include "stdafx.h"
@@ -209,6 +209,7 @@ const COLORREF COLOR_STAGE_GREEN  = RGB(52, 211, 153);  // Soft Mint Emerald (#3
 const COLORREF COLOR_STAGE_YELLOW = RGB(251, 191, 36);  // Golden Amber (#FBBF24)
 const COLORREF COLOR_STAGE_ORANGE = RGB(251, 146, 60);  // Vivid Coral (#FB923C)
 const COLORREF COLOR_STAGE_RED    = RGB(244, 63, 94);   // Electric Rose Red (#F43F5E)
+const COLORREF COLOR_GPU_INDICATOR_DOT = RGB(0, 191, 255); // Vibrant Sky Blue (#00BFFF)
 
 // Dynamic color calculation for hardware usage with specific values:
 // < 50%       : Green
@@ -402,7 +403,7 @@ void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect r
             {
                 CRect rect_dot = draw_label_rect;
                 rect_dot.right = rect_dot.left + dot_width;
-                drawer.DrawWindowText(rect_dot, _T("•"), RGB(255, 255, 255), (vertical ? IDrawCommon::Alignment::CENTER : IDrawCommon::Alignment::LEFT));
+                drawer.DrawWindowText(rect_dot, _T("•"), COLOR_GPU_INDICATOR_DOT, (vertical ? IDrawCommon::Alignment::CENTER : IDrawCommon::Alignment::LEFT));
             }
 
             // Offset the label text to the right by dot_width on both CPU and GPU
