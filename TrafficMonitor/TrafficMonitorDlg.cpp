@@ -1515,6 +1515,16 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
         {
             theApp.m_cpu_temperature = -1;
         }
+
+        // Native Windows 11 PDH Thermal Zone fallback when driver is blocked by HVCI / Core Isolation
+        if (theApp.m_cpu_temperature <= 0)
+        {
+            float pdh_temp = 0.0f;
+            if (m_cpu_temp_helper.GetCpuTemperature(pdh_temp) && pdh_temp > 0)
+            {
+                theApp.m_cpu_temperature = pdh_temp;
+            }
+        }
         //Get hard drive temperature
         if (!theApp.m_pMonitor->AllHDDTemperature().empty())
         {

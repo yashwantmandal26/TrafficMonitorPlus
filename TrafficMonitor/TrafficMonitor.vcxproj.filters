@@ -550,6 +550,9 @@
     <ClInclude Include="PdhHardwareQuery\CPUUsage.h">
       <Filter>Source and Header Files\Common Classes\PdhHardwareQuery</Filter>
     </ClInclude>
+    <ClInclude Include="PdhHardwareQuery\CpuTemperature.h">
+      <Filter>Source and Header Files\Common Classes\PdhHardwareQuery</Filter>
+    </ClInclude>
     <ClInclude Include="PdhHardwareQuery\CpuFreq.h">
       <Filter>Source and Header Files\Common Classes\PdhHardwareQuery</Filter>
     </ClInclude>
@@ -829,6 +832,9 @@
       <Filter>Source and Header Files\TaskBarDlg</Filter>
     </ClCompile>
     <ClCompile Include="PdhHardwareQuery\CPUUsage.cpp">
+      <Filter>Source and Header Files\Common Classes\PdhHardwareQuery</Filter>
+    </ClCompile>
+    <ClCompile Include="PdhHardwareQuery\CpuTemperature.cpp">
       <Filter>Source and Header Files\Common Classes\PdhHardwareQuery</Filter>
     </ClCompile>
     <ClCompile Include="PdhHardwareQuery\CpuFreq.cpp">

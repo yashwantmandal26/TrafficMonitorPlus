@@ -24,6 +24,7 @@
 #include "PdhHardwareQuery/CpuFreq.h"
 #include "PdhHardwareQuery/GpuUsage.h"
 #include "PdhHardwareQuery/DiskUsage.h"
+#include "PdhHardwareQuery/CpuTemperature.h"
 #include "HistoryTrafficFile.h"
 
 // CTrafficMonitorDlg dialog box
@@ -70,6 +71,7 @@ protected:
     CPdhCpuFreq m_cpu_freq_helper;
     CPdhGPUUsage m_gpu_usage_helper;
     CPdhDiskUsage m_disk_usage_helper;
+    CPdhCpuTemperature m_cpu_temp_helper;
 
     bool m_get_disk_usage_by_pdh{};
 
