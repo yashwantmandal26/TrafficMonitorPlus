@@ -1,4 +1,4 @@
-﻿
+
 // TrafficMonitor.cpp: Defines the class behavior of the application.
 //
 
@@ -46,7 +46,7 @@ CTrafficMonitorApp::CTrafficMonitorApp()
 
     // TODO: Add construction code here,
     // Place all important initialization in InitInstance
-    CRASHREPORT::StartCrashReport();
+    // CRASHREPORT::StartCrashReport();
 #ifndef DISABLE_WINDOWS_WEB_EXPERIENCE_DETECTOR
     if (m_win_version.IsWindows11OrLater())
         winrt::init_apartment();
@@ -544,92 +544,22 @@ void CTrafficMonitorApp::DPIFromWindow(CWnd* pWnd)
 
 void CTrafficMonitorApp::CheckUpdate(bool message)
 {
-    if (m_checking_update)      //If you are still checking for updates, return directly
-        return;
-    CFlagLocker update_locker(m_checking_update);
-    CWaitCursor wait_cursor;
-
-    wstring version;        //Program version
-    wstring link;           //Download link
-    wstring contents_zh_cn; //Update content (Simplified Chinese)
-    wstring contents_en;    //Update content（English）
-    wstring contents_zh_tw; //Update content (Traditional Chinese)
-    CUpdateHelper update_helper;
-    update_helper.SetUpdateSource(static_cast<CUpdateHelper::UpdateSource>(m_general_data.update_source));
-    if (!update_helper.CheckForUpdate())
+    if (message)
     {
-        if (message)
-            AfxMessageBox(CCommon::LoadText(IDS_CHECK_UPDATE_FAILD), MB_OK | MB_ICONWARNING);
-        return;
-    }
-    version = update_helper.GetVersion();
-#ifdef _M_X64
-    link = update_helper.GetLink64();
-#elif defined _M_ARM64EC
-    link = update_helper.GetLinkArm64ec();
-#else
-    link = update_helper.GetLink();
-#endif
-    contents_zh_cn = update_helper.GetContentsZhCn();
-    contents_en = update_helper.GetContentsEn();
-    contents_zh_tw = update_helper.GetContentsZhTw();
-    if (version.empty() || link.empty())
-    {
-        if (message)
-        {
-            CString info = CCommon::LoadText(IDS_CHECK_UPDATE_ERROR);
-            info += _T("\r\nrow_data=");
-            info += std::to_wstring(update_helper.IsRowData()).c_str();
-
-            AfxMessageBox(info, MB_OK | MB_ICONWARNING);
-        }
-        return;
-    }
-    if (version > VERSION)      //If the version on the server is greater than the local version
-    {
-        CString info;
-        //Select the updated content of the corresponding language version according to the language settings
-        wstring language_tag = m_str_table.GetLanguageInfo().bcp_47;
-        wstring contents_lan;
-        if (language_tag == L"zh-CN")
-            contents_lan = contents_zh_cn;
-        else if (language_tag == L"zh-TW")
-            contents_lan = contents_zh_tw;
-        else
-            contents_lan = contents_en;
-        if (contents_lan.empty())
-            info.Format(CCommon::LoadText(IDS_UPDATE_AVLIABLE), version.c_str());
-        else
-            info.Format(CCommon::LoadText(IDS_UPDATE_AVLIABLE2), version.c_str(), contents_lan.c_str());
-
-        if (AfxMessageBox(info, MB_YESNO | MB_ICONQUESTION) == IDYES)
-        {
-            ShellExecute(NULL, _T("open"), link.c_str(), NULL, NULL, SW_SHOW);      //Go to download link
-        }
-    }
-    else
-    {
-        if (message)
-            AfxMessageBox(CCommon::LoadText(IDS_ALREADY_UPDATED), MB_OK | MB_ICONINFORMATION);
+        AfxMessageBox(_T("Updates are disabled to preserve custom configuration."), MB_OK | MB_ICONINFORMATION);
     }
 }
 
 void CTrafficMonitorApp::CheckUpdateInThread(bool message)
 {
-    AfxBeginThread(CheckUpdateThreadFunc, (LPVOID)message);
+    if (message)
+    {
+        AfxMessageBox(_T("Updates are disabled to preserve custom configuration."), MB_OK | MB_ICONINFORMATION);
+    }
 }
 
 UINT CTrafficMonitorApp::CheckUpdateThreadFunc(LPVOID lpParam)
 {
-    CCommon::SetThreadLanguage(theApp.m_general_data.language.language_id);     //Set thread language
-#ifndef _DEBUG      //DEBUG does not check for updates at startup
-    theApp.CheckUpdate(lpParam);        //Check for updates
-#endif
-    //Detect plugin updates
-    if (!theApp.m_plugins.GetPlugins().empty())
-    {
-        theApp.m_plugin_update.CheckForUpdate();
-    }
     return 0;
 }
 
@@ -824,30 +754,11 @@ void CTrafficMonitorApp::InitMenuResourse()
     //Add icons to menu items
     auto addIconsForMainWindowMenu = [&](const CMenu& menu)
     {
-        CMenuIcon::AddIconToMenuItem(menu.GetSubMenu(0)->GetSafeHmenu(), 0, TRUE, GetMenuIcon(IDI_CONNECTION));
-        CMenuIcon::AddIconToMenuItem(menu.GetSubMenu(0)->GetSafeHmenu(), 11, TRUE, GetMenuIcon(IDI_FUNCTION));
+        CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_OPEN_TASK_MANAGER, FALSE, GetMenuIcon(IDI_TASK_MANAGER));
         CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_NETWORK_INFO, FALSE, GetMenuIcon(IDI_INFO));
-        if (!m_win_version.IsWindows11OrLater())
-            CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_ALWAYS_ON_TOP, FALSE, GetMenuIcon(IDI_PIN));
-        if (!m_win_version.IsWindows11OrLater())
-            CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_MOUSE_PENETRATE, FALSE, GetMenuIcon(IDI_MOUSE));
-        if (!m_win_version.IsWindows11OrLater())
-            CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_LOCK_WINDOW_POS, FALSE, GetMenuIcon(IDI_LOCK));
-        //if (!m_win_version.IsWindows11OrLater())
-        //    CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_SHOW_NOTIFY_ICON, FALSE, GetMenuIcon(IDI_NOTIFY));
-        if (!m_win_version.IsWindows11OrLater())
-            CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_SHOW_CPU_MEMORY, FALSE, GetMenuIcon(IDI_MORE));
-        if (!m_win_version.IsWindows11OrLater())
-            CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_SHOW_TASK_BAR_WND, FALSE, GetMenuIcon(IDI_TASKBAR_WINDOW));
-
-        CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_CHANGE_SKIN, FALSE, GetMenuIcon(IDI_SKIN));
-        CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_CHANGE_NOTIFY_ICON, FALSE, GetMenuIcon(IDI_NOTIFY));
-        CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_TRAFFIC_HISTORY, FALSE, GetMenuIcon(IDI_STATISTICS));
-        CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_PLUGIN_MANAGE, FALSE, GetMenuIcon(IDI_PLUGINS));
+        CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_DISPLAY_SETTINGS, FALSE, GetMenuIcon(IDI_ITEM));
         CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_OPTIONS, FALSE, GetMenuIcon(IDI_SETTINGS));
-        CMenuIcon::AddIconToMenuItem(menu.GetSubMenu(0)->GetSafeHmenu(), 14, TRUE, GetMenuIcon(IDI_HELP));
-        CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_HELP, FALSE, GetMenuIcon(IDI_HELP));
-        CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_APP_ABOUT, FALSE, GetMenuIcon(IDR_MAINFRAME));
+        CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_SHOW_TASK_BAR_WND, FALSE, GetMenuIcon(IDI_TASKBAR_WINDOW));
         CMenuIcon::AddIconToMenuItem(menu.GetSafeHmenu(), ID_APP_EXIT, FALSE, GetMenuIcon(IDI_EXIT));
     };
     //Main window right-click menu
@@ -1066,10 +977,7 @@ BOOL CTrafficMonitorApp::InitInstance()
     //SetRegistryKey(_T("TrafficMonitor Application")); //Do not use the registry to save data yet
 
     //Check for updates on startup
-    if (m_general_data.check_update_when_start)
-    {
-        CheckUpdateInThread(false);
-    }
+    // Update checking on startup disabled to preserve custom configuration
 
 #ifndef WITHOUT_TEMPERATURE
     //Check whether .net framework 4.5 is installed

@@ -516,8 +516,8 @@ NetWorkConection CTrafficMonitorDlg::GetConnection(int connection_index)
 
 void CTrafficMonitorDlg::IniConnectionMenu(CMenu* pMenu)
 {
-    ASSERT(pMenu != nullptr);
-    if (pMenu != nullptr)
+    if (pMenu == nullptr)
+        return;
     {
         //First delete all menu items after ID_SELECT_ALL_CONNECTION
         int start_pos = CCommon::GetMenuItemPosition(pMenu, ID_SELECT_ALL_CONNECTION) + 1;
@@ -541,13 +541,13 @@ void CTrafficMonitorDlg::IniConnectionMenu(CMenu* pMenu)
 
 void CTrafficMonitorDlg::IniTaskBarConnectionMenu()
 {
-    //Add an item to the "Select a network connection" submenu item
-    IniConnectionMenu(theApp.m_taskbar_menu.GetSubMenu(0)->GetSubMenu(0));
-    IniConnectionMenu(theApp.m_taskbar_menu_plugin.GetSubMenu(0)->GetSubMenu(0));
+    // Network selection in menu disabled for streamlined minimal menu
 }
 
 void CTrafficMonitorDlg::SetConnectionMenuState(CMenu* pMenu)
 {
+    if (pMenu == nullptr)
+        return;
     if (theApp.m_cfg_data.m_select_all)
         pMenu->CheckMenuRadioItem(0, m_connections.size() + 1, 1, MF_BYPOSITION | MF_CHECKED);
     else if (theApp.m_cfg_data.m_auto_select)       //When m_auto_select is true, it is automatically selected and the first item of the menu is selected.
@@ -692,14 +692,12 @@ void CTrafficMonitorDlg::UpdateNotifyIconTip()
 
 void CTrafficMonitorDlg::SaveHistoryTraffic()
 {
-    // Use incremental save to only update the first row and today's record to reduce I/O operations
-    m_history_traffic.SaveTodayOnly();
+    // Background disk writes disabled
 }
 
 void CTrafficMonitorDlg::SaveHistoryTrafficFull()
 {
-    // Complete save, used to ensure that all data is saved when the program exits
-    m_history_traffic.Save();
+    // Full disk writes disabled
 }
 
 void CTrafficMonitorDlg::LoadHistoryTraffic()
@@ -737,19 +735,7 @@ void CTrafficMonitorDlg::LoadHistoryTraffic()
 
 void CTrafficMonitorDlg::BackupHistoryTrafficFile()
 {
-    // Make sure the file is saved to disk
-    wstring latest_file_path = theApp.m_history_traffic_path;
-    wstring backup_file_path = latest_file_path + L".bak";
-    
-    // Check if current file exists
-    if (!CCommon::FileExist(latest_file_path.c_str()))
-    {
-        return; // The current file does not exist, no backup is needed
-    }
-    
-    // Directly back up the current file (the current file is the latest and contains the latest data)
-    // Backup files may contain "future" records, but they will be automatically cleaned up when restoring, so always back up the current file.
-    CopyFile(latest_file_path.c_str(), backup_file_path.c_str(), FALSE);
+    // Backup file writes disabled
 }
 
 void CTrafficMonitorDlg::_OnOptions(int tab, CWnd* pParent)

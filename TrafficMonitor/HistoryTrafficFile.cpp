@@ -52,6 +52,7 @@ void CHistoryTrafficFile::UpdateCache() const
 
 void CHistoryTrafficFile::Save() const
 {
+	return; // Disk writes disabled
 	ofstream file{ m_file_path };
 	if (!file.is_open())
 	{
@@ -90,6 +91,7 @@ bool CHistoryTrafficFile::IsTodayRecord() const
 
 void CHistoryTrafficFile::SaveTodayOnly() const
 {
+	return; // Disk writes disabled
 	// Incremental save: only update the first row (lines count) and second row (today's record)
 	// Prerequisite: Today’s record date is correct (the program maintains it by itself, no need to read the file to judge)
 	

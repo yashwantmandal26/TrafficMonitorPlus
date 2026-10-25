@@ -10,49 +10,9 @@ const std::wstring SKIN_SETTINGS_PREFIX = L"skin_";
 
 void CSkinManager::Init()
 {
-    if (!m_init)    //Prevent repeated loading
+    if (!m_init)
     {
-        //Get all skin names
-        CCommon::GetFiles((theApp.m_skin_path + L"*").c_str(), [&](const wstring& file_name)
-            {
-                if (CCommon::IsFolder(theApp.m_skin_path + file_name))
-                    m_skins.push_back(file_name);
-            });
-        if (m_skins.empty())
-            m_skins.push_back(L"");
-
-        //Load individual settings for all skins
-        CSettingsHelper ini;
-        std::vector<std::wstring> skin_data_app_names = ini.GetAllAppName(SKIN_SETTINGS_PREFIX);
-        for (const std::wstring& skin_name : skin_data_app_names)
-        {
-            std::wstring app_name = SKIN_SETTINGS_PREFIX + skin_name;
-            //Determine if skin is present
-            if (std::find(m_skins.begin(), m_skins.end(), skin_name) != m_skins.end())
-            {
-                CSkinFile skin_file;
-                if (!skin_file.Load(skin_name))
-                    continue;
-                //Get all display items of skin
-                std::set<CommonDisplayItem> skin_all_items;
-                skin_file.GetSkinDisplayItems(skin_all_items);
-
-                SkinSettingData data;
-                //text color
-                ini.LoadMainWndColors(app_name.c_str(), L"text_color", skin_all_items, data.text_colors, 16384); //Set the default text color based on whether the skin exists. When the skin file does not exist, the text color defaults to white.
-                data.specify_each_item_color = ini.GetBool(app_name.c_str(), L"specify_each_item_color", false);
-                //font
-                FontInfo default_font{};
-                default_font.name = theApp.m_str_table.GetLanguageInfo().default_font_name.c_str();
-                default_font.size = 10;
-                ini.LoadFontData(app_name.c_str(), data.font, default_font);
-                //display text
-                ini.LoadDisplayStr(app_name.c_str(), data.disp_str, true);
-                ini.LoadPluginDisplayStr(app_name.c_str(), data.disp_str, true);
-
-                m_skin_setting_data_map[skin_name] = data;
-            }
-        }
+        m_skins.push_back(L"");
         m_init = true;
     }
 }
