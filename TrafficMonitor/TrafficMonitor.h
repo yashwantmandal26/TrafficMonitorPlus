@@ -57,6 +57,10 @@ public:
     float m_hdd_temperature{ -1 };  //Hard drive temperature
     float m_main_board_temperature{ -1 };    //Motherboard temperature
     int m_gpu_usage{ -1 };      //Graphics card utilization
+    bool IsDgpuActive();
+    DWORD m_last_gpu_check_tick{ 0 };
+    bool m_cached_has_igpu{ false };
+    bool m_cached_has_dgpu{ false };
     int m_hdd_usage{ -1 };      //Hard drive utilization
 
     unsigned __int64 m_today_up_traffic{};  //Upload traffic used today

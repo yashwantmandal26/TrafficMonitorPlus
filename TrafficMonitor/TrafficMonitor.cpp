@@ -542,6 +542,70 @@ void CTrafficMonitorApp::DPIFromWindow(CWnd* pWnd)
     m_dpi = GetDeviceCaps(hDC, LOGPIXELSY);
 }
 
+
+bool CTrafficMonitorApp::IsDgpuActive()
+{
+    DWORD current_tick = GetTickCount();
+    // Cache hardware presence check every 2 seconds to avoid unnecessary API calls
+    if (current_tick - m_last_gpu_check_tick > 2000 || m_last_gpu_check_tick == 0)
+    {
+        m_last_gpu_check_tick = current_tick;
+        m_cached_has_igpu = false;
+        m_cached_has_dgpu = false;
+
+        DISPLAY_DEVICE dd{};
+        dd.cb = sizeof(DISPLAY_DEVICE);
+        DWORD dev_num = 0;
+        while (EnumDisplayDevices(NULL, dev_num, &dd, 0))
+        {
+            if (!(dd.StateFlags & DISPLAY_DEVICE_MIRRORING_DRIVER))
+            {
+                wstring device_str = dd.DeviceString;
+                for (auto& c : device_str) c = towlower(c);
+
+                if (device_str.find(L"intel") != wstring::npos ||
+                    device_str.find(L"iris") != wstring::npos ||
+                    device_str.find(L"uhd") != wstring::npos)
+                {
+                    m_cached_has_igpu = true;
+                }
+                if (device_str.find(L"nvidia") != wstring::npos ||
+                    device_str.find(L"geforce") != wstring::npos ||
+                    device_str.find(L"rtx") != wstring::npos ||
+                    device_str.find(L"gtx") != wstring::npos)
+                {
+                    m_cached_has_dgpu = true;
+                }
+                if (device_str.find(L"radeon") != wstring::npos)
+                {
+                    if (device_str.find(L"rx") != wstring::npos || device_str.find(L"discrete") != wstring::npos)
+                        m_cached_has_dgpu = true;
+                    else
+                        m_cached_has_igpu = true;
+                }
+            }
+            dev_num++;
+        }
+    }
+
+    // 1. If only dGPU is present (hardware MUX in dGPU-only mode)
+    if (m_cached_has_dgpu && !m_cached_has_igpu)
+    {
+        return true;
+    }
+
+    // 2. If only iGPU is present (hardware MUX in iGPU-only mode)
+    if (m_cached_has_igpu && !m_cached_has_dgpu)
+    {
+        return false;
+    }
+
+    // 3. If both are present (Hybrid / Optimus mode) or neither specifically matched:
+    // Dynamic based on dGPU activity: when dGPU is in use / waking up (usage > 0%), dot is on GPU;
+    // when dGPU is 0% (idle / sleeping), dot is on CPU.
+    return (m_gpu_usage > 0);
+}
+
 void CTrafficMonitorApp::CheckUpdate(bool message)
 {
     if (message)

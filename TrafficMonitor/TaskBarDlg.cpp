@@ -383,7 +383,34 @@ void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect r
     if (label_width > 0)
     {
         wstring str_label = theApp.m_taskbar_data.disp_str.GetConst(type);
-        drawer.DrawWindowText(rect_label, str_label.c_str(), label_color, (vertical ? IDrawCommon::Alignment::CENTER : IDrawCommon::Alignment::LEFT));
+        CRect draw_label_rect = rect_label;
+
+        if (type == TDI_CPU || type == TDI_GPU_USAGE)
+        {
+            bool is_dgpu = theApp.IsDgpuActive();
+            bool show_dot = (type == TDI_GPU_USAGE && is_dgpu) || (type == TDI_CPU && !is_dgpu);
+
+            int dot_width = 0;
+            if (m_pDC != nullptr)
+            {
+                CFont* pOldFont = m_pDC->SelectObject(&m_font);
+                dot_width = m_pDC->GetTextExtent(_T("• ")).cx;
+                m_pDC->SelectObject(pOldFont);
+            }
+
+            if (show_dot && dot_width > 0)
+            {
+                CRect rect_dot = draw_label_rect;
+                rect_dot.right = rect_dot.left + dot_width;
+                drawer.DrawWindowText(rect_dot, _T("•"), RGB(255, 255, 255), (vertical ? IDrawCommon::Alignment::CENTER : IDrawCommon::Alignment::LEFT));
+            }
+
+            // Offset the label text to the right by dot_width on both CPU and GPU
+            // so that "CPU:" and "GPU:" stay 100% vertically aligned
+            draw_label_rect.left += dot_width;
+        }
+
+        drawer.DrawWindowText(draw_label_rect, str_label.c_str(), label_color, (vertical ? IDrawCommon::Alignment::CENTER : IDrawCommon::Alignment::LEFT));
     }
 
     //Plot values
@@ -717,6 +744,8 @@ CString CTaskBarDlg::GetMouseTipsInfo()
     CString tip_info;
     CString temp;
     tip_info = _T("\x26A1 System Hardware Monitor\r\n-------------------------\r\n");
+    temp.Format(_T("• Mode: %s\r\n"), theApp.IsDgpuActive() ? _T("dGPU Active") : _T("iGPU Active"));
+    tip_info += temp;
     temp.Format(_T("• CPU: %d%% (%d\x00B0C)\r\n"), theApp.m_cpu_usage, theApp.m_cpu_temperature);
     tip_info += temp;
     if (theApp.m_gpu_usage >= 0)
@@ -793,7 +822,12 @@ void CTaskBarDlg::CalculateWindowSize()
         else
         {
             //label width
-            item_widths[*iter].label_width = m_pDC->GetTextExtent(theApp.m_taskbar_data.disp_str.GetConst(*iter).c_str()).cx;
+            int dot_extra = 0;
+            if (*iter == TDI_CPU || *iter == TDI_GPU_USAGE)
+            {
+                dot_extra = m_pDC->GetTextExtent(_T("• ")).cx;
+            }
+            item_widths[*iter].label_width = m_pDC->GetTextExtent(theApp.m_taskbar_data.disp_str.GetConst(*iter).c_str()).cx + dot_extra;
             //Numeric width
             CString sample_str = iter->GetItemValueSampleText(false);
             item_widths[*iter].value_width = m_pDC->GetTextExtent(sample_str).cx;
