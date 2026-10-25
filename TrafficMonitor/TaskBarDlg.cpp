@@ -395,7 +395,7 @@ void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect r
             if (m_pDC != nullptr)
             {
                 CFont* pOldFont = m_pDC->SelectObject(&m_font);
-                dot_width = m_pDC->GetTextExtent(_T("• ")).cx;
+                dot_width = m_pDC->GetTextExtent(_T("\x2022 ")).cx;
                 m_pDC->SelectObject(pOldFont);
             }
 
@@ -403,7 +403,7 @@ void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect r
             {
                 CRect rect_dot = draw_label_rect;
                 rect_dot.right = rect_dot.left + dot_width;
-                drawer.DrawWindowText(rect_dot, _T("•"), COLOR_GPU_INDICATOR_DOT, (vertical ? IDrawCommon::Alignment::CENTER : IDrawCommon::Alignment::LEFT));
+                drawer.DrawWindowText(rect_dot, _T("\x2022"), COLOR_GPU_INDICATOR_DOT, (vertical ? IDrawCommon::Alignment::CENTER : IDrawCommon::Alignment::LEFT));
             }
 
             // Offset the label text to the right by dot_width on both CPU and GPU
@@ -745,21 +745,21 @@ CString CTaskBarDlg::GetMouseTipsInfo()
     CString tip_info;
     CString temp;
     tip_info = _T("\x26A1 System Hardware Monitor\r\n-------------------------\r\n");
-    temp.Format(_T("• Mode: %s\r\n"), theApp.IsDgpuActive() ? _T("dGPU Active") : _T("iGPU Active"));
+    temp.Format(_T("\x2022 Mode: %s\r\n"), theApp.IsDgpuActive() ? _T("dGPU Active") : _T("iGPU Active"));
     tip_info += temp;
-    temp.Format(_T("• CPU: %d%% (%d\x00B0C)\r\n"), theApp.m_cpu_usage, theApp.m_cpu_temperature);
+    temp.Format(_T("\x2022 CPU: %d%% (%d\x00B0C)\r\n"), theApp.m_cpu_usage, theApp.m_cpu_temperature);
     tip_info += temp;
     if (theApp.m_gpu_usage >= 0)
     {
-        temp.Format(_T("• GPU: %d%% (%d\x00B0C)\r\n"), theApp.m_gpu_usage, theApp.m_gpu_temperature);
+        temp.Format(_T("\x2022 GPU: %d%% (%d\x00B0C)\r\n"), theApp.m_gpu_usage, theApp.m_gpu_temperature);
         tip_info += temp;
     }
-    temp.Format(_T("• RAM: %s / %s (%d%%)\r\n"),
+    temp.Format(_T("\x2022 RAM: %s / %s (%d%%)\r\n"),
         CCommon::KBytesToString(theApp.m_used_memory),
         CCommon::KBytesToString(theApp.m_total_memory),
         theApp.m_memory_usage);
     tip_info += temp;
-    temp.Format(_T("• Net: \x2191 %s/s  \x2193 %s/s"),
+    temp.Format(_T("\x2022 Net: \x2191 %s/s  \x2193 %s/s"),
         CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_taskbar_data),
         CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_taskbar_data));
     tip_info += temp;
@@ -826,7 +826,7 @@ void CTaskBarDlg::CalculateWindowSize()
             int dot_extra = 0;
             if (*iter == TDI_CPU || *iter == TDI_GPU_USAGE)
             {
-                dot_extra = m_pDC->GetTextExtent(_T("• ")).cx;
+                dot_extra = m_pDC->GetTextExtent(_T("\x2022 ")).cx;
             }
             item_widths[*iter].label_width = m_pDC->GetTextExtent(theApp.m_taskbar_data.disp_str.GetConst(*iter).c_str()).cx + dot_extra;
             //Numeric width
