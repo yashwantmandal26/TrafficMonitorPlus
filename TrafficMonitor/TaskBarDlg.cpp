@@ -1198,6 +1198,8 @@ void CTaskBarDlg::OnRButtonUp(UINT nFlags, CPoint point)
         }
         //Update plugin submenu
         theApp.UpdatePluginMenu(&theApp.m_taskbar_menu_plugin_sub_menu, plugin, 2);
+        //Remove Main Window option
+        pMenu->DeleteMenu(ID_SHOW_MAIN_WND, MF_BYCOMMAND);
         //Popup menu
         pMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this);
     }
@@ -1209,7 +1211,7 @@ void CTaskBarDlg::OnInitMenu(CMenu* pMenu)
     CDialogEx::OnInitMenu(pMenu);
 
     // TODO: add message handler code here
-    pMenu->CheckMenuItem(ID_SHOW_MAIN_WND, MF_BYCOMMAND | (!theApp.m_cfg_data.m_hide_main_window ? MF_CHECKED : MF_UNCHECKED));
+    pMenu->DeleteMenu(ID_SHOW_MAIN_WND, MF_BYCOMMAND);
 
     pMenu->EnableMenuItem(ID_SELECT_ALL_CONNECTION, MF_BYCOMMAND | (theApp.m_general_data.show_all_interface ? MF_GRAYED : MF_ENABLED));
     pMenu->EnableMenuItem(ID_CHECK_UPDATE, MF_BYCOMMAND | (theApp.IsCheckingForUpdate() ? MF_GRAYED : MF_ENABLED));

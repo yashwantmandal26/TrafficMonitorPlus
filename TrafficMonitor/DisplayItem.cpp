@@ -127,13 +127,13 @@ std::wstring CommonDisplayItem::DefaultString(bool is_main_window) const
             default_text = CCommon::LoadText(IDS_CPU_FREQ, _T(": "));
             break;
         case TDI_MEMORY:
-            default_text = is_main_window ? CCommon::LoadText(IDS_MEMORY_DISP, _T(": ")) : _T("RAM ");
+            default_text = is_main_window ? CCommon::LoadText(IDS_MEMORY_DISP, _T(": ")) : CString(_T("RAM "));
             break;
         case TDI_GPU_USAGE:
             default_text = _T("GPU ");
             break;
         case TDI_GPU_TEMP:
-            default_text = is_main_window ? CCommon::LoadText(IDS_GPU_DISP, _T(": ")) : _T("");
+            default_text = is_main_window ? CCommon::LoadText(IDS_GPU_DISP, _T(": ")) : CString(_T(""));
             break;
         case TDI_HDD_TEMP:
             default_text = CCommon::LoadText(IDS_HDD_DISP, _T(": "));
