@@ -126,12 +126,17 @@ struct FontInfo
     //Create a CFont object
     void Create(CFont& font, int dpi = 0) const
     {
+        int weight = (bold ? FW_BOLD : FW_NORMAL);
+        if (!bold && (name.Find(_T("Semibold")) != -1 || name.Find(_T("Semi-bold")) != -1 || name.Find(_T("Variable")) != -1))
+        {
+            weight = FW_SEMIBOLD; // 600 - Matches Windows 11 taskbar clock
+        }
         font.CreateFont(
             FontSizeToLfHeight(size, dpi), // nHeight
             0, // nWidth
             0, // nEscapement
             0, // nOrientation
-            (bold ? FW_BOLD : FW_NORMAL), // nWeight
+            weight, // nWeight
             italic, // bItalic
             underline, // bUnderline
             strike_out, // cStrikeOut
@@ -313,6 +318,7 @@ struct TaskBarSettingData : public PublicSettingData
     int secondary_display_index{};      //Display the taskbar window on which secondary monitor
     bool value_right_align{ false };    //Whether the value is right aligned
     bool dynamic_color{ true };         //Dynamic text color for hardware usage and temperature (Green -> Yellow -> Red)
+    bool show_refresh_rate{ false };    //Live screen refresh rate (Hz) in info window (off by default)
     int digits_number{ 4 };             //Number of data bits
     bool horizontal_arrange{ true };    //Arrange horizontally
     bool show_status_bar{ true };       //Display CPU/memory status bar

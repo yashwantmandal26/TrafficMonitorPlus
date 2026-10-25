@@ -4,6 +4,8 @@
 #include "stdafx.h"
 #include "TrafficMonitor.h"
 #include "TaskBarDlg.h"
+#include <powrprof.h>
+#pragma comment(lib, "PowrProf.lib")
 #include "afxdialogex.h"
 #include "TrafficMonitorDlg.h"
 #include "WindowsSettingHelper.h"
@@ -753,28 +755,85 @@ HWND CTaskBarDlg::FindTaskbarHandle(bool& is_scendary_display)
 CString CTaskBarDlg::GetMouseTipsInfo()
 {
     CString tip_info;
-    CString temp;
-    tip_info = _T("\x26A1 System Hardware Monitor\r\n-------------------------\r\n");
-    CTrafficMonitorApp::GpuMode mode = theApp.GetGpuMode();
-    const TCHAR* mode_str = (mode == CTrafficMonitorApp::GpuMode::DGPU ? _T("dGPU (Discrete)") : (mode == CTrafficMonitorApp::GpuMode::IGPU ? _T("iGPU (Integrated)") : _T("hGPU (Hybrid)")));
-    temp.Format(_T("\x2022 GPU Mode: %s\r\n"), mode_str);
-    tip_info += temp;
-    temp.Format(_T("\x2022 CPU: %d%% (%d\x00B0C)\r\n"), theApp.m_cpu_usage, theApp.m_cpu_temperature);
-    tip_info += temp;
-    if (theApp.m_gpu_usage >= 0)
-    {
-        temp.Format(_T("\x2022 GPU: %d%% (%d\x00B0C)\r\n"), theApp.m_gpu_usage, theApp.m_gpu_temperature);
-        tip_info += temp;
-    }
-    temp.Format(_T("\x2022 RAM: %s / %s (%d%%)\r\n"),
+    CString line;
+
+    // Header
+    tip_info = _T("\x26A1 TrafficMonitorPlus+\r\n\x2500\x2500\x2500\x2500\x2500\x2500\x2500\x2500\x2500\x2500\x2500\x2500\x2500\x2500\x2500\x2500\r\n");
+
+    // RAM  e.g.  "RAM   6.5 / 15.6 GB (41%)"
+    line.Format(_T("RAM   %s / %s  (%d%%)\r\n"),
         CCommon::KBytesToString(theApp.m_used_memory),
         CCommon::KBytesToString(theApp.m_total_memory),
         theApp.m_memory_usage);
-    tip_info += temp;
-    temp.Format(_T("\x2022 Net: \x2191 %s/s  \x2193 %s/s"),
-        CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_taskbar_data),
-        CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_taskbar_data));
-    tip_info += temp;
+    tip_info += line;
+
+    // CPU freq  e.g.  "CPU   2.40 GHz"
+    if (theApp.m_cpu_freq > 0)
+    {
+        line.Format(_T("CPU   %.2f GHz\r\n"), theApp.m_cpu_freq / 1000.0f);
+        tip_info += line;
+    }
+
+    // GPU mode  e.g.  "GPU   Discrete (dGPU)"
+    {
+        CTrafficMonitorApp::GpuMode mode = theApp.GetGpuMode();
+        const TCHAR* mode_label =
+            (mode == CTrafficMonitorApp::GpuMode::DGPU) ? _T("Discrete (dGPU)") :
+            (mode == CTrafficMonitorApp::GpuMode::IGPU) ? _T("Integrated (iGPU)") :
+                                                          _T("Hybrid (dGPU + iGPU)");
+        line.Format(_T("GPU   %s\r\n"), mode_label);
+        tip_info += line;
+    }
+
+    // Live display refresh rate (off by default)
+    if (theApp.m_taskbar_data.show_refresh_rate)
+    {
+        DEVMODE dm{};
+        dm.dmSize = sizeof(dm);
+        if (EnumDisplaySettings(nullptr, ENUM_CURRENT_SETTINGS, &dm) && dm.dmDisplayFrequency > 0)
+        {
+            line.Format(_T("Disp  %d Hz\r\n"), (int)dm.dmDisplayFrequency);
+            tip_info += line;
+        }
+    }
+
+    // Battery with charge/discharge watts via CallNtPowerInformation
+    {
+        SYSTEM_POWER_STATUS sps{};
+        if (GetSystemPowerStatus(&sps) && sps.BatteryLifePercent != 255)
+        {
+            // Get watt rate from SYSTEM_BATTERY_STATE
+            SYSTEM_BATTERY_STATE sbs{};
+            int watt = 0;
+            bool have_watt = false;
+            if (CallNtPowerInformation(SystemBatteryState, nullptr, 0, &sbs, sizeof(sbs)) == 0)
+            {
+                // Rate is in milliwatts; BATTERY_UNKNOWN_RATE = 0x80000000
+                if (sbs.Rate != (LONG)0x80000000 && sbs.Rate != 0)
+                {
+                    watt = abs((int)sbs.Rate) / 1000;
+                    have_watt = true;
+                }
+            }
+
+            if (sps.ACLineStatus == 1) // plugged in
+            {
+                if (have_watt && watt > 0)
+                    line.Format(_T("Bat   %d%%  +%dW\r\n"), (int)sps.BatteryLifePercent, watt);
+                else
+                    line.Format(_T("Bat   %d%%  Charging\r\n"), (int)sps.BatteryLifePercent);
+            }
+            else // on battery
+            {
+                if (have_watt && watt > 0)
+                    line.Format(_T("Bat   %d%%  -%dW\r\n"), (int)sps.BatteryLifePercent, watt);
+                else
+                    line.Format(_T("Bat   %d%%  Discharging\r\n"), (int)sps.BatteryLifePercent);
+            }
+            tip_info += line;
+        }
+    }
+
     return tip_info;
 }
 
@@ -1104,6 +1163,9 @@ BOOL CTaskBarDlg::OnInitDialog()
     if (IsWindow(GetSafeHwnd()) && m_tool_tips.Create(this, TTS_ALWAYSTIP) && IsWindow(m_tool_tips.GetSafeHwnd()))
     {
         m_tool_tips.SetMaxTipWidth(600);
+        m_tool_tips.SetDelayTime(TTDT_INITIAL, 1200);   // Hover delay 1.2s
+        m_tool_tips.SetDelayTime(TTDT_AUTOPOP, 10000);  // Keep open for 10s
+        m_tool_tips.SetDelayTime(TTDT_RESHOW, 1200);
         m_tool_tips.AddTool(this, _T(""));
         SetToolTipsTopMost();       //Set reminder information to always stay on top
     }
@@ -1174,6 +1236,7 @@ void CTaskBarDlg::OnRButtonUp(UINT nFlags, CPoint point)
         theApp.UpdatePluginMenu(&theApp.m_taskbar_menu_plugin_sub_menu, plugin, 2);
         //Remove Main Window option
         pMenu->DeleteMenu(ID_SHOW_MAIN_WND, MF_BYCOMMAND);
+    pMenu->CheckMenuItem(ID_SHOW_REFRESH_RATE, theApp.m_taskbar_data.show_refresh_rate ? MF_CHECKED : MF_UNCHECKED);
         //Popup menu
         pMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point1.x, point1.y, this);
     }
@@ -1298,6 +1361,13 @@ BOOL CTaskBarDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 {
     // TODO: Add specialized code here and/or call the base class
     UINT uMsg = LOWORD(wParam);
+    if (uMsg == ID_SHOW_REFRESH_RATE)
+    {
+        theApp.m_taskbar_data.show_refresh_rate = !theApp.m_taskbar_data.show_refresh_rate;
+        theApp.SaveConfig();
+        UpdateToolTips();
+        return TRUE;
+    }
     if (uMsg == ID_SELECT_ALL_CONNECTION || uMsg == ID_SELETE_CONNECTION
         || (uMsg > ID_SELECT_ALL_CONNECTION && uMsg <= ID_SELETE_CONNECTION_MAX))
     {

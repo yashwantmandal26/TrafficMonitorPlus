@@ -596,17 +596,29 @@ void CTaskBarDlgDrawCommonWindowSupport::CDWriteHelper::SetFont(HFONT h_font)
             static_cast<DWRITE_FONT_WEIGHT>(m_last_font.lfWeight);
         auto dwrite_font_style =
             m_last_font.lfItalic ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL;
-        ThrowIfFailed<CDWriteException>(
-            CDWriteSupport::GetFactory()->CreateTextFormat(
-                theApp.m_taskbar_data.font.name,
-                NULL,
-                dwrite_font_weight,
-                dwrite_font_style,
-                DWRITE_FONT_STRETCH_NORMAL,
-                abs_font_height_f,
-                L"",
-                &m_p_text_format),
-            TRAFFICMONITOR_ERROR_STR("Create D2D1 Text Format failed."));
+        HRESULT hr_dwrite = CDWriteSupport::GetFactory()->CreateTextFormat(
+            theApp.m_taskbar_data.font.name,
+            NULL,
+            dwrite_font_weight,
+            dwrite_font_style,
+            DWRITE_FONT_STRETCH_NORMAL,
+            abs_font_height_f,
+            L"",
+            &m_p_text_format);
+        if (FAILED(hr_dwrite))
+        {
+            ThrowIfFailed<CDWriteException>(
+                CDWriteSupport::GetFactory()->CreateTextFormat(
+                    L"Segoe UI",
+                    NULL,
+                    dwrite_font_weight,
+                    dwrite_font_style,
+                    DWRITE_FONT_STRETCH_NORMAL,
+                    abs_font_height_f,
+                    L"",
+                    &m_p_text_format),
+                TRAFFICMONITOR_ERROR_STR("Create D2D1 Text Format failed."));
+        }
 
         m_h_last_font = h_font;
     }

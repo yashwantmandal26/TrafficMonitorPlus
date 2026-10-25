@@ -95,8 +95,8 @@ using std::ofstream;
 #define MAX_INSERT_TO_TASKBAR_CNT 200     //Maximum number of attempts to embed the taskbar
 #define WARN_INSERT_TO_TASKBAR_CNT 20     //Number of warning attempts to embed in the taskbar
 
-#define APP_NAME _T("TrafficMonitor")
-#define TASKBAR_WINDOW_NAME _T("TrafficMonitorTaskbarWindow")
+#define APP_NAME _T("TrafficMonitorPlus+")
+#define TASKBAR_WINDOW_NAME _T("TrafficMonitorPlus+TaskbarWindow")
 #define APP_CLASS_NAME _T("TrafficMonitor_r7XZaS4p") //The class name of the program's main window
 #define VERSION L"1.86"
 #define COPYRITE_YEAR L"2017-2026"

@@ -407,7 +407,7 @@
 #define ID_OPTIONS                      32829
 #define ID_32830                        32830
 #define ID_OPTIONS2                     32831
-#define ID_32832                        32832
+#define ID_SHOW_REFRESH_RATE            32832
 #define ID_COPY_TEXT                    32833
 #define ID_32834                        32834
 #define ID_32835                        32835

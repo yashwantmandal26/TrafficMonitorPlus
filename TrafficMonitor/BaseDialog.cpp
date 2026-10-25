@@ -378,6 +378,10 @@ BOOL CBaseDialog::OnInitDialog()
     //Initialize window size
     if (m_window_size.cx > 0 && m_window_size.cy > 0)
     {
+        if (m_min_size.cx > 0 && m_window_size.cx < theApp.DPI(m_min_size.cx))
+            m_window_size.cx = theApp.DPI(m_min_size.cx);
+        if (m_min_size.cy > 0 && m_window_size.cy < theApp.DPI(m_min_size.cy))
+            m_window_size.cy = theApp.DPI(m_min_size.cy);
         SetWindowPos(nullptr, 0, 0, m_window_size.cx, m_window_size.cy, SWP_NOZORDER | SWP_NOMOVE);
     }
 

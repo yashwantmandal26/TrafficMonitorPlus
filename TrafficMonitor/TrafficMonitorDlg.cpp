@@ -233,6 +233,16 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
     //    tip_info += m_tBarDlg->GetTaskbarDebugString().c_str();
     //}
 
+    if (theApp.m_taskbar_data.show_refresh_rate)
+    {
+        DEVMODE dm{};
+        dm.dmSize = sizeof(dm);
+        if (EnumDisplaySettings(nullptr, ENUM_CURRENT_SETTINGS, &dm) && dm.dmDisplayFrequency > 0)
+        {
+            temp.Format(_T("\r\n%s: %d Hz"), _T("Refresh Rate"), (int)dm.dmDisplayFrequency);
+            tip_info += temp;
+        }
+    }
     return tip_info;
 }
 
@@ -1157,6 +1167,9 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
     //Initialize mouse tips
     m_tool_tips.Create(this, TTS_ALWAYSTIP);
     m_tool_tips.SetMaxTipWidth(600);
+    m_tool_tips.SetDelayTime(TTDT_INITIAL, 1200);   // Hover delay 1.2s
+    m_tool_tips.SetDelayTime(TTDT_AUTOPOP, 10000);  // Keep open for 10s
+    m_tool_tips.SetDelayTime(TTDT_RESHOW, 1200);
     m_tool_tips.AddTool(this, _T(""));
 
     //If the main window is set to be hidden when the program is started, or the window is located in the upper left corner, first set its opacity to 0
