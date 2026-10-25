@@ -134,53 +134,9 @@ void CTaskBarSettingsDlg::SetControlMouseWheelEnable(bool enable)
 
 bool CTaskBarSettingsDlg::InitializeControls()
 {
-    RepositionTextBasedControls({
-        { CtrlTextInfo::L1, IDC_FONT_STATIC },
-        { CtrlTextInfo::C0, IDC_FONT_NAME_EDIT1 },
-        { CtrlTextInfo::R1, IDC_FONT_SIZE_STATIC },
-        { CtrlTextInfo::R2, IDC_FONT_SIZE_EDIT1 },
-        { CtrlTextInfo::R3, IDC_SET_FONT_BUTTON1, CtrlTextInfo::W16 }
-    });
-    RepositionTextBasedControls({
-        { CtrlTextInfo::L2, IDC_TXT_COLOR_STATIC },
-        { CtrlTextInfo::L1, IDC_TEXT_COLOR_STATIC1 },
-        { CtrlTextInfo::C0, IDC_SPECIFY_EACH_ITEM_COLOR_CHECK, CtrlTextInfo::W16 },
-        { CtrlTextInfo::R1, IDC_DEFAULT_STYLE_BUTTON, CtrlTextInfo::W16 }
-    });
-    RepositionTextBasedControls({
-        { CtrlTextInfo::C0, IDC_AUTO_ADAPT_LIGHT_THEME_CHECK, CtrlTextInfo::W16 },
-        { CtrlTextInfo::R1, IDC_AUTO_ADAPT_SETTINGS_BUTTON, CtrlTextInfo::W16 }
-    });
-    RepositionTextBasedControls({
-        { CtrlTextInfo::L4, IDC_NET_SPEED_WIDTH_STATIC },
-        { CtrlTextInfo::L3, IDC_DIGIT_NUMBER_COMBO },
-        { CtrlTextInfo::L2, IDC_CHARACTOR_STATIC }
-    });
-    RepositionTextBasedControls({
-        { CtrlTextInfo::L4, IDC_ITEM_SPACING_STATIC },
-        { CtrlTextInfo::L3, IDC_ITEM_SPACE_EDIT },
-        { CtrlTextInfo::L2, IDC_PIXELS_STATIC },
-        { CtrlTextInfo::L4, IDC_VERTICAL_MARGIN_STATIC },
-        { CtrlTextInfo::L3, IDC_VERTICAL_MARGIN_EDIT },
-        { CtrlTextInfo::L2, IDC_PIXELS_STATIC1 }
-    });
-    RepositionTextBasedControls({
-        { CtrlTextInfo::L1, IDC_EXE_PATH_STATIC },
-        { CtrlTextInfo::C0, IDC_EXE_PATH_EDIT },
-        { CtrlTextInfo::R1, IDC_BROWSE_BUTTON }
-    });
-    RepositionTextBasedControls({
-        { CtrlTextInfo::L4, IDC_NET_SPEED_MAX_VALUE_STATIC },
-        { CtrlTextInfo::L3, IDC_NET_SPEED_FIGURE_MAX_VALUE_EDIT },
-        { CtrlTextInfo::L2, IDC_NET_SPEED_FIGURE_MAX_VALUE_UNIT_COMBO }
-    });
-    RepositionTextBasedControls({
-        { CtrlTextInfo::L4, IDC_GRAPH_DISPLAY_MODE_STATIC },
-        { CtrlTextInfo::L3, IDC_CM_GRAPH_BAR_RADIO, CtrlTextInfo::W16 },
-        { CtrlTextInfo::L2, IDC_CM_GRAPH_PLOT_RADIO, CtrlTextInfo::W16 }
-    });
-
-    return true;
+    // Return false to bypass legacy 1-column RepositionTextBasedControls
+    // and preserve the redesigned 2-column layout defined in TrafficMonitor.rc
+    return false;
 }
 
 void CTaskBarSettingsDlg::DoDataExchange(CDataExchange* pDX)

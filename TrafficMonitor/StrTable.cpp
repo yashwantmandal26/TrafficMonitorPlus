@@ -15,7 +15,7 @@ static void LanguageInfoFromIni(LanguageInfo& language_info, const CIniHelper& i
 {
     language_info.display_name = ini.GetString(L"general", L"DISPLAY_NAME", L"");
     language_info.bcp_47 = ini.GetString(L"general", L"BCP_47", L"");
-    language_info.default_font_name = ini.GetString(L"general", L"DEFAULT_FONT", L"Microsoft Sans Serif");
+    language_info.default_font_name = ini.GetString(L"general", L"DEFAULT_FONT", L"Segoe UI");
     language_info.translator = ini.GetString(L"general", L"TRANSLATOR", L"<Unknown>");
     language_info.translator_url = ini.GetString(L"general", L"TRANSLATOR_URL", L"");
 }

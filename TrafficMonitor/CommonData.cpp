@@ -313,7 +313,7 @@ void LanguageInfo::fromConfigString(const wstring& config_str)
     {
         bcp_47 = L"en-US";
         display_name = L"English";
-        default_font_name = L"Segoe UI Variable Text";
+        default_font_name = L"Segoe UI";
         language_id = LocaleNameToLCID(L"en-US", 0);
         return;
     }

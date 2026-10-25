@@ -64,7 +64,7 @@ void CTrafficMonitorApp::LoadLanguageConfig()
     {
         m_general_data.language.bcp_47 = L"en-US";
         m_general_data.language.display_name = L"English";
-        m_general_data.language.default_font_name = L"Segoe UI Variable Text";
+        m_general_data.language.default_font_name = L"Segoe UI";
         m_general_data.language.language_id = LocaleNameToLCID(L"en-US", 0);
     }
     else
