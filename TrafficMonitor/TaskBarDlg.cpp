@@ -204,46 +204,80 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 #endif
 }
 
-// 4-Stage Color Definitions: Green -> Yellow -> Orange -> Red (in increasing order)
-const COLORREF COLOR_STAGE_GREEN  = RGB(52, 211, 153);  // Soft Mint Emerald (#34D399)
-const COLORREF COLOR_STAGE_YELLOW = RGB(251, 191, 36);  // Golden Amber (#FBBF24)
-const COLORREF COLOR_STAGE_ORANGE = RGB(251, 146, 60);  // Vivid Coral (#FB923C)
-const COLORREF COLOR_STAGE_RED    = RGB(244, 63, 94);   // Electric Rose Red (#F43F5E)
+// Smooth 4-Stage Color Definitions: White -> Yellow -> Orange -> Red (in increasing order)
+const COLORREF COLOR_STAGE_WHITE  = RGB(255, 255, 255); // White (Normal)
+const COLORREF COLOR_STAGE_YELLOW = RGB(255, 214, 10);  // Yellow (Lil more high)
+const COLORREF COLOR_STAGE_ORANGE = RGB(251, 146, 60);  // Orange (More value)
+const COLORREF COLOR_STAGE_RED    = RGB(244, 63, 94);   // Red (Highest values)
 
-// Dynamic color calculation for hardware usage with specific values:
-// < 50%       : Green
-// 50% - 69%   : Yellow
-// 70% - 84%   : Orange
-// >= 85%      : Red
-static COLORREF GetDynamicUsageColor(int usage)
+// Linear interpolation between two RGB colors for seamless, smooth color transitions
+static COLORREF InterpolateColor(COLORREF c1, COLORREF c2, float t)
 {
-    if (usage < 50)
-        return COLOR_STAGE_GREEN;
-    else if (usage < 70)
-        return COLOR_STAGE_YELLOW;
-    else if (usage < 85)
-        return COLOR_STAGE_ORANGE;
-    else
-        return COLOR_STAGE_RED;
+    if (t <= 0.0f) return c1;
+    if (t >= 1.0f) return c2;
+    int r = static_cast<int>(GetRValue(c1) + t * (GetRValue(c2) - GetRValue(c1)));
+    int g = static_cast<int>(GetGValue(c1) + t * (GetGValue(c2) - GetGValue(c1)));
+    int b = static_cast<int>(GetBValue(c1) + t * (GetBValue(c2) - GetBValue(c1)));
+    return RGB(r, g, b);
 }
 
-// Dynamic color calculation for hardware temperature with specific values:
-// < 55 deg C       : Green
-// 55 - 69 deg C    : Yellow
-// 70 - 79 deg C    : Orange
-// >= 80 deg C      : Red
+// Dynamic smooth color for hardware usage:
+// <= 35%        : White (Normal)
+// 35% - 60%     : Smooth seamless transition from White to Yellow
+// 60% - 80%     : Smooth seamless transition from Yellow to Orange
+// >= 80%        : Smooth seamless transition from Orange to Red (up to 100%)
+static COLORREF GetDynamicUsageColor(int usage)
+{
+    if (usage <= 35)
+    {
+        return COLOR_STAGE_WHITE;
+    }
+    else if (usage < 60)
+    {
+        float t = (usage - 35.0f) / (60.0f - 35.0f);
+        return InterpolateColor(COLOR_STAGE_WHITE, COLOR_STAGE_YELLOW, t);
+    }
+    else if (usage < 80)
+    {
+        float t = (usage - 60.0f) / (80.0f - 60.0f);
+        return InterpolateColor(COLOR_STAGE_YELLOW, COLOR_STAGE_ORANGE, t);
+    }
+    else
+    {
+        float t = (usage - 80.0f) / (100.0f - 80.0f);
+        return InterpolateColor(COLOR_STAGE_ORANGE, COLOR_STAGE_RED, t);
+    }
+}
+
+// Dynamic smooth color for hardware temperature:
+// <= 48 deg C   : White (Normal)
+// 48 - 65 deg C : Smooth seamless transition from White to Yellow
+// 65 - 80 deg C : Smooth seamless transition from Yellow to Orange
+// >= 80 deg C   : Smooth seamless transition from Orange to Red (up to 95 deg C+)
 static COLORREF GetDynamicTempColor(int temp)
 {
     if (temp <= 0)
-        return RGB(255, 255, 255); // White if no valid sensor data
-    if (temp < 55)
-        return COLOR_STAGE_GREEN;
-    else if (temp < 70)
-        return COLOR_STAGE_YELLOW;
+        return COLOR_STAGE_WHITE;
+
+    if (temp <= 48)
+    {
+        return COLOR_STAGE_WHITE;
+    }
+    else if (temp < 65)
+    {
+        float t = (temp - 48.0f) / (65.0f - 48.0f);
+        return InterpolateColor(COLOR_STAGE_WHITE, COLOR_STAGE_YELLOW, t);
+    }
     else if (temp < 80)
-        return COLOR_STAGE_ORANGE;
+    {
+        float t = (temp - 65.0f) / (80.0f - 65.0f);
+        return InterpolateColor(COLOR_STAGE_YELLOW, COLOR_STAGE_ORANGE, t);
+    }
     else
-        return COLOR_STAGE_RED;
+    {
+        float t = (temp - 80.0f) / (95.0f - 80.0f);
+        return InterpolateColor(COLOR_STAGE_ORANGE, COLOR_STAGE_RED, t);
+    }
 }
 
 void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect rect, int label_width, bool vertical)
