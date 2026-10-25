@@ -205,10 +205,10 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 }
 
 // 4-Stage Color Definitions: Green -> Yellow -> Orange -> Red (in increasing order)
-const COLORREF COLOR_STAGE_GREEN  = RGB(76, 217, 100);  // Green (Normal / Low)
-const COLORREF COLOR_STAGE_YELLOW = RGB(255, 214, 10);  // Yellow (Moderate)
-const COLORREF COLOR_STAGE_ORANGE = RGB(255, 149, 0);   // Orange (High)
-const COLORREF COLOR_STAGE_RED    = RGB(255, 59, 48);   // Red (Critical / Alert)
+const COLORREF COLOR_STAGE_GREEN  = RGB(52, 211, 153);  // Soft Mint Emerald (#34D399)
+const COLORREF COLOR_STAGE_YELLOW = RGB(251, 191, 36);  // Golden Amber (#FBBF24)
+const COLORREF COLOR_STAGE_ORANGE = RGB(251, 146, 60);  // Vivid Coral (#FB923C)
+const COLORREF COLOR_STAGE_RED    = RGB(244, 63, 94);   // Electric Rose Red (#F43F5E)
 
 // Dynamic color calculation for hardware usage with specific values:
 // < 50%       : Green
@@ -716,96 +716,23 @@ CString CTaskBarDlg::GetMouseTipsInfo()
 {
     CString tip_info;
     CString temp;
-    temp.Format(_T("%s: %s\r\n (%s: %s/%s: %s)"), CCommon::LoadText(IDS_TRAFFIC_USED_TODAY),
-        CCommon::KBytesToString((theApp.m_today_up_traffic + theApp.m_today_down_traffic) / 1024u),
-        CCommon::LoadText(IDS_UPLOAD), CCommon::KBytesToString(theApp.m_today_up_traffic / 1024u),
-        CCommon::LoadText(IDS_DOWNLOAD), CCommon::KBytesToString(theApp.m_today_down_traffic / 1024u)
-    );
+    tip_info = _T("\x26A1 System Hardware Monitor\r\n-------------------------\r\n");
+    temp.Format(_T("• CPU: %d%% (%d\x00B0C)\r\n"), theApp.m_cpu_usage, theApp.m_cpu_temperature);
     tip_info += temp;
-    if (!IsItemShow(TDI_UP))
+    if (theApp.m_gpu_usage >= 0)
     {
-        temp.Format(_T("\r\n%s: %s/s"), CCommon::LoadText(IDS_UPLOAD),
-            CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_taskbar_data));
+        temp.Format(_T("• GPU: %d%% (%d\x00B0C)\r\n"), theApp.m_gpu_usage, theApp.m_gpu_temperature);
         tip_info += temp;
     }
-    if (!IsItemShow(TDI_DOWN))
-    {
-        temp.Format(_T("\r\n%s: %s/s"), CCommon::LoadText(IDS_DOWNLOAD),
-            CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_taskbar_data));
-        tip_info += temp;
-    }
-    if (!IsItemShow(TDI_CPU))
-    {
-        temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_CPU_USAGE), theApp.m_cpu_usage);
-        tip_info += temp;
-    }
-    if (!IsShowCpuMemory())
-    {
-        temp.Format(_T("\r\n%s: %s/%s"),
-            CCommon::LoadText(IDS_MEMORY_USAGE),
-            CCommon::KBytesToString(theApp.m_used_memory), CCommon::KBytesToString(theApp.m_total_memory));
-    }
-    if (!IsItemShow(TDI_MEMORY))
-    {
-        temp.Format(_T("\r\n%s: %s/%s (%d %%)"), CCommon::LoadText(IDS_MEMORY_USAGE),
-            CCommon::KBytesToString(theApp.m_used_memory),
-            CCommon::KBytesToString(theApp.m_total_memory), theApp.m_memory_usage);
-        tip_info += temp;
-    }
-    else
-    {
-        temp.Format(_T("\r\n%s: %s/%s"), CCommon::LoadText(IDS_MEMORY_USAGE),
-            CCommon::KBytesToString(theApp.m_used_memory),
-            CCommon::KBytesToString(theApp.m_total_memory));
-        tip_info += temp;
-    }
-    if (!IsItemShow(TDI_CPU_FREQ) && theApp.m_cpu_freq > 0)
-    {
-        temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_FREQ), CCommon::FreqToString(theApp.m_cpu_freq, theApp.m_taskbar_data));
-        tip_info += temp;
-    }
-
-    if (!IsItemShow(TDI_GPU_USAGE) && theApp.m_gpu_usage >= 0)
-    {
-        temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_GPU_USAGE), theApp.m_gpu_usage);
-        tip_info += temp;
-    }
-
-#ifndef WITHOUT_TEMPERATURE
-    CTrafficMonitorDlg* pMainWnd = dynamic_cast<CTrafficMonitorDlg*>(theApp.m_pMainWnd);
-    if (pMainWnd->IsTemperatureNeeded())
-    {
-        if (!IsItemShow(TDI_CPU_TEMP) && theApp.m_cpu_temperature > 0)
-        {
-            temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_CPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_cpu_temperature, theApp.m_taskbar_data));
-            tip_info += temp;
-        }
-        if (!IsItemShow(TDI_GPU_TEMP) && theApp.m_gpu_temperature > 0)
-        {
-            temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_GPU_TEMPERATURE), CCommon::TemperatureToString(theApp.m_gpu_temperature, theApp.m_taskbar_data));
-            tip_info += temp;
-        }
-        if (!IsItemShow(TDI_HDD_TEMP) && theApp.m_hdd_temperature > 0)
-        {
-            temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_HDD_TEMPERATURE), CCommon::TemperatureToString(theApp.m_hdd_temperature, theApp.m_taskbar_data));
-            tip_info += temp;
-        }
-        if (!IsItemShow(TDI_MAIN_BOARD_TEMP) && theApp.m_main_board_temperature > 0)
-        {
-            temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE), CCommon::TemperatureToString(theApp.m_main_board_temperature, theApp.m_taskbar_data));
-            tip_info += temp;
-        }
-    }
-#endif
-    if (!IsItemShow(TDI_HDD_USAGE) && theApp.m_hdd_usage >= 0)
-    {
-        temp.Format(_T("\r\n%s: %d %%"), CCommon::LoadText(IDS_HDD_USAGE), theApp.m_hdd_usage);
-        tip_info += temp;
-    }
-
-    //Add mouse hints for plugin projects
-    tip_info += theApp.GetPlauginTooltipInfo().c_str();
-
+    temp.Format(_T("• RAM: %s / %s (%d%%)\r\n"),
+        CCommon::KBytesToString(theApp.m_used_memory),
+        CCommon::KBytesToString(theApp.m_total_memory),
+        theApp.m_memory_usage);
+    tip_info += temp;
+    temp.Format(_T("• Net: \x2191 %s/s  \x2193 %s/s"),
+        CCommon::DataSizeToString(theApp.m_out_speed, theApp.m_taskbar_data),
+        CCommon::DataSizeToString(theApp.m_in_speed, theApp.m_taskbar_data));
+    tip_info += temp;
     return tip_info;
 }
 
@@ -1210,48 +1137,22 @@ void CTaskBarDlg::OnInitMenu(CMenu* pMenu)
 {
     CDialogEx::OnInitMenu(pMenu);
 
-    // TODO: add message handler code here
     pMenu->DeleteMenu(ID_SHOW_MAIN_WND, MF_BYCOMMAND);
 
-    pMenu->EnableMenuItem(ID_SELECT_ALL_CONNECTION, MF_BYCOMMAND | (theApp.m_general_data.show_all_interface ? MF_GRAYED : MF_ENABLED));
-    pMenu->EnableMenuItem(ID_CHECK_UPDATE, MF_BYCOMMAND | (theApp.IsCheckingForUpdate() ? MF_GRAYED : MF_ENABLED));
-
-    //pMenu->SetDefaultItem(ID_NETWORK_INFO);
-    //Set default menu items
+    // Set default menu item (Task Manager by default)
     switch (theApp.m_taskbar_data.double_click_action)
     {
     case DoubleClickAction::CONNECTION_INFO:
         pMenu->SetDefaultItem(ID_NETWORK_INFO);
         break;
-    case DoubleClickAction::HISTORY_TRAFFIC:
-        pMenu->SetDefaultItem(ID_TRAFFIC_HISTORY);
-        break;
-    case DoubleClickAction::SHOW_MORE_INFO:
-        pMenu->SetDefaultItem(ID_SHOW_CPU_MEMORY2);
-        break;
     case DoubleClickAction::OPTIONS:
         pMenu->SetDefaultItem(ID_OPTIONS2);
         break;
     case DoubleClickAction::TASK_MANAGER:
+    default:
         pMenu->SetDefaultItem(ID_OPEN_TASK_MANAGER);
         break;
-    default:
-        pMenu->SetDefaultItem(-1);
-        break;
     }
-
-    //Set the check status of the plug-in command
-    ITMPlugin* plugin = theApp.m_plugins.GetPluginByItem(m_clicked_item.PluginItem());
-    if (plugin != nullptr && plugin->GetAPIVersion() >= 5)
-    {
-        for (int i = ID_PLUGIN_COMMAND_START; i <= ID_PLUGIN_COMMAND_MAX; i++)
-        {
-            bool checked = (plugin->IsCommandChecked(i - ID_PLUGIN_COMMAND_START) != 0);
-            pMenu->CheckMenuItem(i, MF_BYCOMMAND | (checked ? MF_CHECKED : MF_UNCHECKED));
-        }
-    }
-
-    ::SendMessage(theApp.m_pMainWnd->GetSafeHwnd(), WM_TASKBAR_MENU_POPED_UP, 0, 0); //Notification that the main window menu has popped up
 }
 
 BOOL CTaskBarDlg::PreTranslateMessage(MSG* pMsg)
