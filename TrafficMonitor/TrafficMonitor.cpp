@@ -543,7 +543,7 @@ void CTrafficMonitorApp::DPIFromWindow(CWnd* pWnd)
 }
 
 
-bool CTrafficMonitorApp::IsDgpuActive()
+CTrafficMonitorApp::GpuMode CTrafficMonitorApp::GetGpuMode()
 {
     DWORD current_tick = GetTickCount();
     // Cache hardware presence check every 2 seconds to avoid unnecessary API calls
@@ -588,22 +588,46 @@ bool CTrafficMonitorApp::IsDgpuActive()
         }
     }
 
-    // 1. If only dGPU is present (hardware MUX in dGPU-only mode)
     if (m_cached_has_dgpu && !m_cached_has_igpu)
     {
-        return true;
+        return GpuMode::DGPU;
     }
-
-    // 2. If only iGPU is present (hardware MUX in iGPU-only mode)
     if (m_cached_has_igpu && !m_cached_has_dgpu)
     {
-        return false;
+        return GpuMode::IGPU;
+    }
+    return GpuMode::HYBRID;
+}
+
+wstring CTrafficMonitorApp::GetGpuLabelString(const wstring& default_str)
+{
+    GpuMode mode = GetGpuMode();
+    wstring prefix;
+    switch (mode)
+    {
+    case GpuMode::DGPU:
+        prefix = L"dGPU";
+        break;
+    case GpuMode::IGPU:
+        prefix = L"iGPU";
+        break;
+    case GpuMode::HYBRID:
+    default:
+        prefix = L"hGPU";
+        break;
     }
 
-    // 3. If both are present (Hybrid / Optimus mode) or neither specifically matched:
-    // Dynamic based on dGPU activity: when dGPU is in use / waking up (usage > 0%), dot is on GPU;
-    // when dGPU is 0% (idle / sleeping), dot is on CPU.
-    return (m_gpu_usage > 0);
+    wstring result = default_str;
+    size_t pos = result.find(L"GPU");
+    if (pos != wstring::npos)
+    {
+        result.replace(pos, 3, prefix);
+    }
+    else
+    {
+        result = prefix + L": ";
+    }
+    return result;
 }
 
 void CTrafficMonitorApp::CheckUpdate(bool message)

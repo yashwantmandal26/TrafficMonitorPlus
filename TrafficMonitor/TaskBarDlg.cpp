@@ -209,7 +209,6 @@ const COLORREF COLOR_STAGE_GREEN  = RGB(52, 211, 153);  // Soft Mint Emerald (#3
 const COLORREF COLOR_STAGE_YELLOW = RGB(251, 191, 36);  // Golden Amber (#FBBF24)
 const COLORREF COLOR_STAGE_ORANGE = RGB(251, 146, 60);  // Vivid Coral (#FB923C)
 const COLORREF COLOR_STAGE_RED    = RGB(244, 63, 94);   // Electric Rose Red (#F43F5E)
-const COLORREF COLOR_GPU_INDICATOR_DOT = RGB(0, 191, 255); // Vibrant Sky Blue (#00BFFF)
 
 // Dynamic color calculation for hardware usage with specific values:
 // < 50%       : Green
@@ -384,34 +383,11 @@ void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect r
     if (label_width > 0)
     {
         wstring str_label = theApp.m_taskbar_data.disp_str.GetConst(type);
-        CRect draw_label_rect = rect_label;
-
-        if (type == TDI_CPU || type == TDI_GPU_USAGE)
+        if (type == TDI_GPU_USAGE)
         {
-            bool is_dgpu = theApp.IsDgpuActive();
-            bool show_dot = (type == TDI_GPU_USAGE && is_dgpu) || (type == TDI_CPU && !is_dgpu);
-
-            int dot_width = 0;
-            if (m_pDC != nullptr)
-            {
-                CFont* pOldFont = m_pDC->SelectObject(&m_font);
-                dot_width = m_pDC->GetTextExtent(_T("\x2022 ")).cx;
-                m_pDC->SelectObject(pOldFont);
-            }
-
-            if (show_dot && dot_width > 0)
-            {
-                CRect rect_dot = draw_label_rect;
-                rect_dot.right = rect_dot.left + dot_width;
-                drawer.DrawWindowText(rect_dot, _T("\x2022"), COLOR_GPU_INDICATOR_DOT, (vertical ? IDrawCommon::Alignment::CENTER : IDrawCommon::Alignment::LEFT));
-            }
-
-            // Offset the label text to the right by dot_width on both CPU and GPU
-            // so that "CPU:" and "GPU:" stay 100% vertically aligned
-            draw_label_rect.left += dot_width;
+            str_label = theApp.GetGpuLabelString(str_label);
         }
-
-        drawer.DrawWindowText(draw_label_rect, str_label.c_str(), label_color, (vertical ? IDrawCommon::Alignment::CENTER : IDrawCommon::Alignment::LEFT));
+        drawer.DrawWindowText(rect_label, str_label.c_str(), label_color, (vertical ? IDrawCommon::Alignment::CENTER : IDrawCommon::Alignment::LEFT));
     }
 
     //Plot values
@@ -745,7 +721,9 @@ CString CTaskBarDlg::GetMouseTipsInfo()
     CString tip_info;
     CString temp;
     tip_info = _T("\x26A1 System Hardware Monitor\r\n-------------------------\r\n");
-    temp.Format(_T("\x2022 Mode: %s\r\n"), theApp.IsDgpuActive() ? _T("dGPU Active") : _T("iGPU Active"));
+    CTrafficMonitorApp::GpuMode mode = theApp.GetGpuMode();
+    const TCHAR* mode_str = (mode == CTrafficMonitorApp::GpuMode::DGPU ? _T("dGPU (Discrete)") : (mode == CTrafficMonitorApp::GpuMode::IGPU ? _T("iGPU (Integrated)") : _T("hGPU (Hybrid)")));
+    temp.Format(_T("\x2022 GPU Mode: %s\r\n"), mode_str);
     tip_info += temp;
     temp.Format(_T("\x2022 CPU: %d%% (%d\x00B0C)\r\n"), theApp.m_cpu_usage, theApp.m_cpu_temperature);
     tip_info += temp;
@@ -823,12 +801,12 @@ void CTaskBarDlg::CalculateWindowSize()
         else
         {
             //label width
-            int dot_extra = 0;
-            if (*iter == TDI_CPU || *iter == TDI_GPU_USAGE)
+            wstring str_label = theApp.m_taskbar_data.disp_str.GetConst(*iter);
+            if (*iter == TDI_GPU_USAGE)
             {
-                dot_extra = m_pDC->GetTextExtent(_T("\x2022 ")).cx;
+                str_label = theApp.GetGpuLabelString(str_label);
             }
-            item_widths[*iter].label_width = m_pDC->GetTextExtent(theApp.m_taskbar_data.disp_str.GetConst(*iter).c_str()).cx + dot_extra;
+            item_widths[*iter].label_width = m_pDC->GetTextExtent(str_label.c_str()).cx;
             //Numeric width
             CString sample_str = iter->GetItemValueSampleText(false);
             item_widths[*iter].value_width = m_pDC->GetTextExtent(sample_str).cx;
