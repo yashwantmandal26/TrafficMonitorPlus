@@ -17,6 +17,15 @@
 
 ---
 
+<p align="center">
+  <img src="./Screenshots/taskbar_preview.png" alt="TrafficMonitorPlus+ Windows 11 Taskbar Live Preview" />
+</p>
+<p align="center">
+  <em>Live real-time telemetry seamlessly integrated into the Windows 11 Taskbar with dynamic color-reactive heat transitions.</em>
+</p>
+
+---
+
 ## 🌟 Introduction
 
 **TrafficMonitorPlus+** is an enhanced, feature-rich edition of the popular Windows monitoring utility. Designed for power users, gamers, and developers, TrafficMonitorPlus+ seamlessly embeds real-time network speeds, CPU/GPU temperatures, memory usage, and battery telemetry directly into your Windows taskbar or a sleek desktop floating widget.
