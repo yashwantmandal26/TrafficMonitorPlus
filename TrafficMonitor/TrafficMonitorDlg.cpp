@@ -1486,15 +1486,16 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
             }
             __except (EXCEPTION_EXECUTE_HANDLER)
             {
-                AfxMessageBox(error_info, MB_ICONERROR | MB_OK);
+                if (theApp.m_debug_log)
+                    CCommon::WriteLog(error_info, theApp.m_log_path.c_str());
             }
         };
 
         getHardwareInfo();
         auto monitor_error_message{ OpenHardwareMonitorApi::GetErrorMessage() };
-        if (!monitor_error_message.empty())
+        if (!monitor_error_message.empty() && theApp.m_debug_log)
         {
-            AfxMessageBox(monitor_error_message.c_str(), MB_ICONERROR | MB_OK);
+            CCommon::WriteLog(monitor_error_message.c_str(), theApp.m_log_path.c_str());
         }
         theApp.m_gpu_temperature = theApp.m_pMonitor->GpuTemperature();
         theApp.m_main_board_temperature = theApp.m_pMonitor->MainboardTemperature();

@@ -10,13 +10,23 @@ CPdhQuery::CPdhQuery(LPCTSTR _fullCounterPath)
 CPdhQuery::~CPdhQuery()
 {
     //Close query
-    PdhCloseQuery(query);
+    if (query != nullptr)
+    {
+        PdhCloseQuery(query);
+        query = nullptr;
+    }
 }
 
 bool CPdhQuery::Initialize()
 {
     if (isInitialized)
         return true;
+
+    if (query != nullptr)
+    {
+        PdhCloseQuery(query);
+        query = nullptr;
+    }
 
     PDH_STATUS status;
     //Open query

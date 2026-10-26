@@ -16,6 +16,10 @@ bool CPdhCpuTemperature::GetCpuTemperature(float& temp)
 {
     if (!isInitialized)
     {
+        ULONGLONG now = GetTickCount64();
+        if (now - m_last_init_attempt < 10000) // 10-second cooldown if counters missing
+            return false;
+        m_last_init_attempt = now;
         Initialize();
         if (!isInitialized)
             return false;
@@ -28,9 +32,10 @@ bool CPdhCpuTemperature::GetCpuTemperature(float& temp)
         for (const auto& item : values)
         {
             float c = 0.0f;
-            if (m_high_precision)
+            // Adaptive conversion: tenths of Kelvin (> 1000) vs whole Kelvin (< 1000)
+            if (item.value > 1000.0)
                 c = static_cast<float>((item.value / 10.0) - 273.15);
-            else
+            else if (item.value > 0.0)
                 c = static_cast<float>(item.value - 273.15);
 
             if (c >= 20.0f && c <= 115.0f)

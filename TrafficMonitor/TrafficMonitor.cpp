@@ -660,7 +660,8 @@ UINT CTrafficMonitorApp::InitOpenHardwareMonitorLibThreadFunc(LPVOID lpParam)
     theApp.m_pMonitor = OpenHardwareMonitorApi::CreateInstance();
     if (theApp.m_pMonitor == nullptr)
     {
-        AfxMessageBox(OpenHardwareMonitorApi::GetErrorMessage().c_str(), MB_ICONERROR | MB_OK);
+        if (theApp.m_debug_log)
+            CCommon::WriteLog(OpenHardwareMonitorApi::GetErrorMessage().c_str(), theApp.m_log_path.c_str());
     }
     //Set the enabled status of hardware monitoring
     theApp.UpdateOpenHardwareMonitorEnableState();

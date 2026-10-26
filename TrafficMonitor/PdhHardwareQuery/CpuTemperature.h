@@ -9,4 +9,5 @@ public:
 
 private:
     bool m_high_precision{ true };
+    ULONGLONG m_last_init_attempt{ 0 };
 };
