@@ -103,7 +103,7 @@ TrafficMonitorPlus+ is built upon the wonderful foundation of the open-source **
 Anyone can easily install and use **TrafficMonitorPlus+** in under 10 seconds on **Windows 10 & 11**:
 
 ### Option 1: 1-Click Automatic Installation (Recommended)
-1. **Download** the latest `TrafficMonitorPlus+_v1.86_x64.zip` from [Releases](https://github.com/yashwantmandal/TrafficMonitorPlus/releases).
+1. **Download** the latest `TrafficMonitorPlus+_v1.86_x64.zip` from [Releases](https://github.com/yashwantmandal26/TrafficMonitorPlus/releases).
 2. **Extract** the zip file to any folder.
 3. **Double-click `Install_TrafficMonitorPlus+.bat`**:
    * It automatically installs the software cleanly into `C:\Program Files\TrafficMonitorPlus+\`.
@@ -133,7 +133,7 @@ If you prefer not to install anything into `Program Files`:
 ### Building from Source
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yashwantmandal/TrafficMonitorPlus.git
+   git clone https://github.com/yashwantmandal26/TrafficMonitorPlus.git
    cd TrafficMonitorPlus
    ```
 2. Open `TrafficMonitor.sln` in **Visual Studio 2022** with the following workloads installed:
