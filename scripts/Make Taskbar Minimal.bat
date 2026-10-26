@@ -7,14 +7,15 @@ if %errorlevel% neq 0 (
     exit /b
 )
 
-echo Stopping TrafficMonitor...
+echo Stopping TrafficMonitorPlus+...
+taskkill /F /IM TrafficMonitorPlus+.exe >nul 2>&1
 taskkill /F /IM TrafficMonitor.exe >nul 2>&1
 timeout /t 1 /nobreak >nul
 
 echo Applying white internet speed, white CPU/GPU labels, green normal values, and clean formatting...
 
 powershell -NoProfile -ExecutionPolicy Bypass -Command ^
-    "$progDir = 'C:\Program Files\TrafficMonitor';" ^
+    "$progDir = 'C:\Program Files\TrafficMonitorPlus+';" ^
     "$configPath = \"$progDir\config.ini\";" ^
     "if (Test-Path $configPath) {" ^
     "    $content = [System.IO.File]::ReadAllText($configPath, [System.Text.Encoding]::UTF8);" ^
@@ -47,8 +48,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -Command ^
     "    Copy-Item $engIni \"$langDir\Traditional_Chinese.ini\" -Force -ErrorAction SilentlyContinue;" ^
     "    Copy-Item $engIni \"$langDir\Japanese.ini\" -Force -ErrorAction SilentlyContinue;" ^
     "};" ^
-    "Start-Process \"$progDir\TrafficMonitor.exe\";" ^
-    "Write-Host 'TrafficMonitor restarted successfully!';"
+    "Start-Process \"$progDir\TrafficMonitorPlus+.exe\";" ^
+    "Write-Host 'TrafficMonitorPlus+ restarted successfully!';"
 
 echo Done!
 timeout /t 2 /nobreak >nul

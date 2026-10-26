@@ -2,13 +2,13 @@
 :: Self-elevate to Administrator
 net session >nul 2>&1
 if %errorlevel% neq 0 (
-    echo Requesting Administrator privileges to install build tools and compile TrafficMonitor...
+    echo Requesting Administrator privileges to compile TrafficMonitorPlus+...
     powershell -Command "Start-Process cmd -ArgumentList '/c \"\"%~f0\"\"' -Verb RunAs"
     exit /b
 )
 
 echo ============================================================
-echo   TrafficMonitor 100%% English & Dynamic Color Auto-Builder
+echo   TrafficMonitorPlus+ 100%% English & Dynamic Color Auto-Builder
 echo ============================================================
 echo.
 
@@ -34,8 +34,8 @@ if not exist "%MSBUILD_PATH%" (
 
 echo Found MSBuild at: "%MSBUILD_PATH%"
 echo.
-echo Compiling TrafficMonitor (Release x64)...
-cd /d "c:\Users\Yashwant\Desktop\MyProject\antigravity\TrafficMonitor  English"
+echo Compiling TrafficMonitorPlus+ (Release x64)...
+cd /d "%~dp0.."
 "%MSBUILD_PATH%" TrafficMonitor.sln /p:Configuration="Release" /p:Platform=x64 /m
 
 if %errorlevel% neq 0 (
@@ -45,28 +45,34 @@ if %errorlevel% neq 0 (
 )
 
 echo.
-echo Stopping running TrafficMonitor...
+echo Stopping running TrafficMonitorPlus+...
+taskkill /F /IM TrafficMonitorPlus+.exe >nul 2>&1
 taskkill /F /IM TrafficMonitor.exe >nul 2>&1
 timeout /t 1 /nobreak >nul
 
-echo Updating C:\Program Files\TrafficMonitor with new binary...
+echo Updating repository and C:\Program Files\TrafficMonitorPlus+ with new binary...
 if exist "Bin\x64\Release\TrafficMonitor.exe" (
-    copy /Y "Bin\x64\Release\TrafficMonitor.exe" "C:\Program Files\TrafficMonitor\TrafficMonitor.exe"
+    copy /Y "Bin\x64\Release\TrafficMonitor.exe" "TrafficMonitorPlus+.exe" >nul
+    copy /Y "Bin\x64\Release\TrafficMonitor.exe" "TrafficMonitor.exe" >nul
+    copy /Y "Bin\x64\Release\TrafficMonitor.exe" "C:\Program Files\TrafficMonitorPlus+\TrafficMonitorPlus+.exe" >nul 2>&1
+    copy /Y "Bin\x64\Release\TrafficMonitor.exe" "C:\Program Files\TrafficMonitorPlus+\TrafficMonitor.exe" >nul 2>&1
     if exist "Bin\x64\Release\OpenHardwareMonitorApi.dll" (
-        copy /Y "Bin\x64\Release\OpenHardwareMonitorApi.dll" "C:\Program Files\TrafficMonitor\OpenHardwareMonitorApi.dll"
+        copy /Y "Bin\x64\Release\OpenHardwareMonitorApi.dll" "C:\Program Files\TrafficMonitorPlus+\OpenHardwareMonitorApi.dll" >nul 2>&1
     )
-    echo Successfully installed new TrafficMonitor.exe!
+    echo Successfully installed new TrafficMonitorPlus+.exe!
 ) else if exist "x64\Release\TrafficMonitor.exe" (
-    copy /Y "x64\Release\TrafficMonitor.exe" "C:\Program Files\TrafficMonitor\TrafficMonitor.exe"
-    echo Successfully installed new TrafficMonitor.exe!
+    copy /Y "x64\Release\TrafficMonitor.exe" "TrafficMonitorPlus+.exe" >nul
+    copy /Y "x64\Release\TrafficMonitor.exe" "TrafficMonitor.exe" >nul
+    copy /Y "x64\Release\TrafficMonitor.exe" "C:\Program Files\TrafficMonitorPlus+\TrafficMonitorPlus+.exe" >nul 2>&1
+    copy /Y "x64\Release\TrafficMonitor.exe" "C:\Program Files\TrafficMonitorPlus+\TrafficMonitor.exe" >nul 2>&1
+    echo Successfully installed new TrafficMonitorPlus+.exe!
 )
 
-echo Starting updated TrafficMonitor with real-time dynamic colors...
-start "" "C:\Program Files\TrafficMonitor\TrafficMonitor.exe"
+echo Starting updated TrafficMonitorPlus+...
+start "" "C:\Program Files\TrafficMonitorPlus+\TrafficMonitorPlus+.exe"
 
 echo.
 echo ============================================================
-echo   SUCCESS! TrafficMonitor is now running with native
-echo   real-time dynamic colors (Green - Yellow - Red)!
+echo   SUCCESS! TrafficMonitorPlus+ is now running!
 echo ============================================================
 timeout /t 5

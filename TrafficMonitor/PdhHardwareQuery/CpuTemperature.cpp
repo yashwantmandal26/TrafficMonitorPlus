@@ -36,9 +36,11 @@ bool CPdhCpuTemperature::GetCpuTemperature(float& temp)
             if (c >= 20.0f && c <= 115.0f)
             {
                 // Prefer the EC / CPU thermal zone if present
-                if (item.name.find(L"EC") != std::wstring::npos ||
-                    item.name.find(L"TZRZ") != std::wstring::npos ||
-                    item.name.find(L"CPU") != std::wstring::npos)
+                std::wstring name_lower = item.name;
+                for (auto& ch : name_lower) ch = towlower(ch);
+                if (name_lower.find(L"ec") != std::wstring::npos ||
+                    name_lower.find(L"tzrz") != std::wstring::npos ||
+                    name_lower.find(L"cpu") != std::wstring::npos)
                 {
                     best_temp = c;
                     break;

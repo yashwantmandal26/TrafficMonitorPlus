@@ -17,25 +17,38 @@ echo =======================================================
 echo.
 
 set "INSTALL_DIR=C:\Program Files\TrafficMonitorPlus+"
+set "SRC_DIR=%~dp0"
 
-:: Kill running instances if any
+:: 1. Terminate running instances
 taskkill /F /IM TrafficMonitor.exe >nul 2>&1
 taskkill /F /IM TrafficMonitorPlus+.exe >nul 2>&1
 timeout /t 1 /nobreak >nul
+
+:: 2. Stop and completely remove any vulnerable WinRing0 services flagged by Windows Defender
+echo [*] Cleaning up legacy driver services (preventing Windows Defender alerts)...
+sc stop R0TrafficMonitorPlus+ >nul 2>&1
+sc delete R0TrafficMonitorPlus+ >nul 2>&1
+sc stop R0TrafficMonitor >nul 2>&1
+sc delete R0TrafficMonitor >nul 2>&1
+
+:: 3. Remove any vulnerable .sys driver files
+del /F /Q "%INSTALL_DIR%\TrafficMonitorPlus+.sys" >nul 2>&1
+del /F /Q "%INSTALL_DIR%\LibreHardwareMonitorLib.sys" >nul 2>&1
+del /F /Q "%SRC_DIR%TrafficMonitorPlus+.sys" >nul 2>&1
+del /F /Q "%SRC_DIR%LibreHardwareMonitorLib.sys" >nul 2>&1
 
 echo [1/5] Creating installation directory: "%INSTALL_DIR%"...
 if not exist "%INSTALL_DIR%" mkdir "%INSTALL_DIR%"
 
 echo [2/5] Copying application files and libraries...
-set "SRC_DIR=%~dp0"
-copy /Y "%SRC_DIR%TrafficMonitorPlus+.exe" "%INSTALL_DIR%\" >nul
-copy /Y "%SRC_DIR%TrafficMonitor.exe" "%INSTALL_DIR%\" >nul 2>&1
-copy /Y "%SRC_DIR%OpenHardwareMonitorApi.dll" "%INSTALL_DIR%\" >nul
-copy /Y "%SRC_DIR%LibreHardwareMonitorLib.dll" "%INSTALL_DIR%\" >nul
-copy /Y "%SRC_DIR%LibreHardwareMonitorLib.xml" "%INSTALL_DIR%\" >nul
-copy /Y "%SRC_DIR%config.ini" "%INSTALL_DIR%\" >nul
-copy /Y "%SRC_DIR%global_cfg.ini" "%INSTALL_DIR%\" >nul 2>&1
-copy /Y "%SRC_DIR%Uninstall_TrafficMonitorPlus+.bat" "%INSTALL_DIR%\" >nul 2>&1
+copy /Y "%SRC_DIR%TrafficMonitorPlus+.exe" "%INSTALL_DIR%" >nul
+copy /Y "%SRC_DIR%TrafficMonitor.exe" "%INSTALL_DIR%" >nul 2>&1
+copy /Y "%SRC_DIR%OpenHardwareMonitorApi.dll" "%INSTALL_DIR%" >nul
+copy /Y "%SRC_DIR%LibreHardwareMonitorLib.dll" "%INSTALL_DIR%" >nul
+copy /Y "%SRC_DIR%LibreHardwareMonitorLib.xml" "%INSTALL_DIR%" >nul
+copy /Y "%SRC_DIR%config.ini" "%INSTALL_DIR%" >nul
+copy /Y "%SRC_DIR%global_cfg.ini" "%INSTALL_DIR%" >nul 2>&1
+copy /Y "%SRC_DIR%Uninstall_TrafficMonitorPlus+.bat" "%INSTALL_DIR%" >nul 2>&1
 
 :: Copy directories
 if exist "%SRC_DIR%language" (
@@ -59,7 +72,7 @@ if not exist "%START_MENU_DIR%" mkdir "%START_MENU_DIR%"
 powershell -NoProfile -Command "$ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut('%START_MENU_DIR%\TrafficMonitorPlus+.lnk'); $s.TargetPath = '%INSTALL_DIR%\TrafficMonitorPlus+.exe'; $s.WorkingDirectory = '%INSTALL_DIR%'; $s.Description = 'TrafficMonitorPlus+ by Yashwant Mandal'; $s.Save()"
 
 echo [4/5] Setting up Silent Auto-Start on Windows Boot (No UAC Prompts)...
-schtasks /create /tn "TrafficMonitorPlus+" /tr "\"%INSTALL_DIR%\TrafficMonitorPlus+.exe\"" /sc onlogon /rl HIGHEST /f >nul 2>&1
+schtasks /create /tn "TrafficMonitorPlus+" /tr "\"%%INSTALL_DIR%%\TrafficMonitorPlus+.exe\"" /sc onlogon /rl HIGHEST /f >nul 2>&1
 
 echo [5/5] Launching TrafficMonitorPlus+...
 start "" "%INSTALL_DIR%\TrafficMonitorPlus+.exe"
@@ -67,7 +80,8 @@ start "" "%INSTALL_DIR%\TrafficMonitorPlus+.exe"
 echo.
 echo =======================================================
 echo     Installation Completed Successfully!
-echo     Look at your Taskbar (right side) to see telemetry.
+echo     All vulnerable legacy drivers cleaned up.
+echo     Native Windows 11 Thermal Telemetry is now active!
 echo =======================================================
 echo.
 pause

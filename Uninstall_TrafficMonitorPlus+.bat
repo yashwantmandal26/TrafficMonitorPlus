@@ -15,6 +15,12 @@ taskkill /F /IM TrafficMonitor.exe >nul 2>&1
 taskkill /F /IM TrafficMonitorPlus+.exe >nul 2>&1
 timeout /t 1 /nobreak >nul
 
+echo Removing any driver services...
+sc stop R0TrafficMonitorPlus+ >nul 2>&1
+sc delete R0TrafficMonitorPlus+ >nul 2>&1
+sc stop R0TrafficMonitor >nul 2>&1
+sc delete R0TrafficMonitor >nul 2>&1
+
 echo Removing Auto-Start Scheduled Task...
 schtasks /delete /tn "TrafficMonitorPlus+" /f >nul 2>&1
 

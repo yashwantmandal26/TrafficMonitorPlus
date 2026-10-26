@@ -1463,6 +1463,17 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
 
 #ifndef WITHOUT_TEMPERATURE
     //Get temperature
+    // 1. Native Windows 11 Driverless CPU Temperature (ACPI / Thermal Zone)
+    if (IsTemperatureNeeded())
+    {
+        float pdh_temp = 0.0f;
+        if (m_cpu_temp_helper.GetCpuTemperature(pdh_temp) && pdh_temp > 0)
+        {
+            theApp.m_cpu_temperature = pdh_temp;
+        }
+    }
+
+    // 2. Hardware telemetry (GPU via user-mode NvAPI / storage via SMART)
     if (IsTemperatureNeeded() && theApp.m_pMonitor != nullptr)
     {
         CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
@@ -1485,46 +1496,13 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
         {
             AfxMessageBox(monitor_error_message.c_str(), MB_ICONERROR | MB_OK);
         }
-        //theApp.m_cpu_temperature = theApp.m_pMonitor->CpuTemperature();
         theApp.m_gpu_temperature = theApp.m_pMonitor->GpuTemperature();
-        //theApp.m_hdd_temperature = theApp.m_pMonitor->HDDTemperature();
         theApp.m_main_board_temperature = theApp.m_pMonitor->MainboardTemperature();
         if (!gpu_usage_acquired)
             theApp.m_gpu_usage = theApp.m_pMonitor->GpuUsage();
         if (!cpu_freq_acquired)
             theApp.m_cpu_freq = theApp.m_pMonitor->CpuFreq();
-        //Get CPU temperature
-        if (!theApp.m_pMonitor->AllCpuTemperature().empty())
-        {
-            if (theApp.m_general_data.cpu_core_name == CCommon::LoadText(IDS_AVREAGE_TEMPERATURE).GetString())  //If average temperature is selected
-            {
-                theApp.m_cpu_temperature = theApp.m_pMonitor->CpuTemperature();
-            }
-            else
-            {
-                auto iter = theApp.m_pMonitor->AllCpuTemperature().find(theApp.m_general_data.cpu_core_name);
-                if (iter == theApp.m_pMonitor->AllCpuTemperature().end())
-                {
-                    iter = theApp.m_pMonitor->AllCpuTemperature().begin();
-                    theApp.m_general_data.cpu_core_name = iter->first;
-                }
-                theApp.m_cpu_temperature = iter->second;
-            }
-        }
-        else
-        {
-            theApp.m_cpu_temperature = -1;
-        }
 
-        // Native Windows 11 PDH Thermal Zone fallback when driver is blocked by HVCI / Core Isolation
-        if (theApp.m_cpu_temperature <= 0)
-        {
-            float pdh_temp = 0.0f;
-            if (m_cpu_temp_helper.GetCpuTemperature(pdh_temp) && pdh_temp > 0)
-            {
-                theApp.m_cpu_temperature = pdh_temp;
-            }
-        }
         //Get hard drive temperature
         if (!theApp.m_pMonitor->AllHDDTemperature().empty())
         {

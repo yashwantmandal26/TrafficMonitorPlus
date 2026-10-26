@@ -1149,10 +1149,13 @@ void CTrafficMonitorApp::UpdateOpenHardwareMonitorEnableState()
     if (m_pMonitor != nullptr)
     {
         CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
-        m_pMonitor->SetCpuEnable(m_general_data.IsHardwareEnable(HI_CPU));
+        // Completely disable CPU and Motherboard in LibreHardwareMonitor to prevent dropping vulnerable WinRing0 driver
+        // (Microsoft Defender flags WinRing0 as VulnerableDriver:WinNT/Winring0 on Windows 11).
+        // CPU temperature, usage and frequency are 100% handled natively and driverless via CPdhCpuTemperature, CCPUUsage, CPdhCpuFreq.
+        m_pMonitor->SetCpuEnable(false);
         m_pMonitor->SetGpuEnable(m_general_data.IsHardwareEnable(HI_GPU));
         m_pMonitor->SetHddEnable(m_general_data.IsHardwareEnable(HI_HDD));
-        m_pMonitor->SetMainboardEnable(m_general_data.IsHardwareEnable(HI_MBD));
+        m_pMonitor->SetMainboardEnable(false);
     }
 #endif
 }
