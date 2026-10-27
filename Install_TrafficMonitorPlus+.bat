@@ -30,6 +30,7 @@ sc stop R0TrafficMonitorPlus+ >nul 2>&1
 sc delete R0TrafficMonitorPlus+ >nul 2>&1
 sc stop R0TrafficMonitor >nul 2>&1
 sc delete R0TrafficMonitor >nul 2>&1
+schtasks /delete /tn "\TrafficMonitor\Autorun for %USERNAME%" /f >nul 2>&1
 
 :: 3. Remove any vulnerable .sys driver files
 del /F /Q "%INSTALL_DIR%\TrafficMonitorPlus+.sys" >nul 2>&1

@@ -1,4 +1,4 @@
-﻿
+
 // TrafficMonitorDlg.cpp: Implementation file
 //
 
@@ -1537,6 +1537,15 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
                 theApp.m_hdd_usage = -1;
             }
         }
+    }
+
+    // 3. Integrated GPU (iGPU) temperature fallback
+    // In iGPU mode, the discrete GPU is disabled. The integrated GPU is located on the
+    // CPU die and shares the CPU package thermal envelope. If no standalone
+    // GPU temperature sensor is reported by hardware APIs, mirror the CPU package temperature.
+    if (IsTemperatureNeeded() && theApp.m_gpu_temperature <= 0 && theApp.GetGpuMode() == CTrafficMonitorApp::GpuMode::IGPU && theApp.m_cpu_temperature > 0)
+    {
+        theApp.m_gpu_temperature = theApp.m_cpu_temperature;
     }
 #endif
 

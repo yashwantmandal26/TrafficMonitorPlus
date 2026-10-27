@@ -983,7 +983,7 @@ BOOL CTrafficMonitorApp::InitInstance()
 
     //Check if there is already an instance running
     CIniHelper ini{ m_config_path };
-    m_no_multistart_warning = ini.GetBool(_T("other"), _T("no_multistart_warning"), false);
+    m_no_multistart_warning = ini.GetBool(_T("other"), _T("no_multistart_warning"), true);
     LPCTSTR mutex_name{};
 #ifdef _DEBUG
     mutex_name = _T("TrafficMonitor-e8Ahk24HP6JC8hDy");

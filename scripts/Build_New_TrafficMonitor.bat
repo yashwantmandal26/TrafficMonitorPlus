@@ -36,7 +36,7 @@ echo Found MSBuild at: "%MSBUILD_PATH%"
 echo.
 echo Compiling TrafficMonitorPlus+ (Release x64)...
 cd /d "%~dp0.."
-"%MSBUILD_PATH%" TrafficMonitor.sln /p:Configuration="Release" /p:Platform=x64 /m
+"%MSBUILD_PATH%" TrafficMonitor\TrafficMonitor.vcxproj /p:Configuration="Release" /p:Platform=x64 /m
 
 if %errorlevel% neq 0 (
     echo Compilation failed! Please check output above.
@@ -51,7 +51,7 @@ taskkill /F /IM TrafficMonitor.exe >nul 2>&1
 timeout /t 1 /nobreak >nul
 
 echo Updating repository and C:\Program Files\TrafficMonitorPlus+ with new binary...
-if exist "Bin\x64\Release\TrafficMonitor.exe" (
+if exist "TrafficMonitor\Bin\x64\Release\TrafficMonitor.exe" (`r`n    copy /Y "TrafficMonitor\Bin\x64\Release\TrafficMonitor.exe" "TrafficMonitorPlus+.exe" >nul`r`n    copy /Y "TrafficMonitor\Bin\x64\Release\TrafficMonitor.exe" "TrafficMonitor.exe" >nul`r`n    copy /Y "TrafficMonitor\Bin\x64\Release\TrafficMonitor.exe" "dist\TrafficMonitorPlus+_v1.86_x64\TrafficMonitorPlus+.exe" >nul 2>&1`r`n    copy /Y "TrafficMonitor\Bin\x64\Release\TrafficMonitor.exe" "dist\TrafficMonitorPlus+_v1.86_x64\TrafficMonitor.exe" >nul 2>&1`r`n    copy /Y "TrafficMonitor\Bin\x64\Release\TrafficMonitor.exe" "C:\Program Files\TrafficMonitorPlus+\TrafficMonitorPlus+.exe" >nul 2>&1`r`n    copy /Y "TrafficMonitor\Bin\x64\Release\TrafficMonitor.exe" "C:\Program Files\TrafficMonitorPlus+\TrafficMonitor.exe" >nul 2>&1`r`n    echo Successfully installed new TrafficMonitorPlus+.exe!`r`n) else if exist "Bin\x64\Release\TrafficMonitor.exe" (
     copy /Y "Bin\x64\Release\TrafficMonitor.exe" "TrafficMonitorPlus+.exe" >nul
     copy /Y "Bin\x64\Release\TrafficMonitor.exe" "TrafficMonitor.exe" >nul
     copy /Y "Bin\x64\Release\TrafficMonitor.exe" "C:\Program Files\TrafficMonitorPlus+\TrafficMonitorPlus+.exe" >nul 2>&1

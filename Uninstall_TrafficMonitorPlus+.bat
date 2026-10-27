@@ -23,6 +23,7 @@ sc delete R0TrafficMonitor >nul 2>&1
 
 echo Removing Auto-Start Scheduled Task...
 schtasks /delete /tn "TrafficMonitorPlus+" /f >nul 2>&1
+schtasks /delete /tn "\TrafficMonitor\Autorun for %USERNAME%" /f >nul 2>&1
 
 echo Removing Desktop & Start Menu Shortcuts...
 del /F /Q "%Public%\Desktop\TrafficMonitorPlus+.lnk" >nul 2>&1
