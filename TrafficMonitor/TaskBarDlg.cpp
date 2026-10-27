@@ -1,4 +1,4 @@
-// TaskBarDlg.cpp: implementation file
+﻿// TaskBarDlg.cpp: implementation file
 //
 
 #include "stdafx.h"
@@ -419,7 +419,13 @@ void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect r
     if (label_width > 0)
     {
         wstring str_label = theApp.m_taskbar_data.disp_str.GetConst(type);
-        if (type == TDI_GPU_USAGE)
+        if (type == TDI_UP && (str_label == L"?" || str_label == L"? "))
+            str_label = L"↑ ";
+        else if (type == TDI_DOWN && (str_label == L"?" || str_label == L"? "))
+            str_label = L"↓ ";
+        else if (type == TDI_TOTAL_SPEED && (str_label == L"??" || str_label == L"??: " || str_label == L"?: "))
+            str_label = L"↑↓: ";
+        else if (type == TDI_GPU_USAGE)
         {
             str_label = theApp.GetGpuLabelString(str_label);
         }
@@ -895,7 +901,13 @@ void CTaskBarDlg::CalculateWindowSize()
         {
             //label width
             wstring str_label = theApp.m_taskbar_data.disp_str.GetConst(*iter);
-            if (*iter == TDI_GPU_USAGE)
+            if (*iter == TDI_UP && (str_label == L"?" || str_label == L"? "))
+                str_label = L"↑ ";
+            else if (*iter == TDI_DOWN && (str_label == L"?" || str_label == L"? "))
+                str_label = L"↓ ";
+            else if (*iter == TDI_TOTAL_SPEED && (str_label == L"??" || str_label == L"??: " || str_label == L"?: "))
+                str_label = L"↑↓: ";
+            else if (*iter == TDI_GPU_USAGE)
             {
                 str_label = theApp.GetGpuLabelString(str_label);
             }

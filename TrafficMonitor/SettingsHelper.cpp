@@ -122,6 +122,13 @@ void CSettingsHelper::LoadDisplayStr(const wchar_t* AppName, DispStrings& disp_s
     {
         std::wstring str{ CommonDisplayItem(display_item).DefaultString(is_main_window)};
         bool exist = GetString(AppName, CommonDisplayItem(display_item).GetItemIniKeyName(), str);
+        // Sanitize corrupted arrow strings from ANSI encoding conversions
+        if (display_item == TDI_UP && (str == L"?" || str == L"? "))
+            str = L"↑ ";
+        if (display_item == TDI_DOWN && (str == L"?" || str == L"? "))
+            str = L"↓ ";
+        if (display_item == TDI_TOTAL_SPEED && (str == L"??" || str == L"??: " || str == L"?: "))
+            str = L"↑↓: ";
         //The main window only reads items that exist in the configuration file, and the taskbar window reads all items
         if (!is_main_window || exist)
             disp_str.Get(display_item) = str;

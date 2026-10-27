@@ -1,4 +1,4 @@
-@echo off
+﻿@echo off
 :: Self-elevate to Administrator
 net session >nul 2>&1
 if %errorlevel% neq 0 (
@@ -38,7 +38,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -Command ^
     "    $content = [System.Text.RegularExpressions.Regex]::Replace($content, 'specify_each_item_color\s*=\s*\w+', 'specify_each_item_color = true');" ^
     "    $itemColors = '16777215,16777215,16777215,16777215,16777215,6609228,16777215,16777215,16777215,6609228,16777215,10542160,16777215,10542160,16777215,16777215,16777215,16777215,16777215,16777215,16777215,16777215,16777215,16777215,16777215,16777215,';" ^
     "    $content = [System.Text.RegularExpressions.Regex]::Replace($content, 'task_bar_text_color\s*=\s*[\d,]+', \"task_bar_text_color = $itemColors\");" ^
-    "    [System.IO.File]::WriteAllText($configPath, $content, [System.Text.Encoding]::UTF8);" ^
+    "    [System.IO.File]::WriteAllText($configPath, $content, (New-Object System.Text.UTF8Encoding($true)));" ^
     "    Write-Host 'config.ini updated successfully!';" ^
     "};" ^
     "$langDir = \"$progDir\language\";" ^
