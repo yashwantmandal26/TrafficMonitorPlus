@@ -104,7 +104,6 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialog)
     ON_COMMAND(ID_APP_ABOUT, &CTrafficMonitorDlg::OnAppAbout)
     ON_COMMAND(ID_SHOW_CPU_MEMORY2, &CTrafficMonitorDlg::OnShowCpuMemory2)
     ON_COMMAND(ID_SHOW_MAIN_WND, &CTrafficMonitorDlg::OnShowMainWnd)
-    ON_WM_WINDOWPOSCHANGING()
     ON_COMMAND(ID_CHANGE_SKIN, &CTrafficMonitorDlg::OnChangeSkin)
     ON_REGISTERED_MESSAGE(m_WM_TASKBARCREATED, &CTrafficMonitorDlg::OnTaskBarCreated)
     ON_COMMAND(ID_TRAFFIC_HISTORY, &CTrafficMonitorDlg::OnTrafficHistory)
@@ -1173,13 +1172,12 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
     m_tool_tips.SetDelayTime(TTDT_RESHOW, 1200);
     m_tool_tips.AddTool(this, _T(""));
 
-    // Force floating window completely hidden and open taskbar window immediately
+    // Ensure floating window is completely invisible and off-screen
     theApp.m_cfg_data.m_hide_main_window = true;
     theApp.m_cfg_data.m_show_task_bar_wnd = true;
     SetTransparency(0);
+    SetWindowPos(nullptr, -10000, -10000, 0, 0, SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOSIZE);
     ShowWindow(SW_HIDE);
-    if (m_tBarDlg == nullptr)
-        OpenTaskBarWnd();
 
     SetTimer(TASKBAR_TIMER, 100, NULL);
 
@@ -2585,13 +2583,6 @@ LRESULT CTrafficMonitorDlg::OnTaskBarCreated(WPARAM wParam, LPARAM lParam)
     return LRESULT();
 }
 
-
-void CTrafficMonitorDlg::OnWindowPosChanging(WINDOWPOS* lpwndpos)
-{
-    lpwndpos->flags &= ~SWP_SHOWWINDOW;
-    lpwndpos->flags |= SWP_HIDEWINDOW;
-    CDialog::OnWindowPosChanging(lpwndpos);
-}
 
 void CTrafficMonitorDlg::OnShowMainWnd()
 {
