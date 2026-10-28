@@ -50,24 +50,45 @@ Write-Host ""
 $cleanupDirs = @()
 
 # 1. Close existing running instances
-Write-Host "[1/6] Stopping any running instances..." -ForegroundColor Yellow
+Write-Host "[1/7] Stopping any running instances..." -ForegroundColor Yellow
 Get-Process -Name "TrafficMonitorPlus+","TrafficMonitor" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
 Start-Sleep -Milliseconds 800
 
-# 2. Clean up legacy vulnerable services
+# 2. Check and ensure Visual C++ Runtime prerequisites
+Write-Host "[2/7] Checking Visual C++ Runtime prerequisites..." -ForegroundColor Yellow
+$sysMfc = Join-Path $env:SystemRoot "System32\mfc140u.dll"
+if (-not (Test-Path $sysMfc)) {
+    Write-Host "  -> Microsoft Visual C++ MFC Runtime is missing on this PC." -ForegroundColor Yellow
+    Write-Host "  -> Downloading official Microsoft Visual C++ Redistributable (x64)..." -ForegroundColor Yellow
+    $vcRedistUrl = "https://aka.ms/vs/17/release/vc_redist.x64.exe"
+    $vcTemp = Join-Path $env:TEMP "vc_redist.x64.exe"
+    try {
+        Invoke-WebRequest -Uri $vcRedistUrl -OutFile $vcTemp -UseBasicParsing
+        Write-Host "  -> Installing Visual C++ Redistributable silently..." -ForegroundColor Yellow
+        $vcProc = Start-Process -FilePath $vcTemp -ArgumentList "/install /quiet /norestart" -Wait -PassThru -ErrorAction Stop
+        Remove-Item $vcTemp -Force -ErrorAction SilentlyContinue
+        Write-Host "  -> Visual C++ Runtime installed successfully!" -ForegroundColor Green
+    } catch {
+        Write-Host "  -> Note: Bundled local runtime DLLs will be installed directly into app folder." -ForegroundColor Gray
+    }
+} else {
+    Write-Host "  -> Visual C++ Runtime is present." -ForegroundColor Green
+}
+
+# 3. Clean up legacy vulnerable services
 if ($isAdmin) {
-    Write-Host "[2/6] Cleaning up legacy driver services (preventing Defender alerts)..." -ForegroundColor Yellow
+    Write-Host "[3/7] Cleaning up legacy driver services (preventing Defender alerts)..." -ForegroundColor Yellow
     try { & sc.exe stop R0TrafficMonitorPlus+ 2>&1 | Out-Null } catch {}
     try { & sc.exe delete R0TrafficMonitorPlus+ 2>&1 | Out-Null } catch {}
     try { & sc.exe stop R0TrafficMonitor 2>&1 | Out-Null } catch {}
     try { & sc.exe delete R0TrafficMonitor 2>&1 | Out-Null } catch {}
 } else {
-    Write-Host "[2/6] Skipping service cleanup (user-level install)..." -ForegroundColor Yellow
+    Write-Host "[3/7] Skipping service cleanup (user-level install)..." -ForegroundColor Yellow
 }
 try { & schtasks.exe /delete /tn "\TrafficMonitor\Autorun for $env:USERNAME" /f 2>&1 | Out-Null } catch {}
 
-# 3. Locate or Download Source Files
-Write-Host "[3/6] Locating package binaries..." -ForegroundColor Yellow
+# 4. Locate or Download Source Files
+Write-Host "[4/7] Locating package binaries..." -ForegroundColor Yellow
 $srcDir = $null
 
 if ($PSScriptRoot -and (Test-Path (Join-Path $PSScriptRoot "TrafficMonitorPlus+.exe"))) {
@@ -105,8 +126,8 @@ if ($PSScriptRoot -and (Test-Path (Join-Path $PSScriptRoot "TrafficMonitorPlus+.
     Write-Host "  -> Package extracted successfully." -ForegroundColor Green
 }
 
-# 4. Install files to destination directory
-Write-Host "[4/6] Installing TrafficMonitorPlus+ to '$installDir'..." -ForegroundColor Yellow
+# 5. Install files to destination directory
+Write-Host "[5/7] Installing TrafficMonitorPlus+ to '$installDir'..." -ForegroundColor Yellow
 if (-not (Test-Path $installDir)) {
     New-Item -ItemType Directory -Path $installDir -Force | Out-Null
 }
@@ -117,6 +138,11 @@ $coreFiles = @(
     "OpenHardwareMonitorApi.dll",
     "LibreHardwareMonitorLib.dll",
     "LibreHardwareMonitorLib.xml",
+    "mfc140u.dll",
+    "mfcm140u.dll",
+    "msvcp140.dll",
+    "vcruntime140.dll",
+    "vcruntime140_1.dll",
     "Uninstall_TrafficMonitorPlus+.bat"
 )
 
@@ -148,8 +174,8 @@ foreach ($d in $subDirs) {
     }
 }
 
-# 5. Create Shortcuts and Startup Entry
-Write-Host "[5/6] Creating Desktop and Start Menu shortcuts..." -ForegroundColor Yellow
+# 6. Create Shortcuts and Startup Entry
+Write-Host "[6/7] Creating Desktop and Start Menu shortcuts..." -ForegroundColor Yellow
 $wsh = New-Object -ComObject WScript.Shell
 
 # Desktop shortcut
@@ -189,8 +215,8 @@ if ($isAdmin) {
     Set-ItemProperty -Path $regPath -Name "TrafficMonitorPlus+" -Value "`"$installDir\TrafficMonitorPlus+.exe`"" -Force
 }
 
-# 6. Launch Application
-Write-Host "[6/6] Launching TrafficMonitorPlus+..." -ForegroundColor Green
+# 7. Launch Application
+Write-Host "[7/7] Launching TrafficMonitorPlus+..." -ForegroundColor Green
 $targetExe = Join-Path $installDir "TrafficMonitorPlus+.exe"
 $launched = $false
 

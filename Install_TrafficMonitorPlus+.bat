@@ -55,7 +55,19 @@ copy /Y "%SRC_DIR%TrafficMonitor.exe" "%INSTALL_DIR%\" >nul 2>&1
 copy /Y "%SRC_DIR%OpenHardwareMonitorApi.dll" "%INSTALL_DIR%\" >nul
 copy /Y "%SRC_DIR%LibreHardwareMonitorLib.dll" "%INSTALL_DIR%\" >nul
 copy /Y "%SRC_DIR%LibreHardwareMonitorLib.xml" "%INSTALL_DIR%\" >nul
+copy /Y "%SRC_DIR%mfc140u.dll" "%INSTALL_DIR%\" >nul 2>&1
+copy /Y "%SRC_DIR%mfcm140u.dll" "%INSTALL_DIR%\" >nul 2>&1
+copy /Y "%SRC_DIR%msvcp140.dll" "%INSTALL_DIR%\" >nul 2>&1
+copy /Y "%SRC_DIR%vcruntime140.dll" "%INSTALL_DIR%\" >nul 2>&1
+copy /Y "%SRC_DIR%vcruntime140_1.dll" "%INSTALL_DIR%\" >nul 2>&1
 copy /Y "%SRC_DIR%Uninstall_TrafficMonitorPlus+.bat" "%INSTALL_DIR%\" >nul 2>&1
+
+:: Check if system has Visual C++ MFC runtime installed; if not, download & install silently
+if not exist "%SystemRoot%\System32\mfc140u.dll" (
+    echo [*] Microsoft Visual C++ MFC Runtime is missing on this PC.
+    echo [*] Downloading and installing official Microsoft VC++ Redistributable (x64)...
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "$t = Join-Path $env:TEMP 'vc_redist.x64.exe'; [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://aka.ms/vs/17/release/vc_redist.x64.exe' -OutFile $t -UseBasicParsing; Start-Process $t -ArgumentList '/install /quiet /norestart' -Wait; Remove-Item $t -Force -ErrorAction SilentlyContinue" >nul 2>&1
+)
 
 :: Preserve existing user configuration if present; otherwise copy default config
 if not exist "%INSTALL_DIR%\config.ini" (
