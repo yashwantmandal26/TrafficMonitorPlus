@@ -69,7 +69,7 @@ if not exist "%SystemRoot%\System32\mfc140u.dll" (
     powershell -NoProfile -ExecutionPolicy Bypass -Command "$t = Join-Path $env:TEMP 'vc_redist.x64.exe'; [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://aka.ms/vs/17/release/vc_redist.x64.exe' -OutFile $t -UseBasicParsing; Start-Process $t -ArgumentList '/install /quiet /norestart' -Wait; Remove-Item $t -Force -ErrorAction SilentlyContinue" >nul 2>&1
 )
 
-:: Preserve existing user configuration if present; otherwise copy default config
+:: Seed default config if missing
 if not exist "%INSTALL_DIR%\config.ini" (
     copy /Y "%SRC_DIR%config.ini" "%INSTALL_DIR%\" >nul
 )
@@ -83,6 +83,9 @@ if not exist "%APPDATA%\TrafficMonitor\config.ini" (
 if exist "%SRC_DIR%global_cfg.ini" (
     copy /Y "%SRC_DIR%global_cfg.ini" "%APPDATA%\TrafficMonitor\" >nul 2>&1
 )
+
+:: Force taskbar enabled and floating window disabled in config
+powershell -NoProfile -Command "foreach ($c in @('%INSTALL_DIR%\config.ini', '%APPDATA%\TrafficMonitor\config.ini')) { if (Test-Path $c) { $t = (Get-Content $c -Raw) -replace '(?m)^show_task_bar_wnd\s*=.*$', 'show_task_bar_wnd = true' -replace '(?m)^hide_main_window\s*=.*$', 'hide_main_window = 1'; Set-Content -Path $c -Value $t -Force } }" >nul 2>&1
 
 :: Copy language, skins, and plugins
 if exist "%SRC_DIR%language" (

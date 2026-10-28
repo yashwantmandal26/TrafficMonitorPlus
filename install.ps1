@@ -153,14 +153,13 @@ foreach ($f in $coreFiles) {
     }
 }
 
-# Preserve user's config if present; otherwise copy default config
+# Seed default config if missing
 $targetConfig = Join-Path $installDir "config.ini"
 $srcConfig = Join-Path $srcDir "config.ini"
 if ((-not (Test-Path $targetConfig)) -and (Test-Path $srcConfig)) {
     Copy-Item -Path $srcConfig -Destination $targetConfig -Force
 }
 
-# Ensure AppData/Roaming configuration is also seeded with taskbar-only defaults
 $appDataConfigDir = Join-Path $env:APPDATA "TrafficMonitor"
 if (-not (Test-Path $appDataConfigDir)) {
     New-Item -ItemType Directory -Path $appDataConfigDir -Force | Out-Null
@@ -168,6 +167,18 @@ if (-not (Test-Path $appDataConfigDir)) {
 $appDataConfigFile = Join-Path $appDataConfigDir "config.ini"
 if ((-not (Test-Path $appDataConfigFile)) -and (Test-Path $srcConfig)) {
     Copy-Item -Path $srcConfig -Destination $appDataConfigFile -Force
+}
+
+# Force taskbar mode enabled and floating window disabled across all config files
+foreach ($cfg in @($targetConfig, $appDataConfigFile)) {
+    if (Test-Path $cfg) {
+        try {
+            $raw = Get-Content $cfg -Raw
+            $raw = $raw -replace '(?m)^show_task_bar_wnd\s*=.*$', 'show_task_bar_wnd = true'
+            $raw = $raw -replace '(?m)^hide_main_window\s*=.*$', 'hide_main_window = 1'
+            Set-Content -Path $cfg -Value $raw -Force
+        } catch {}
+    }
 }
 
 $srcGlobalCfg = Join-Path $srcDir "global_cfg.ini"
