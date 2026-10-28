@@ -27,9 +27,13 @@ for /f "usebackq tokens=*" %%i in (`powershell -Command "& '${env:ProgramFiles(x
 )
 
 if not exist "%MSBUILD_PATH%" (
-    echo Error: MSBuild was not found after installation.
-    pause
-    exit /b
+    if exist "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\amd64\MSBuild.exe" (
+        set "MSBUILD_PATH=C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\amd64\MSBuild.exe"
+    ) else (
+        echo Error: MSBuild was not found after installation.
+        pause
+        exit /b
+    )
 )
 
 echo Found MSBuild at: "%MSBUILD_PATH%"
@@ -51,7 +55,15 @@ taskkill /F /IM TrafficMonitor.exe >nul 2>&1
 timeout /t 1 /nobreak >nul
 
 echo Updating repository and C:\Program Files\TrafficMonitorPlus+ with new binary...
-if exist "TrafficMonitor\Bin\x64\Release\TrafficMonitor.exe" (`r`n    copy /Y "TrafficMonitor\Bin\x64\Release\TrafficMonitor.exe" "TrafficMonitorPlus+.exe" >nul`r`n    copy /Y "TrafficMonitor\Bin\x64\Release\TrafficMonitor.exe" "TrafficMonitor.exe" >nul`r`n    copy /Y "TrafficMonitor\Bin\x64\Release\TrafficMonitor.exe" "dist\TrafficMonitorPlus+_v1.86_x64\TrafficMonitorPlus+.exe" >nul 2>&1`r`n    copy /Y "TrafficMonitor\Bin\x64\Release\TrafficMonitor.exe" "dist\TrafficMonitorPlus+_v1.86_x64\TrafficMonitor.exe" >nul 2>&1`r`n    copy /Y "TrafficMonitor\Bin\x64\Release\TrafficMonitor.exe" "C:\Program Files\TrafficMonitorPlus+\TrafficMonitorPlus+.exe" >nul 2>&1`r`n    copy /Y "TrafficMonitor\Bin\x64\Release\TrafficMonitor.exe" "C:\Program Files\TrafficMonitorPlus+\TrafficMonitor.exe" >nul 2>&1`r`n    echo Successfully installed new TrafficMonitorPlus+.exe!`r`n) else if exist "Bin\x64\Release\TrafficMonitor.exe" (
+if exist "TrafficMonitor\Bin\x64\Release\TrafficMonitor.exe" (
+    copy /Y "TrafficMonitor\Bin\x64\Release\TrafficMonitor.exe" "TrafficMonitorPlus+.exe" >nul
+    copy /Y "TrafficMonitor\Bin\x64\Release\TrafficMonitor.exe" "TrafficMonitor.exe" >nul
+    copy /Y "TrafficMonitor\Bin\x64\Release\TrafficMonitor.exe" "dist\TrafficMonitorPlus+_v1.86_x64\TrafficMonitorPlus+.exe" >nul 2>&1
+    copy /Y "TrafficMonitor\Bin\x64\Release\TrafficMonitor.exe" "dist\TrafficMonitorPlus+_v1.86_x64\TrafficMonitor.exe" >nul 2>&1
+    copy /Y "TrafficMonitor\Bin\x64\Release\TrafficMonitor.exe" "C:\Program Files\TrafficMonitorPlus+\TrafficMonitorPlus+.exe" >nul 2>&1
+    copy /Y "TrafficMonitor\Bin\x64\Release\TrafficMonitor.exe" "C:\Program Files\TrafficMonitorPlus+\TrafficMonitor.exe" >nul 2>&1
+    echo Successfully installed new TrafficMonitorPlus+.exe!
+) else if exist "Bin\x64\Release\TrafficMonitor.exe" (
     copy /Y "Bin\x64\Release\TrafficMonitor.exe" "TrafficMonitorPlus+.exe" >nul
     copy /Y "Bin\x64\Release\TrafficMonitor.exe" "TrafficMonitor.exe" >nul
     copy /Y "Bin\x64\Release\TrafficMonitor.exe" "C:\Program Files\TrafficMonitorPlus+\TrafficMonitorPlus+.exe" >nul 2>&1

@@ -98,25 +98,52 @@ TrafficMonitorPlus+ is built upon the wonderful foundation of the open-source **
 
 ---
 
-## 🚀 Quick Installation (Simple 1-Click Setup)
+## 🚀 Quick Installation (Windows 11 & 10)
 
-Anyone can easily install and use **TrafficMonitorPlus+** in under 10 seconds on **Windows 10 & 11**:
+Anyone can easily install and start running **TrafficMonitorPlus+** in under 10 seconds on any new Windows PC using either simple commands or downloading from Git:
 
-### Option 1: 1-Click Automatic Installation (Recommended)
+### Method 1: Instant 1-Command Install (Fastest for Any Windows 11 PC)
+Open **PowerShell**, **Windows Terminal**, or **CMD** and paste the command below:
+
+**PowerShell / Windows Terminal (Recommended):**
+```powershell
+irm https://raw.githubusercontent.com/yashwantmandal26/TrafficMonitorPlus/master/install.ps1 | iex
+```
+
+**Command Prompt (CMD):**
+```cmd
+powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/yashwantmandal26/TrafficMonitorPlus/master/install.ps1 | iex"
+```
+
+> **What this command does automatically:**
+> 1. Self-elevates to Administrator (with standard UAC prompt for hardware sensor telemetry).
+> 2. Downloads and unpacks the latest release package cleanly.
+> 3. Installs directly to `C:\Program Files\TrafficMonitorPlus+\`.
+> 4. Creates **Desktop** and **Start Menu** shortcuts.
+> 5. Configures **Silent Auto-Start on Windows Boot** (starts on logon with zero UAC popups).
+> 6. **Instantly launches TrafficMonitorPlus+** into your Windows 11 taskbar!
+
+---
+
+### Method 2: Download File from Git
+
+#### Option A: Download Single Installer Script (`install.bat`)
+1. Download **[`install.bat`](https://raw.githubusercontent.com/yashwantmandal26/TrafficMonitorPlus/master/install.bat)** from this repository.
+2. Double-click **`install.bat`**.
+3. It automatically downloads the latest release from GitHub, installs everything, and starts running immediately!
+
+#### Option B: Download Release ZIP Package
 1. **Download** the latest `TrafficMonitorPlus+_v1.86_x64.zip` from [Releases](https://github.com/yashwantmandal26/TrafficMonitorPlus/releases).
 2. **Extract** the zip file to any folder.
-3. **Double-click `Install_TrafficMonitorPlus+.bat`**:
-   * It automatically installs the software cleanly into `C:\Program Files\TrafficMonitorPlus+\`.
-   * Automatically creates a **Desktop Shortcut** & **Start Menu Shortcut**.
-   * Sets up **Silent Auto-Start on Windows Boot** (so it starts automatically every time your PC turns on, without annoying UAC prompts).
-   * Launches the app instantly on your taskbar!
+3. **Double-click `install.bat`** (or `Install_TrafficMonitorPlus+.bat`).
+4. It instantly installs to `C:\Program Files\TrafficMonitorPlus+\` and launches the app!
+
+#### Option C: Portable Mode (Zero Installation)
+If you prefer not to install into `Program Files`:
+* Extract the zip and run **`TrafficMonitorPlus+.exe`** directly from any folder or USB drive.
 
 > [!NOTE]
-> *If Windows SmartScreen shows "Windows protected your PC", simply click **"More info"** $\rightarrow$ **"Run anyway"** (normal for open-source GitHub utilities).*
-
-### Option 2: Portable Mode (Zero Installation)
-If you prefer not to install anything into `Program Files`:
-* Simply extract the zip and double-click **`TrafficMonitorPlus+.exe`**. It runs portably from any folder or USB stick!
+> *If Windows SmartScreen shows "Windows protected your PC", simply click **"More info"** -> **"Run anyway"** (standard for open-source GitHub utilities).*
 
 ### 🗑️ How to Uninstall
 * Double-click **`Uninstall_TrafficMonitorPlus+.bat`** (or search "Uninstall TrafficMonitorPlus+" in your Start Menu). It stops the app, removes the auto-start task, deletes shortcuts, and cleans up all files with zero leftovers.

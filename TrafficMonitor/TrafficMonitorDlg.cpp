@@ -1933,7 +1933,7 @@ void CTrafficMonitorDlg::OnTimer(UINT_PTR nIDEvent)
             int pointx{ rect.left - 1 };
             if (theApp.m_taskbar_data.tbar_wnd_on_left && m_tBarDlg->IsTasksbarOnTopOrBottom())
                 pointx = rect.right + 1;
-            int pointy = rect.bottom;
+            int pointy = (rect.top + rect.bottom) / 2;
             if (pointx < 0) pointx = 0;
             if (pointx >= m_screen_size.cx) pointx = m_screen_size.cx - 1;
             if (pointy < 0) pointy = 0;

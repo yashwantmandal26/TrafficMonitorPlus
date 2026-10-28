@@ -206,11 +206,23 @@ void CTaskBarDlg::ShowInfo(CDC* pDC)
 #endif
 }
 
-// Smooth 4-Stage Color Definitions: White -> Yellow -> Orange -> Red (in increasing order)
-const COLORREF COLOR_STAGE_WHITE  = RGB(255, 255, 255); // White (Normal)
-const COLORREF COLOR_STAGE_YELLOW = RGB(255, 214, 10);  // Yellow (Lil more high)
-const COLORREF COLOR_STAGE_ORANGE = RGB(251, 146, 60);  // Orange (More value)
-const COLORREF COLOR_STAGE_RED    = RGB(244, 63, 94);   // Red (Highest values)
+// Helper function to calculate perceived luminance (ITU-R BT.601)
+static inline int GetColorLuminance(COLORREF c)
+{
+    return (GetRValue(c) * 299 + GetGValue(c) * 587 + GetBValue(c) * 114) / 1000;
+}
+
+// Smooth 4-Stage Color Definitions for Dark Backgrounds: White -> Yellow -> Orange -> Red (in increasing order)
+const COLORREF COLOR_STAGE_DARK_NORMAL = RGB(255, 255, 255); // White (Normal)
+const COLORREF COLOR_STAGE_DARK_YELLOW = RGB(255, 214, 10);  // Yellow (Moderate)
+const COLORREF COLOR_STAGE_DARK_ORANGE = RGB(251, 146, 60);  // Orange (High)
+const COLORREF COLOR_STAGE_DARK_RED    = RGB(244, 63, 94);   // Red (Critical)
+
+// Smooth 4-Stage Color Definitions for Light Backgrounds/Wallpapers: Black -> Dark Amber -> Vivid Orange -> Crimson
+const COLORREF COLOR_STAGE_LIGHT_NORMAL = RGB(0, 0, 0);       // Black (Normal, crisp contrast on light bg)
+const COLORREF COLOR_STAGE_LIGHT_YELLOW = RGB(205, 140, 0);   // Rich Golden Yellow (Clear, high contrast on light bg)
+const COLORREF COLOR_STAGE_LIGHT_ORANGE = RGB(230, 81, 0);    // Vivid Deep Orange
+const COLORREF COLOR_STAGE_LIGHT_RED    = RGB(220, 20, 30);   // Crimson Red
 
 // Linear interpolation between two RGB colors for seamless, smooth color transitions
 static COLORREF InterpolateColor(COLORREF c1, COLORREF c2, float t)
@@ -223,67 +235,191 @@ static COLORREF InterpolateColor(COLORREF c1, COLORREF c2, float t)
     return RGB(r, g, b);
 }
 
-// Dynamic smooth color for hardware usage:
-// <= 35%        : White (Normal)
-// 35% - 60%     : Smooth seamless transition from White to Yellow
-// 60% - 80%     : Smooth seamless transition from Yellow to Orange
-// >= 80%        : Smooth seamless transition from Orange to Red (up to 100%)
-static COLORREF GetDynamicUsageColor(int usage)
+// Dynamic smooth color for hardware usage (adapts dynamically to wallpaper brightness):
+// <= 35%        : Normal (White on dark bg, Black on light bg)
+// 35% - 60%     : Normal -> Yellow / Dark Amber
+// 60% - 80%     : Yellow / Dark Amber -> Orange
+// >= 80%        : Orange -> Red
+static COLORREF GetDynamicUsageColor(int usage, bool is_light_bg = false)
 {
+    const COLORREF c_normal = is_light_bg ? COLOR_STAGE_LIGHT_NORMAL : COLOR_STAGE_DARK_NORMAL;
+    const COLORREF c_mid    = is_light_bg ? COLOR_STAGE_LIGHT_YELLOW  : COLOR_STAGE_DARK_YELLOW;
+    const COLORREF c_high   = is_light_bg ? COLOR_STAGE_LIGHT_ORANGE : COLOR_STAGE_DARK_ORANGE;
+    const COLORREF c_crit   = is_light_bg ? COLOR_STAGE_LIGHT_RED    : COLOR_STAGE_DARK_RED;
+
     if (usage <= 35)
     {
-        return COLOR_STAGE_WHITE;
+        return c_normal;
     }
     else if (usage < 60)
     {
         float t = (usage - 35.0f) / (60.0f - 35.0f);
-        return InterpolateColor(COLOR_STAGE_WHITE, COLOR_STAGE_YELLOW, t);
+        return InterpolateColor(c_normal, c_mid, t);
     }
     else if (usage < 80)
     {
         float t = (usage - 60.0f) / (80.0f - 60.0f);
-        return InterpolateColor(COLOR_STAGE_YELLOW, COLOR_STAGE_ORANGE, t);
+        return InterpolateColor(c_mid, c_high, t);
     }
     else
     {
         float t = (usage - 80.0f) / (100.0f - 80.0f);
-        return InterpolateColor(COLOR_STAGE_ORANGE, COLOR_STAGE_RED, t);
+        return InterpolateColor(c_high, c_crit, t);
     }
 }
 
-// Dynamic smooth color for hardware temperature:
-// <= 48 deg C   : White (Normal)
-// 48 - 65 deg C : Smooth seamless transition from White to Yellow
-// 65 - 80 deg C : Smooth seamless transition from Yellow to Orange
-// >= 80 deg C   : Smooth seamless transition from Orange to Red (up to 95 deg C+)
-static COLORREF GetDynamicTempColor(int temp)
+// Dynamic smooth color for hardware temperature (adapts dynamically to wallpaper brightness):
+// <= 48 deg C   : Normal (White on dark bg, Black on light bg)
+// 48 - 65 deg C : Normal -> Yellow / Dark Amber
+// 65 - 80 deg C : Yellow / Dark Amber -> Orange
+// >= 80 deg C   : Orange -> Red
+static COLORREF GetDynamicTempColor(int temp, bool is_light_bg = false)
 {
+    const COLORREF c_normal = is_light_bg ? COLOR_STAGE_LIGHT_NORMAL : COLOR_STAGE_DARK_NORMAL;
+    const COLORREF c_mid    = is_light_bg ? COLOR_STAGE_LIGHT_YELLOW  : COLOR_STAGE_DARK_YELLOW;
+    const COLORREF c_high   = is_light_bg ? COLOR_STAGE_LIGHT_ORANGE : COLOR_STAGE_DARK_ORANGE;
+    const COLORREF c_crit   = is_light_bg ? COLOR_STAGE_LIGHT_RED    : COLOR_STAGE_DARK_RED;
+
     if (temp <= 0)
-        return COLOR_STAGE_WHITE;
+        return c_normal;
 
     if (temp <= 48)
     {
-        return COLOR_STAGE_WHITE;
+        return c_normal;
     }
     else if (temp < 65)
     {
         float t = (temp - 48.0f) / (65.0f - 48.0f);
-        return InterpolateColor(COLOR_STAGE_WHITE, COLOR_STAGE_YELLOW, t);
+        return InterpolateColor(c_normal, c_mid, t);
     }
     else if (temp < 80)
     {
         float t = (temp - 65.0f) / (80.0f - 65.0f);
-        return InterpolateColor(COLOR_STAGE_YELLOW, COLOR_STAGE_ORANGE, t);
+        return InterpolateColor(c_mid, c_high, t);
     }
     else
     {
         float t = (temp - 80.0f) / (95.0f - 80.0f);
-        return InterpolateColor(COLOR_STAGE_ORANGE, COLOR_STAGE_RED, t);
+        return InterpolateColor(c_high, c_crit, t);
     }
+}
+
+// Dynamic smooth color for network speed (White/Black -> Yellow -> Orange -> Red):
+// <= 60 KB/s        : Normal (White on dark bg, Black on light bg)
+// 60 KB/s - 1.5 MB/s: Normal -> Yellow
+// 1.5 MB/s - 8 MB/s : Yellow -> Orange
+// >= 8 MB/s         : Orange -> Red (max at 25 MB/s+)
+static COLORREF GetDynamicSpeedColor(unsigned __int64 speed_bytes, bool is_light_bg = false)
+{
+    const COLORREF c_normal = is_light_bg ? COLOR_STAGE_LIGHT_NORMAL : COLOR_STAGE_DARK_NORMAL;
+    const COLORREF c_mid    = is_light_bg ? COLOR_STAGE_LIGHT_YELLOW : COLOR_STAGE_DARK_YELLOW;
+    const COLORREF c_high   = is_light_bg ? COLOR_STAGE_LIGHT_ORANGE : COLOR_STAGE_DARK_ORANGE;
+    const COLORREF c_crit   = is_light_bg ? COLOR_STAGE_LIGHT_RED    : COLOR_STAGE_DARK_RED;
+
+    const unsigned __int64 SPEED_STAGE_1 = 60 * 1024;           // 60 KB/s
+    const unsigned __int64 SPEED_STAGE_2 = 1536 * 1024;         // 1.5 MB/s
+    const unsigned __int64 SPEED_STAGE_3 = 8 * 1024 * 1024;     // 8 MB/s
+    const unsigned __int64 SPEED_STAGE_4 = 25 * 1024 * 1024;    // 25 MB/s
+
+    if (speed_bytes <= SPEED_STAGE_1)
+    {
+        return c_normal;
+    }
+    else if (speed_bytes < SPEED_STAGE_2)
+    {
+        float t = static_cast<float>(speed_bytes - SPEED_STAGE_1) / static_cast<float>(SPEED_STAGE_2 - SPEED_STAGE_1);
+        return InterpolateColor(c_normal, c_mid, t);
+    }
+    else if (speed_bytes < SPEED_STAGE_3)
+    {
+        float t = static_cast<float>(speed_bytes - SPEED_STAGE_2) / static_cast<float>(SPEED_STAGE_3 - SPEED_STAGE_2);
+        return InterpolateColor(c_mid, c_high, t);
+    }
+    else
+    {
+        float t = (speed_bytes < SPEED_STAGE_4)
+            ? (static_cast<float>(speed_bytes - SPEED_STAGE_3) / static_cast<float>(SPEED_STAGE_4 - SPEED_STAGE_3))
+            : 1.0f;
+        return InterpolateColor(c_high, c_crit, t);
+    }
+}
+
+bool CTaskBarDlg::IsBackgroundLight() const
+{
+    // If the taskbar window is not transparent, its background is strictly back_color
+    if (!theApp.m_taskbar_data.IsTaskbarTransparent())
+    {
+        return (GetColorLuminance(theApp.m_taskbar_data.back_color) >= 130);
+    }
+
+    // 1. Check if Windows Light Theme is active
+    bool win_light_theme = CWindowsSettingHelper::IsWindows10LightTheme();
+
+    COLORREF bg_color = theApp.m_taskbar_data.back_color;
+
+    // 2. Sample screen/wallpaper pixels right next to the taskbar window
+    if (GetSafeHwnd() != NULL && ::IsWindow(GetSafeHwnd()))
+    {
+        CRect wnd_rect;
+        ::GetWindowRect(GetSafeHwnd(), &wnd_rect);
+        if (wnd_rect.Width() > 0 && wnd_rect.Height() > 0)
+        {
+            HDC hdc_screen = ::GetDC(NULL);
+            if (hdc_screen != NULL)
+            {
+                int virt_x = ::GetSystemMetrics(SM_XVIRTUALSCREEN);
+                int virt_y = ::GetSystemMetrics(SM_YVIRTUALSCREEN);
+                int virt_w = ::GetSystemMetrics(SM_CXVIRTUALSCREEN);
+                int virt_h = ::GetSystemMetrics(SM_CYVIRTUALSCREEN);
+
+                int py = (wnd_rect.top + wnd_rect.bottom) / 2;
+                int px1 = wnd_rect.left - 6;
+                int px2 = wnd_rect.right + 6;
+
+                COLORREF sample1 = CLR_INVALID;
+                COLORREF sample2 = CLR_INVALID;
+
+                if (px1 >= virt_x && px1 < (virt_x + virt_w) && py >= virt_y && py < (virt_y + virt_h))
+                    sample1 = ::GetPixel(hdc_screen, px1, py);
+
+                if (px2 >= virt_x && px2 < (virt_x + virt_w) && py >= virt_y && py < (virt_y + virt_h))
+                    sample2 = ::GetPixel(hdc_screen, px2, py);
+
+                ::ReleaseDC(NULL, hdc_screen);
+
+                if (sample1 != CLR_INVALID && sample2 != CLR_INVALID)
+                {
+                    int r = (GetRValue(sample1) + GetRValue(sample2)) / 2;
+                    int g = (GetGValue(sample1) + GetGValue(sample2)) / 2;
+                    int b = (GetBValue(sample1) + GetBValue(sample2)) / 2;
+                    bg_color = RGB(r, g, b);
+                }
+                else if (sample1 != CLR_INVALID)
+                {
+                    bg_color = sample1;
+                }
+                else if (sample2 != CLR_INVALID)
+                {
+                    bg_color = sample2;
+                }
+            }
+        }
+    }
+
+    int luminance = GetColorLuminance(bg_color);
+
+    if (win_light_theme)
+    {
+        return (luminance >= 90 || bg_color == 0);
+    }
+
+    return (luminance >= 130);
 }
 
 void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect rect, int label_width, bool vertical)
 {
+    bool is_light_bg = IsBackgroundLight();
+
     //Set the text color to be drawn
     COLORREF label_color{};
     COLORREF text_color{};
@@ -298,43 +434,87 @@ void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect r
         text_color = theApp.m_taskbar_data.text_colors.begin()->second.label;
     }
 
-    // Dynamic color based on usage and temperature (Green -> Yellow -> Red)
+    // Dynamic contrast adaptation based on background/wallpaper brightness
+    if (is_light_bg)
+    {
+        // On light wallpapers, if user-configured color is white/near-white, switch to crisp black
+        if (GetColorLuminance(label_color) > 185)
+            label_color = RGB(0, 0, 0);
+        if (GetColorLuminance(text_color) > 185)
+            text_color = RGB(0, 0, 0);
+    }
+    else
+    {
+        // On dark wallpapers, if user-configured color is black/near-black, switch to crisp white
+        if (GetColorLuminance(label_color) < 40)
+            label_color = RGB(255, 255, 255);
+        if (GetColorLuminance(text_color) < 40)
+            text_color = RGB(255, 255, 255);
+    }
+
+    // Dynamic color based on usage and temperature (Black/White -> Yellow/Amber -> Orange -> Red)
     if (theApp.m_taskbar_data.dynamic_color)
     {
-        if (type == TDI_CPU)
+        COLORREF default_label = is_light_bg ? RGB(0, 0, 0) : RGB(255, 255, 255);
+
+        if (type == TDI_UP)
         {
-            label_color = RGB(255, 255, 255); // Keep label ("CPU:") in white
-            text_color = GetDynamicUsageColor(theApp.m_cpu_usage); // Only the value (e.g. "100%") changes color
+            label_color = default_label;
+            text_color = GetDynamicSpeedColor(theApp.m_out_speed, is_light_bg);
+        }
+        else if (type == TDI_DOWN)
+        {
+            label_color = default_label;
+            text_color = GetDynamicSpeedColor(theApp.m_in_speed, is_light_bg);
+        }
+        else if (type == TDI_TOTAL_SPEED)
+        {
+            label_color = default_label;
+            text_color = GetDynamicSpeedColor(theApp.m_in_speed + theApp.m_out_speed, is_light_bg);
+        }
+        else if (type == TDI_CPU)
+        {
+            label_color = default_label;
+            text_color = GetDynamicUsageColor(theApp.m_cpu_usage, is_light_bg);
         }
         else if (type == TDI_GPU_USAGE)
         {
-            label_color = RGB(255, 255, 255); // Keep label ("GPU:") in white
-            text_color = GetDynamicUsageColor(theApp.m_gpu_usage); // Only the value changes color
+            label_color = default_label;
+            text_color = GetDynamicUsageColor(theApp.m_gpu_usage, is_light_bg);
         }
         else if (type == TDI_MEMORY)
         {
-            label_color = RGB(255, 255, 255);
-            text_color = GetDynamicUsageColor(theApp.m_memory_usage);
+            label_color = default_label;
+            text_color = GetDynamicUsageColor(theApp.m_memory_usage, is_light_bg);
+        }
+        else if (type == TDI_HDD_USAGE)
+        {
+            label_color = default_label;
+            text_color = GetDynamicUsageColor(theApp.m_hdd_usage, is_light_bg);
         }
         else if (type == TDI_CPU_TEMP)
         {
-            label_color = RGB(255, 255, 255);
-            text_color = GetDynamicTempColor(theApp.m_cpu_temperature);
+            label_color = default_label;
+            text_color = GetDynamicTempColor(theApp.m_cpu_temperature, is_light_bg);
         }
         else if (type == TDI_GPU_TEMP)
         {
-            label_color = RGB(255, 255, 255);
-            text_color = GetDynamicTempColor(theApp.m_gpu_temperature);
+            label_color = default_label;
+            text_color = GetDynamicTempColor(theApp.m_gpu_temperature, is_light_bg);
         }
         else if (type == TDI_HDD_TEMP)
         {
-            label_color = RGB(255, 255, 255);
-            text_color = GetDynamicTempColor(theApp.m_hdd_temperature);
+            label_color = default_label;
+            text_color = GetDynamicTempColor(theApp.m_hdd_temperature, is_light_bg);
         }
         else if (type == TDI_MAIN_BOARD_TEMP)
         {
-            label_color = RGB(255, 255, 255);
-            text_color = GetDynamicTempColor(theApp.m_main_board_temperature);
+            label_color = default_label;
+            text_color = GetDynamicTempColor(theApp.m_main_board_temperature, is_light_bg);
+        }
+        else
+        {
+            label_color = default_label;
         }
     }
 
@@ -480,6 +660,33 @@ void CTaskBarDlg::DrawPluginItem(IDrawCommon& drawer, IPluginItem* item, CRect r
         value_text_color = theApp.m_taskbar_data.text_colors.begin()->second.label;
     }
 
+    bool is_light_bg = IsBackgroundLight();
+    if (is_light_bg)
+    {
+        if (GetColorLuminance(label_text_color) > 185)
+            label_text_color = RGB(0, 0, 0);
+        if (GetColorLuminance(value_text_color) > 185)
+            value_text_color = RGB(0, 0, 0);
+    }
+    else
+    {
+        if (GetColorLuminance(label_text_color) < 40)
+            label_text_color = RGB(255, 255, 255);
+        if (GetColorLuminance(value_text_color) < 40)
+            value_text_color = RGB(255, 255, 255);
+    }
+
+    if (theApp.m_taskbar_data.dynamic_color && item != nullptr)
+    {
+        COLORREF default_label = is_light_bg ? RGB(0, 0, 0) : RGB(255, 255, 255);
+        label_text_color = default_label;
+        if (item->IsDrawResourceUsageGraph())
+        {
+            int usage = static_cast<int>(item->GetResourceUsageGraphValue() * 100);
+            value_text_color = GetDynamicUsageColor(usage, is_light_bg);
+        }
+    }
+
     if (plugin != nullptr && plugin->GetAPIVersion() >= 2)
     {
         plugin->OnExtenedInfo(ITMPlugin::EI_DRAW_TASKBAR_WND, L"1");
@@ -500,23 +707,23 @@ void CTaskBarDlg::DrawPluginItem(IDrawCommon& drawer, IPluginItem* item, CRect r
         if (typeid(drawer) == typeid(CDrawCommon))
         {
             auto* p_dc = static_cast<CDrawCommon&>(drawer).GetDC();
-            item->DrawItem(p_dc->GetSafeHdc(), rect.left, rect.top, rect.Width(), rect.Height(), background_brightness < 128);
+            item->DrawItem(p_dc->GetSafeHdc(), rect.left, rect.top, rect.Width(), rect.Height(), !is_light_bg);
             p_dc->SelectObject(&m_font);
         }
         else if (typeid(drawer) == typeid(CTaskBarDlgDrawCommon))
         {
             auto& ref_d2d1_drawer = static_cast<CTaskBarDlgDrawCommon&>(drawer);
             ref_d2d1_drawer.ExecuteGdiOperation(rect,
-                [item, rect, background_brightness](HDC gdi_dc)
+                [item, rect, is_light_bg](HDC gdi_dc)
                 { item->DrawItem(gdi_dc,
                     rect.left,
                     rect.top,
                     rect.Width(),
                     rect.Height(),
-                    background_brightness < 128); });
+                    !is_light_bg); });
         }
         if (plugin != nullptr && plugin->GetAPIVersion() >= 8)
-            item->DrawItemEx(&drawer, rect.left, rect.top, rect.Width(), rect.Height(), background_brightness < 128);
+            item->DrawItemEx(&drawer, rect.left, rect.top, rect.Width(), rect.Height(), !is_light_bg);
     }
     else
     {

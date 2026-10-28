@@ -19,6 +19,14 @@ echo.
 set "INSTALL_DIR=C:\Program Files\TrafficMonitorPlus+"
 set "SRC_DIR=%~dp0"
 
+:: If running as a standalone downloaded .bat file without binaries, delegate to web installer
+if not exist "%SRC_DIR%TrafficMonitorPlus+.exe" (
+    echo [*] Standalone script detected (binaries missing locally).
+    echo [*] Downloading and installing latest version from GitHub...
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/yashwantmandal26/TrafficMonitorPlus/master/install.ps1 | iex"
+    exit /b
+)
+
 :: 1. Terminate running instances
 taskkill /F /IM TrafficMonitor.exe >nul 2>&1
 taskkill /F /IM TrafficMonitorPlus+.exe >nul 2>&1

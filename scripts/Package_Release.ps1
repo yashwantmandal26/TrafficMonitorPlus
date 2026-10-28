@@ -24,6 +24,8 @@ $filesToCopy = @(
     "LibreHardwareMonitorLib.xml",
     "config.ini",
     "global_cfg.ini",
+    "install.bat",
+    "install.ps1",
     "Install_TrafficMonitorPlus+.bat",
     "Uninstall_TrafficMonitorPlus+.bat",
     "README.md",

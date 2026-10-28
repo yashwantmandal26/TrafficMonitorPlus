@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Common.h"
 #include "afxwin.h"
 #include "DrawCommon.h"
@@ -198,6 +198,7 @@ public:
     bool GetCannotInsertToTaskBar() const { return m_connot_insert_to_task_bar; }
     int GetErrorCode() const { return m_error_code; }
     bool IsTasksbarOnTopOrBottom() const { return m_taskbar_on_top_or_bottom; }
+    bool IsBackgroundLight() const;
 
     static bool IsItemShow(DisplayItem item);
     static bool IsShowCpuMemory();
