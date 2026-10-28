@@ -109,12 +109,12 @@ void CTrafficMonitorApp::LoadConfig()
     m_general_data.show_notify_icon = ini.GetBool(_T("config"), _T("show_notify_icon"), true);
     m_cfg_data.m_show_more_info = ini.GetBool(_T("config"), _T("show_cpu_memory"), false);
     m_main_wnd_data.m_mouse_penetrate = ini.GetBool(_T("config"), _T("mouse_penetrate"), false);
-    m_cfg_data.m_show_task_bar_wnd = ini.GetBool(_T("config"), _T("show_task_bar_wnd"), false);
+    m_cfg_data.m_show_task_bar_wnd = true; // Always enable taskbar window
     m_cfg_data.m_position_x = ini.GetInt(_T("config"), _T("position_x"), -1);
     m_cfg_data.m_position_y = ini.GetInt(_T("config"), _T("position_y"), -1);
     m_cfg_data.m_auto_select = ini.GetBool(_T("connection"), _T("auto_select"), true);
     m_cfg_data.m_select_all = ini.GetBool(_T("connection"), _T("select_all"), false);
-    m_cfg_data.m_hide_main_window = ini.GetBool(_T("config"), _T("hide_main_window"), false);
+    m_cfg_data.m_hide_main_window = true; // Floating window permanently disabled
     m_cfg_data.m_connection_name = CCommon::UnicodeToStr(ini.GetString(L"connection", L"connection_name", L"").c_str());
     m_cfg_data.m_skin_name = ini.GetString(_T("config"), _T("skin_selected"), _T(""));
     if (m_cfg_data.m_skin_name.substr(0, 8) == L".\\skins\\")       //If the skin name read has ".\\skins\\" in front of it, delete it. (To maintain compatibility with the previous version)
@@ -325,14 +325,14 @@ void CTrafficMonitorApp::SaveConfig()
     ini.WriteBool(L"config", L"show_notify_icon", m_general_data.show_notify_icon);
     ini.WriteBool(L"config", L"show_cpu_memory", m_cfg_data.m_show_more_info);
     ini.WriteBool(L"config", L"mouse_penetrate", m_main_wnd_data.m_mouse_penetrate);
-    ini.WriteBool(L"config", L"show_task_bar_wnd", m_cfg_data.m_show_task_bar_wnd);
+    ini.WriteBool(L"config", L"show_task_bar_wnd", true);
     ini.WriteInt(L"config", L"position_x", m_cfg_data.m_position_x);
     ini.WriteInt(L"config", L"position_y", m_cfg_data.m_position_y);
     ini.WriteBool(L"connection", L"auto_select", m_cfg_data.m_auto_select);
     ini.WriteBool(L"connection", L"select_all", m_cfg_data.m_select_all);
     //ini.SaveMainWndColors(L"config", L"text_color", m_main_wnd_data.text_colors);
     //ini.WriteBool(_T("config"), _T("specify_each_item_color"), m_main_wnd_data.specify_each_item_color);
-    ini.WriteInt(L"config", L"hide_main_window", m_cfg_data.m_hide_main_window);
+    ini.WriteInt(L"config", L"hide_main_window", 1);
     ini.WriteString(L"connection", L"connection_name", CCommon::StrToUnicode(m_cfg_data.m_connection_name.c_str()));
     ini.WriteString(_T("config"), _T("skin_selected"), m_cfg_data.m_skin_name.c_str());
 

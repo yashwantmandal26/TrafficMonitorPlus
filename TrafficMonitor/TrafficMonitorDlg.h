@@ -230,6 +230,7 @@ public:
     afx_msg void OnMove(int x, int y);
 protected:
     afx_msg LRESULT OnNotifyIcon(WPARAM wParam, LPARAM lParam);
+    afx_msg void OnWindowPosChanging(WINDOWPOS* lpwndpos);
 public:
     afx_msg void OnShowNotifyIcon();
     afx_msg void OnDestroy();

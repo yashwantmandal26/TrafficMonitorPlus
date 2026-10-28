@@ -160,9 +160,20 @@ if ((-not (Test-Path $targetConfig)) -and (Test-Path $srcConfig)) {
     Copy-Item -Path $srcConfig -Destination $targetConfig -Force
 }
 
+# Ensure AppData/Roaming configuration is also seeded with taskbar-only defaults
+$appDataConfigDir = Join-Path $env:APPDATA "TrafficMonitor"
+if (-not (Test-Path $appDataConfigDir)) {
+    New-Item -ItemType Directory -Path $appDataConfigDir -Force | Out-Null
+}
+$appDataConfigFile = Join-Path $appDataConfigDir "config.ini"
+if ((-not (Test-Path $appDataConfigFile)) -and (Test-Path $srcConfig)) {
+    Copy-Item -Path $srcConfig -Destination $appDataConfigFile -Force
+}
+
 $srcGlobalCfg = Join-Path $srcDir "global_cfg.ini"
 if (Test-Path $srcGlobalCfg) {
     Copy-Item -Path $srcGlobalCfg -Destination $installDir -Force
+    Copy-Item -Path $srcGlobalCfg -Destination $appDataConfigDir -Force
 }
 
 # Copy subdirectories (skins, language, plugins)

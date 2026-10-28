@@ -69,7 +69,7 @@ void CAppAlreadyRuningDlg::OnBnClickedOpenSettingsButton()
 
 void CAppAlreadyRuningDlg::OnBnClickedShowHideMainWindowButton()
 {
-    ::PostMessage(m_handle, WM_COMMAND, ID_SHOW_MAIN_WND, 0);
+    ::PostMessage(m_handle, WM_COMMAND, ID_SHOW_TASK_BAR_WND, 0);
 }
 
 

@@ -104,6 +104,7 @@ BEGIN_MESSAGE_MAP(CTrafficMonitorDlg, CDialog)
     ON_COMMAND(ID_APP_ABOUT, &CTrafficMonitorDlg::OnAppAbout)
     ON_COMMAND(ID_SHOW_CPU_MEMORY2, &CTrafficMonitorDlg::OnShowCpuMemory2)
     ON_COMMAND(ID_SHOW_MAIN_WND, &CTrafficMonitorDlg::OnShowMainWnd)
+    ON_WM_WINDOWPOSCHANGING()
     ON_COMMAND(ID_CHANGE_SKIN, &CTrafficMonitorDlg::OnChangeSkin)
     ON_REGISTERED_MESSAGE(m_WM_TASKBARCREATED, &CTrafficMonitorDlg::OnTaskBarCreated)
     ON_COMMAND(ID_TRAFFIC_HISTORY, &CTrafficMonitorDlg::OnTrafficHistory)
@@ -1172,9 +1173,13 @@ BOOL CTrafficMonitorDlg::OnInitDialog()
     m_tool_tips.SetDelayTime(TTDT_RESHOW, 1200);
     m_tool_tips.AddTool(this, _T(""));
 
-    //If the main window is set to be hidden when the program is started, or the window is located in the upper left corner, first set its opacity to 0
-    if (theApp.m_cfg_data.m_hide_main_window || (theApp.m_cfg_data.m_position_x == 0 && theApp.m_cfg_data.m_position_y == 0))
-        SetTransparency(0);
+    // Force floating window completely hidden and open taskbar window immediately
+    theApp.m_cfg_data.m_hide_main_window = true;
+    theApp.m_cfg_data.m_show_task_bar_wnd = true;
+    SetTransparency(0);
+    ShowWindow(SW_HIDE);
+    if (m_tBarDlg == nullptr)
+        OpenTaskBarWnd();
 
     SetTimer(TASKBAR_TIMER, 100, NULL);
 
@@ -2386,21 +2391,9 @@ afx_msg LRESULT CTrafficMonitorDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
 
     if (lParam == WM_LBUTTONDOWN)
     {
-        if (!theApp.m_cfg_data.m_hide_main_window)
+        if (dialog_exist)
         {
-            if (dialog_exist)       //When there is an open dialog box, click the notification area icon to set focus to the dialog box.
-            {
-                ::SetForegroundWindow(handle);
-            }
-            else        //When there is no open dialog box, the main window is displayed.
-            {
-                ShowWindow(SW_RESTORE);
-                theApp.m_cfg_data.m_hide_main_window = false;
-                SetForegroundWindow();
-                SetAlwaysOnTop();
-                CheckWindowPos();
-                theApp.SaveConfig();
-            }
+            ::SetForegroundWindow(handle);
         }
     }
     if (lParam == WM_RBUTTONUP)
@@ -2426,18 +2419,13 @@ afx_msg LRESULT CTrafficMonitorDlg::OnNotifyIcon(WPARAM wParam, LPARAM lParam)
     }
     if (lParam == WM_LBUTTONDBLCLK)
     {
-        if (dialog_exist)       //When there is an open dialog box, click the notification area icon to set focus to the dialog box.
+        if (dialog_exist)
         {
             ::SetForegroundWindow(handle);
         }
-        else        //When there is no open dialog box, the main window is displayed.
+        else
         {
-            ShowWindow(SW_RESTORE);
-            theApp.m_cfg_data.m_hide_main_window = false;
-            SetForegroundWindow();
-            SetAlwaysOnTop();
-            CheckWindowPos();
-            theApp.SaveConfig();
+            OnOpenTaskManager();
         }
     }
     return 0;
@@ -2558,20 +2546,10 @@ void CTrafficMonitorDlg::OnShowTaskBarWnd()
     {
         CloseTaskBarWnd();
     }
-    if (!theApp.m_cfg_data.m_show_task_bar_wnd)
+    theApp.m_cfg_data.m_show_task_bar_wnd = true;
+    if (m_tBarDlg == nullptr)
     {
-        theApp.m_cfg_data.m_show_task_bar_wnd = true;
         OpenTaskBarWnd();
-    }
-    else
-    {
-        theApp.m_cfg_data.m_show_task_bar_wnd = false;
-        //After closing the taskbar window, if the notification area icon is not displayed and the main window is not displayed or mouse penetration is set, the notification area icon will be displayed.
-        if (!theApp.m_general_data.show_notify_icon && theApp.IsForceShowNotifyIcon())
-        {
-            AddNotifyIcon();
-            theApp.m_general_data.show_notify_icon = true;
-        }
     }
     theApp.SaveConfig();
 }
@@ -2607,6 +2585,13 @@ LRESULT CTrafficMonitorDlg::OnTaskBarCreated(WPARAM wParam, LPARAM lParam)
     return LRESULT();
 }
 
+
+void CTrafficMonitorDlg::OnWindowPosChanging(WINDOWPOS* lpwndpos)
+{
+    lpwndpos->flags &= ~SWP_SHOWWINDOW;
+    lpwndpos->flags |= SWP_HIDEWINDOW;
+    CDialog::OnWindowPosChanging(lpwndpos);
+}
 
 void CTrafficMonitorDlg::OnShowMainWnd()
 {

@@ -76,6 +76,13 @@ if not exist "%INSTALL_DIR%\config.ini" (
 if exist "%SRC_DIR%global_cfg.ini" (
     copy /Y "%SRC_DIR%global_cfg.ini" "%INSTALL_DIR%\" >nul 2>&1
 )
+if not exist "%APPDATA%\TrafficMonitor" mkdir "%APPDATA%\TrafficMonitor" >nul 2>&1
+if not exist "%APPDATA%\TrafficMonitor\config.ini" (
+    copy /Y "%SRC_DIR%config.ini" "%APPDATA%\TrafficMonitor\" >nul 2>&1
+)
+if exist "%SRC_DIR%global_cfg.ini" (
+    copy /Y "%SRC_DIR%global_cfg.ini" "%APPDATA%\TrafficMonitor\" >nul 2>&1
+)
 
 :: Copy language, skins, and plugins
 if exist "%SRC_DIR%language" (
