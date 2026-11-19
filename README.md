@@ -1,191 +1,55 @@
-# TrafficMonitorPlus+
+# TrafficMonitorPlus
 
-<p align="center">
-  <img src="./TrafficMonitor/res/TrafficMonitor.ico" width="128" height="128" alt="TrafficMonitorPlus+ Logo" />
-</p>
+A lightweight Windows taskbar monitor with **Quick Panel**, live per-app network traffic, CPU/RAM/GPU readings and storage information.
 
-<p align="center">
-  <strong>A high-performance Windows taskbar & floating hardware monitor with dynamic color-reactive heat transitions and telemetry.</strong>
-</p>
+## Download and install
 
-<p align="center">
-  <a href="https://github.com/zhongyang219/TrafficMonitor"><img src="https://img.shields.io/badge/Based%20On-TrafficMonitor-blue?style=flat-square" alt="Based On TrafficMonitor"></a>
-  <img src="https://img.shields.io/badge/Creator-Yashwant%20Mandal-blueviolet?style=flat-square" alt="Creator: Yashwant Mandal">
-  <img src="https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011%20(x64)-0078D6?style=flat-square&logo=windows" alt="Platform">
-  <img src="https://img.shields.io/badge/License-Anti--996-orange?style=flat-square" alt="License">
-</p>
+[**Download Setup EXE (recommended)**](https://github.com/yashwantmandal26/TrafficMonitorPlus/releases/latest/download/TrafficMonitorPlus-2.0.0-Setup-x64.exe) · [Portable ZIP](https://github.com/yashwantmandal26/TrafficMonitorPlus/releases/latest/download/TrafficMonitorPlus-2.0.0-windows-x64.zip) · [All releases](https://github.com/yashwantmandal26/TrafficMonitorPlus/releases)
 
----
+1. Download **TrafficMonitorPlus-2.0.0-Setup-x64.exe** from the latest release.
+2. Run the setup wizard and approve the Windows administrator prompt. The required Microsoft Visual C++ runtime is bundled.
+3. Launch TrafficMonitorPlus from the Start menu. Click the taskbar monitor to open Quick Panel; right-click for Settings and Exit.
 
-<p align="center">
-  <img src="./Screenshots/taskbar_preview.png" alt="TrafficMonitorPlus+ Windows 11 Taskbar Live Preview" />
-</p>
-<p align="center">
-  <em>Live real-time telemetry seamlessly integrated into the Windows 11 Taskbar with dynamic color-reactive heat transitions.</em>
-</p>
+Requires **Windows 10 version 1809 or later / Windows 11, x64**. Native ARM64 and 32-bit builds are not provided. The installer is currently unsigned; no verified publisher signing certificate is configured. Hardware sensor availability varies by device and driver.
 
----
+### Portable option
 
-## 🌟 Introduction
+Extract the **entire ZIP**. Keep the application, its `.exe.config`, and all three sensor DLLs together. If the Microsoft Visual C++ x64 runtime is not installed, run the signed installer in `prerequisites` first. Launch `TrafficMonitorPlus.exe`, or use `install.bat` for the legacy per-user installation method.
 
-**TrafficMonitorPlus+** is an enhanced, feature-rich edition of the popular Windows monitoring utility. Designed for power users, gamers, and developers, TrafficMonitorPlus+ seamlessly embeds real-time network speeds, CPU/GPU temperatures, memory usage, and battery telemetry directly into your Windows taskbar or a sleek desktop floating widget.
+### Uninstall and upgrades
 
-Maintained and upgraded by **Yashwant Mandal**, TrafficMonitorPlus+ introduces intelligent thermal heat color transitions, hybrid laptop graphics intelligence, a redesigned modern configuration interface, and updated Windows 11 branding.
+Use Windows **Installed apps → TrafficMonitorPlus → Uninstall** for the Setup version. The installer upgrades the same installation directory. Exit the running app before manually replacing portable files. User settings and history are retained in `%LOCALAPPDATA%\TrafficMonitorPlus`; the installer does not replace them with another user's configuration.
 
----
+## Quick Panel
 
-## 🙏 Credits & Acknowledgements
+- **Overview:** All activity, Network and CPU & RAM filters.
+- **Processes:** live CPU/memory sorting and process IDs.
+- **Storage:** drive capacities, free space and click-to-open.
+- Visible scrollbar with wheel, thumb drag, arrows, Page Up/Page Down and Home/End. Header and action buttons stay fixed.
+- Uploading/downloading rows show current app speeds. Their **×** buttons open a confirmation; browser process groups and specific Windows services are verified before closing/stopping.
+- Daily per-app totals use Windows records when available, with clearly labelled **tracked since** history otherwise. Traffic from before tracking started is not invented.
+- Pin keeps the panel open. Esc closes it. `Win + Shift + M` opens Quick Panel.
 
-TrafficMonitorPlus+ is built upon the wonderful foundation of the open-source **TrafficMonitor** project:
+Live per-app traffic and some hardware sensors need administrator access. Protected system processes and failed service stop requests are reported rather than bypassed. Temperatures and battery power can be unavailable on unsupported hardware. [Measurement details](docs/TELEMETRY_ACCURACY.md).
 
-* **Original Creator & Lead Developer:** **Zhong Yang ([@zhongyang219](https://github.com/zhongyang219))**  
-  * Original Repository: [github.com/zhongyang219/TrafficMonitor](https://github.com/zhongyang219/TrafficMonitor)  
-  * Deepest thanks and respect to Zhong Yang and the original contributors for creating this indispensable tool.
-* **Hardware Telemetry Provider:** [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor) for sensor access across CPUs, GPUs, motherboards, and storage drives.
-* **XML Parser:** [TinyXML2](https://github.com/leethomason/tinyxml2) by Lee Thomason.
+## Build from source
 
----
+Install Visual Studio 2022 **Desktop development with C++**, CMake and a Windows SDK. Build x64:
 
-## ✨ What's New in TrafficMonitorPlus+
-
-### 1. 🌡️ Dynamic Color-Reactive Thermal Heat Display
-* Monitors CPU and GPU temperatures and loads in real time.
-* Dynamically shifts text colors through an intuitive thermal spectrum:
-  * **Cool / Normal:** Crisp theme text (e.g. White / Silver)
-  * **Warm:** Vivid Warm Yellow
-  * **High Load:** Radiant Amber / Orange
-  * **Critical:** Bright Red Alert
-* Visual feedback at a single glance without cluttering the taskbar.
-
-### 2. ⚡ Hybrid Laptop Graphics Telemetry
-* Automatic detection for laptops with dual graphics (integrated iGPU + discrete dGPU).
-* Intelligently shows active dedicated GPU usage and temperature when gaming or rendering, and sleeps cleanly during low-power battery usage.
-
-### 3. 🔋 Battery Wattage & Discharge Monitoring
-* Live battery discharge and charging wattage rate (W) telemetry.
-* **Live Display Refresh Rate (Hz):** Real-time screen refresh rate telemetry (e.g. 60Hz, 120Hz, 144Hz DRR) in the info tooltip (off by default, togglable with 1-click via taskbar menu).
-* Instant power-draw feedback to identify battery-draining background apps.
-
-### 4. 🎨 Redesigned Option Settings Dashboard
-* Completely restructured **460 × 310 DLU** spacious dialog layout.
-* Modern two-column card architecture:
-  * **Left Column:** Window Layout & Telemetry Item Ordering.
-  * **Right Column:** Font, Color Themes & Preview.
-* **Zero vertical scrollbars:** All controls, labels, and color buttons are directly accessible without scrolling.
-* Clearer, intuitive button labels (e.g. `Display Items & Order...`, `Customize Labels...`).
-
-### 5. 💎 Modern Windows 11 Fluent Icon & Branding
-* Modern squircle icon with high-contrast waveform and glowing `+` indicator.
-* Fully crisp multi-resolution assets (16x16 up to 256x256) for sharp taskbar and High-DPI screen rendering.
-* Clean Segoe UI typography across all dialogs.
-
----
-
-## 🚀 Key Features
-
-* **Taskbar Embedding:** Embeds smoothly into Windows 10 and Windows 11 taskbars (both centered and left-aligned).
-* **Network Speed Telemetry:** Real-time upload and download speed graphs and metrics with auto-scaling units (KB/s, MB/s).
-* **Comprehensive Hardware Metrics:**
-  * CPU Usage (%), Frequency (GHz), and Core Temperatures (°C / °F).
-  * RAM Usage (%) and Available Physical Memory.
-  * Dedicated & Integrated GPU Usage (%) and Temperatures.
-  * Hard Disk Activity (%) and Temperature.
-  * Motherboard temperature and Battery capacity / power rate.
-* **Floating Desktop Window:** Optional customizable desktop overlay with mouse-penetration (click-through) support.
-* **Skinning Engine:** Supports custom XML/PNG skins, transparencies, and background graphics.
-* **Plugin Architecture:** Extensible via C++ dynamic plugins.
-* **Traffic Statistics:** Historical daily, weekly, and monthly data consumption tracking.
-
----
-
-## 🚀 Quick Installation (Windows 11 & 10)
-
-Anyone can easily install and start running **TrafficMonitorPlus+** in under 10 seconds on any new Windows PC using either simple commands or downloading from Git:
-
-### Method 1: Instant 1-Command Install (Fastest for Any Windows 11 PC)
-Open **PowerShell**, **Windows Terminal**, or **CMD** and paste the command below:
-
-**PowerShell / Windows Terminal (Recommended):**
 ```powershell
-irm https://raw.githubusercontent.com/yashwantmandal26/TrafficMonitorPlus/master/install.ps1 | iex
+cmake -S . -B out -A x64 -DBUILD_TESTING=ON
+cmake --build out --config Release --parallel 4
+ctest --test-dir out -C Release --output-on-failure
 ```
 
-**Command Prompt (CMD):**
-```cmd
-powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/yashwantmandal26/TrafficMonitorPlus/master/install.ps1 | iex"
-```
+To build both the Setup EXE and portable ZIP, install Inno Setup 6 and run `./scripts/package-release.ps1`. This verifies the bundled Microsoft runtime signature and writes release packages plus `SHA256SUMS.txt` to `dist`.
 
-> **What this command does automatically:**
-> 1. Self-elevates to Administrator (with standard UAC prompt for hardware sensor telemetry).
-> 2. Downloads and unpacks the latest release package cleanly.
-> 3. Installs directly to `C:\Program Files\TrafficMonitorPlus+\`.
-> 4. Creates **Desktop** and **Start Menu** shortcuts.
-> 5. Configures **Silent Auto-Start on Windows Boot** (starts on logon with zero UAC popups).
-> 6. **Instantly launches TrafficMonitorPlus+** into your Windows 11 taskbar!
+GitHub Actions builds on `windows-2022`, runs deterministic tests and smoke-tests the generated installer/uninstaller before adding assets to a tagged draft release. Desktop/compositor tests carry the `desktop` label and require an interactive Windows desktop; CI uses `ctest -LE desktop` and does not claim those checks passed.
 
----
+## Validation and licensing
 
-### Method 2: Download File from Git
+[Version 2.0.0 release notes and limitations](docs/RELEASE_2.0.0.md). This release has not been certified across every Windows/hardware combination. The most recent local full test run passed 18/19; the separate taskbar/fullscreen interaction fixture failed. New network close/cancel and PID identity tests passed using only test-owned child processes.
 
-#### Option A: Download Single Installer Script (`install.bat`)
-1. Download **[`install.bat`](https://raw.githubusercontent.com/yashwantmandal26/TrafficMonitorPlus/master/install.bat)** from this repository.
-2. Double-click **`install.bat`**.
-3. It automatically downloads the latest release from GitHub, installs everything, and starts running immediately!
+[Project license](LICENSE) · [Third-party notices](THIRD_PARTY_NOTICES.md) · [Bundled dependency licenses](licenses/).
 
-#### Option B: Download Release ZIP Package
-1. **Download** the latest `TrafficMonitorPlus+_v1.86_x64.zip` from [Releases](https://github.com/yashwantmandal26/TrafficMonitorPlus/releases).
-2. **Extract** the zip file to any folder.
-3. **Double-click `install.bat`** (or `Install_TrafficMonitorPlus+.bat`).
-4. It instantly installs to `C:\Program Files\TrafficMonitorPlus+\` and launches the app!
-
-#### Option C: Portable Mode (Zero Installation)
-If you prefer not to install into `Program Files`:
-* Extract the zip and run **`TrafficMonitorPlus+.exe`** directly from any folder or USB drive.
-
-> [!NOTE]
-> *If Windows SmartScreen shows "Windows protected your PC", simply click **"More info"** -> **"Run anyway"** (standard for open-source GitHub utilities).*
-
-### 🗑️ How to Uninstall
-* Double-click **`Uninstall_TrafficMonitorPlus+.bat`** (or search "Uninstall TrafficMonitorPlus+" in your Start Menu). It stops the app, removes the auto-start task, deletes shortcuts, and cleans up all files with zero leftovers.
-
----
-
-## 🛠️ System Requirements & Build Instructions
-
-### Requirements
-* **Operating System:** Windows 10 (version 1809 or later) or Windows 11 (x64 / ARM64).
-* **Runtime:** Microsoft Visual C++ 2015–2022 Redistributable (x64).
-* **Administrator Privileges:** Recommended for low-level CPU/GPU hardware sensor readouts.
-
-### Building from Source
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yashwantmandal26/TrafficMonitorPlus.git
-   cd TrafficMonitorPlus
-   ```
-2. Open `TrafficMonitor.sln` in **Visual Studio 2022** with the following workloads installed:
-   * Desktop development with C++
-   * C++/CLI support for v143 build tools
-   * .NET Framework 4.7.2 / 4.8 Targeting Pack
-3. Select **Release** and **x64** configuration.
-4. Build the solution (`Ctrl + Shift + B`).
-
----
-
-## 📖 Usage Guide
-
-1. **Launch:** Run `TrafficMonitor.exe` (as Administrator for hardware sensor access).
-2. **Show Taskbar Window:** Right-click the desktop widget or system tray icon and select **Show Taskbar Window**.
-3. **Configure Telemetry:**
-   * Right-click the taskbar telemetry area $\rightarrow$ select **Taskbar Settings...**
-   * Click **Display Items & Order...** to choose which metrics appear and reorder them.
-   * Enable **Dynamic Color Transitions** for reactive heat colors.
-4. **Change Fonts & Colors:** Select your favorite fonts and colors in the redesigned settings dashboard.
-
----
-
-## 📄 License & Disclaimers
-
-* **License:** Distributed under the Anti-996 License, honoring the original TrafficMonitor open-source licensing.
-* **Credits:** Original codebase and architecture &copy; **Zhong Yang ([@zhongyang219](https://github.com/zhongyang219))**.
-* **Modifications & Enhancements:** &copy; 2026 **Yashwant Mandal**.
+Version 2 replaces the older public 1.x implementation. Previous Git history and earlier releases are retained.

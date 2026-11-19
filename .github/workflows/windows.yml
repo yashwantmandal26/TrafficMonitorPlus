@@ -1,0 +1,47 @@
+name: Build and release Windows app
+on:
+  push:
+    branches: [master]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-2022
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build, test and package
+        shell: pwsh
+        run: ./scripts/package-release.ps1
+      - name: Smoke test installer and uninstaller
+        shell: pwsh
+        run: |
+          $setup=Get-ChildItem dist/*Setup-x64.exe | Select-Object -First 1
+          $destination=Join-Path $env:RUNNER_TEMP 'TrafficMonitorPlus-smoke'
+          $process=Start-Process $setup.FullName -ArgumentList "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /NOICONS /DIR=`"$destination`" /LOG=`"$env:RUNNER_TEMP\setup.log`"" -PassThru -Wait
+          if($process.ExitCode -notin @(0,3010)){throw "Installer failed: $($process.ExitCode)"}
+          if(!(Test-Path "$destination/TrafficMonitorPlus.exe")){throw 'Installed executable missing'}
+          $uninstall=Start-Process "$destination/unins000.exe" -ArgumentList '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART' -PassThru -Wait
+          if($uninstall.ExitCode -ne 0){throw "Uninstaller failed: $($uninstall.ExitCode)"}
+          if(Test-Path "$destination/TrafficMonitorPlus.exe"){throw 'Uninstaller left executable behind'}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TrafficMonitorPlus-windows-x64
+          path: |
+            dist/*.zip
+            dist/*Setup-x64.exe
+            dist/SHA256SUMS.txt
+      - name: Upload to draft release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          $assets=@(Get-ChildItem dist -File | Where-Object { $_.Extension -in @('.zip','.exe') -or $_.Name -eq 'SHA256SUMS.txt' } | ForEach-Object FullName)
+          if($assets.Count -ne 3){throw 'Expected installer, ZIP and checksum manifest.'}
+          & gh release upload $env:GITHUB_REF_NAME @assets --clobber
+          if($LASTEXITCODE -ne 0){throw 'Release asset upload failed.'}
